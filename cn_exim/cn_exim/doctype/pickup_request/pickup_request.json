@@ -1,0 +1,176 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PR-{###}",
+ "creation": "2024-08-07 13:38:37.549161",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "header_details_section",
+  "no_of_boxes",
+  "type_of_cargo",
+  "mode_of_shipment",
+  "group_email",
+  "name_of_supplier",
+  "pol",
+  "dimension",
+  "billing_address",
+  "file_attachements",
+  "column_break_dm43",
+  "pickup_date_by",
+  "gross_weight",
+  "incoterms",
+  "type_of_shipments",
+  "insurance_intimation",
+  "origin_country",
+  "pod",
+  "pickup_address",
+  "chargeable_weight",
+  "section_break_4pdi",
+  "remarks",
+  "purchase_order_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "header_details_section",
+   "fieldtype": "Section Break",
+   "label": "Header Details"
+  },
+  {
+   "fieldname": "no_of_boxes",
+   "fieldtype": "Data",
+   "label": "No. Of Boxes"
+  },
+  {
+   "fieldname": "type_of_cargo",
+   "fieldtype": "Data",
+   "label": "Type Of Cargo"
+  },
+  {
+   "fieldname": "mode_of_shipment",
+   "fieldtype": "Data",
+   "label": "Mode Of Shipment"
+  },
+  {
+   "fieldname": "group_email",
+   "fieldtype": "Data",
+   "label": "Group Email"
+  },
+  {
+   "fieldname": "name_of_supplier",
+   "fieldtype": "Data",
+   "label": "Name Of Supplier"
+  },
+  {
+   "fieldname": "pol",
+   "fieldtype": "Data",
+   "label": "POL"
+  },
+  {
+   "fieldname": "billing_address",
+   "fieldtype": "Small Text",
+   "label": "Billing Address"
+  },
+  {
+   "fieldname": "dimension",
+   "fieldtype": "Int",
+   "label": "Dimension(cm)"
+  },
+  {
+   "fieldname": "chargeable_weight",
+   "fieldtype": "Float",
+   "label": "Chargeable Weight"
+  },
+  {
+   "fieldname": "file_attachements",
+   "fieldtype": "Attach",
+   "label": "File Attachements"
+  },
+  {
+   "fieldname": "column_break_dm43",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pickup_date_by",
+   "fieldtype": "Date",
+   "label": "Pickup Date By"
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight"
+  },
+  {
+   "fieldname": "incoterms",
+   "fieldtype": "Data",
+   "label": "Incoterms"
+  },
+  {
+   "fieldname": "type_of_shipments",
+   "fieldtype": "Data",
+   "label": "Type Of Shipments"
+  },
+  {
+   "default": "0",
+   "fieldname": "insurance_intimation",
+   "fieldtype": "Check",
+   "label": "Insurance Intimation"
+  },
+  {
+   "fieldname": "origin_country",
+   "fieldtype": "Data",
+   "label": "Origin Country"
+  },
+  {
+   "fieldname": "pod",
+   "fieldtype": "Data",
+   "label": "POD"
+  },
+  {
+   "fieldname": "pickup_address",
+   "fieldtype": "Small Text",
+   "label": "Pickup Address"
+  },
+  {
+   "fieldname": "section_break_4pdi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "purchase_order_details",
+   "fieldtype": "Table",
+   "label": "Purchase Order Details",
+   "options": "Purchase Order Details"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-07 16:41:47.076044",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Pickup Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

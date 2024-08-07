@@ -1,0 +1,282 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PA-{pickup_request}-{##}",
+ "creation": "2024-08-07 14:04:27.614232",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pre_alert_header_details_section",
+  "pickup_request",
+  "rfq_number",
+  "vendor",
+  "exch_rate",
+  "remarks",
+  "cha",
+  "column_break_6qpd",
+  "total_doc_val",
+  "accessible_val",
+  "bcd_amount",
+  "h_cess_amount",
+  "sws_amount",
+  "igst_amount",
+  "total_duty",
+  "file_attachments",
+  "column_break_cbel",
+  "total_inr_val",
+  "house_number",
+  "master_number",
+  "etd",
+  "eta",
+  "payment_type",
+  "courier",
+  "column_break_2omd",
+  "freight_amt",
+  "ex_works",
+  "other_charges",
+  "insurance_amount",
+  "insurance",
+  "igcr",
+  "iin_number",
+  "column_break_o1im",
+  "invoice_details",
+  "invoice_dt",
+  "total_freight",
+  "rem_rodtep",
+  "tot_rodt_ut",
+  "rodtep_utilization",
+  "section_break_oobu",
+  "item_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "pre_alert_header_details_section",
+   "fieldtype": "Section Break",
+   "label": "Pre Alert Header Details"
+  },
+  {
+   "fieldname": "pickup_request",
+   "fieldtype": "Link",
+   "label": "Pickup Request",
+   "options": "Pickup Request"
+  },
+  {
+   "fieldname": "column_break_6qpd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_doc_val",
+   "fieldtype": "Float",
+   "label": "Total Doc. Val"
+  },
+  {
+   "fieldname": "column_break_cbel",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_inr_val",
+   "fieldtype": "Currency",
+   "label": "Total INR Val"
+  },
+  {
+   "fieldname": "column_break_2omd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "freight_amt",
+   "fieldtype": "Currency",
+   "label": "Freight Amt."
+  },
+  {
+   "fieldname": "column_break_o1im",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_details",
+   "fieldtype": "Attach",
+   "label": "Invoice Details"
+  },
+  {
+   "fieldname": "rfq_number",
+   "fieldtype": "Link",
+   "label": "RFQ Number",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "vendor",
+   "fieldtype": "Data",
+   "label": "Vendor"
+  },
+  {
+   "fieldname": "exch_rate",
+   "fieldtype": "Float",
+   "label": "Exch. Rate"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Data",
+   "label": "CHA"
+  },
+  {
+   "fieldname": "file_attachments",
+   "fieldtype": "Attach",
+   "label": "File Attachments"
+  },
+  {
+   "fieldname": "accessible_val",
+   "fieldtype": "Float",
+   "label": "Accessible Val"
+  },
+  {
+   "fieldname": "bcd_amount",
+   "fieldtype": "Currency",
+   "label": "BCD Amount"
+  },
+  {
+   "fieldname": "h_cess_amount",
+   "fieldtype": "Currency",
+   "label": "H. Cess Amount"
+  },
+  {
+   "fieldname": "sws_amount",
+   "fieldtype": "Currency",
+   "label": "SWS Amount"
+  },
+  {
+   "fieldname": "igst_amount",
+   "fieldtype": "Currency",
+   "label": "IGST Amount"
+  },
+  {
+   "fieldname": "total_duty",
+   "fieldtype": "Float",
+   "label": "Total Duty"
+  },
+  {
+   "fieldname": "house_number",
+   "fieldtype": "Data",
+   "label": "House Number"
+  },
+  {
+   "fieldname": "master_number",
+   "fieldtype": "Data",
+   "label": "Master Number"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Datetime",
+   "label": "ETD"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Datetime",
+   "label": "ETA"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Data",
+   "label": "Payment Type"
+  },
+  {
+   "fieldname": "courier",
+   "fieldtype": "Data",
+   "label": "Courier"
+  },
+  {
+   "fieldname": "ex_works",
+   "fieldtype": "Currency",
+   "label": "Ex. Works"
+  },
+  {
+   "fieldname": "other_charges",
+   "fieldtype": "Currency",
+   "label": "Other Charges"
+  },
+  {
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount"
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Percent",
+   "label": "Insurance (%)"
+  },
+  {
+   "default": "0",
+   "fieldname": "igcr",
+   "fieldtype": "Check",
+   "label": "IGCR"
+  },
+  {
+   "fieldname": "iin_number",
+   "fieldtype": "Data",
+   "label": "IIN Number"
+  },
+  {
+   "fieldname": "invoice_dt",
+   "fieldtype": "Date",
+   "label": "Invoice Dt."
+  },
+  {
+   "fieldname": "total_freight",
+   "fieldtype": "Float",
+   "label": "Total Freight"
+  },
+  {
+   "fieldname": "rem_rodtep",
+   "fieldtype": "Float",
+   "label": "Rem. Rodtep"
+  },
+  {
+   "fieldname": "tot_rodt_ut",
+   "fieldtype": "Float",
+   "label": "Tot. Rodt. Ut"
+  },
+  {
+   "fieldname": "rodtep_utilization",
+   "fieldtype": "Attach",
+   "label": "Rodtep Utilization"
+  },
+  {
+   "fieldname": "section_break_oobu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_details",
+   "fieldtype": "Table",
+   "label": "Item Details",
+   "options": "Pre-Alert Item Details"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-07 16:39:53.817653",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Pre-Alert",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
