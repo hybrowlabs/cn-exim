@@ -14,9 +14,10 @@
  "fields": [
   {
    "fieldname": "vendor",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Vendor"
+   "label": "Vendor",
+   "options": "Supplier"
   },
   {
    "fieldname": "cha_name",
@@ -38,7 +39,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-08 14:16:11.450288",
+ "modified": "2024-08-08 14:42:57.437528",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "CHA",
