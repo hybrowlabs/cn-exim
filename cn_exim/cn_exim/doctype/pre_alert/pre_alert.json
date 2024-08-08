@@ -119,8 +119,9 @@
   },
   {
    "fieldname": "cha",
-   "fieldtype": "Data",
-   "label": "CHA"
+   "fieldtype": "Link",
+   "label": "CHA",
+   "options": "CHA"
   },
   {
    "fieldname": "file_attachments",
@@ -179,8 +180,9 @@
   },
   {
    "fieldname": "payment_type",
-   "fieldtype": "Data",
-   "label": "Payment Type"
+   "fieldtype": "Link",
+   "label": "Payment Type",
+   "options": "Payment Type"
   },
   {
    "fieldname": "courier",
@@ -215,8 +217,9 @@
   },
   {
    "fieldname": "iin_number",
-   "fieldtype": "Data",
-   "label": "IIN Number"
+   "fieldtype": "Link",
+   "label": "IIN Number",
+   "options": "IIN"
   },
   {
    "fieldname": "invoice_dt",
@@ -256,7 +259,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-07 16:39:53.817653",
+ "modified": "2024-08-08 14:20:30.858338",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert",

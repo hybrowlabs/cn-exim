@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:CHA-{vendor}-{###}",
+ "creation": "2024-08-08 14:07:44.788245",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "vendor",
+  "cha_name",
+  "seq_num",
+  "email_address"
+ ],
+ "fields": [
+  {
+   "fieldname": "vendor",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vendor"
+  },
+  {
+   "fieldname": "cha_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "CHA Name"
+  },
+  {
+   "fieldname": "seq_num",
+   "fieldtype": "Int",
+   "label": "Seq. Num"
+  },
+  {
+   "fieldname": "email_address",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email Address"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-08 14:16:11.450288",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "CHA",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
