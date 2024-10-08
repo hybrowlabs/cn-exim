@@ -14,7 +14,8 @@
   "name_of_supplier",
   "pol",
   "dimension",
-  "billing_address",
+  "supplier_address",
+  "pickup_address",
   "file_attachements",
   "column_break_dm43",
   "pickup_date_by",
@@ -24,9 +25,11 @@
   "insurance_intimation",
   "origin_country",
   "pod",
-  "pickup_address",
   "chargeable_weight",
+  "billing_address",
   "remarks",
+  "section_break_wmor",
+  "purchase_order_list",
   "section_break_4pdi",
   "purchase_order_details"
  ],
@@ -151,11 +154,28 @@
    "fieldtype": "Link",
    "label": "Origin Country",
    "options": "Country"
+  },
+  {
+   "fieldname": "section_break_wmor",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_order_list",
+   "fieldtype": "Table",
+   "label": "Purchase Order List",
+   "options": "Purchase Order List"
+  },
+  {
+   "fetch_from": "name_of_supplier.supplier_primary_address",
+   "fieldname": "supplier_address",
+   "fieldtype": "Link",
+   "label": "Supplier Address",
+   "options": "Address"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-18 12:43:38.019907",
+ "modified": "2024-10-08 17:06:17.822636",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

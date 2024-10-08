@@ -6,56 +6,28 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "po_type",
-  "po_number",
   "item",
   "material",
+  "pick_qty",
   "column_break_aost",
-  "document_date",
-  "vendor",
-  "pay_term",
-  "quantity"
+  "quantity",
+  "material_desc",
+  "po_number"
  ],
  "fields": [
   {
-   "fieldname": "po_type",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "PO Type"
-  },
-  {
-   "fieldname": "po_number",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "PO Number"
-  },
-  {
    "fieldname": "item",
-   "fieldtype": "Int",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Item"
+   "label": "Item Code",
+   "options": "Item"
   },
   {
+   "fetch_from": "item.item_name",
    "fieldname": "material",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Material"
-  },
-  {
-   "fieldname": "document_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Document Date"
-  },
-  {
-   "fieldname": "vendor",
-   "fieldtype": "Data",
-   "label": "Vendor"
-  },
-  {
-   "fieldname": "pay_term",
-   "fieldtype": "Data",
-   "label": "Pay. Term"
   },
   {
    "fieldname": "quantity",
@@ -65,12 +37,30 @@
   {
    "fieldname": "column_break_aost",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "item.description",
+   "fieldname": "material_desc",
+   "fieldtype": "Data",
+   "label": "Material Desc"
+  },
+  {
+   "fieldname": "pick_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Pick Qty"
+  },
+  {
+   "fieldname": "po_number",
+   "fieldtype": "Link",
+   "label": "Po Number",
+   "options": "Purchase Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-07 13:59:30.315035",
+ "modified": "2024-10-08 17:30:18.732529",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Purchase Order Details",

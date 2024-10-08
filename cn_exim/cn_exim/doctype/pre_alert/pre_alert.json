@@ -104,8 +104,9 @@
   },
   {
    "fieldname": "vendor",
-   "fieldtype": "Data",
-   "label": "Vendor"
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Supplier"
   },
   {
    "fieldname": "exch_rate",
@@ -257,7 +258,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-19 10:16:25.934902",
+ "modified": "2024-10-08 17:20:24.883723",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert",
