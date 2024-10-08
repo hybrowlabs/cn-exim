@@ -26,8 +26,8 @@
   "pod",
   "pickup_address",
   "chargeable_weight",
-  "section_break_4pdi",
   "remarks",
+  "section_break_4pdi",
   "purchase_order_details"
  ],
  "fields": [
@@ -38,18 +38,20 @@
   },
   {
    "fieldname": "no_of_boxes",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "No. Of Boxes"
   },
   {
    "fieldname": "type_of_cargo",
-   "fieldtype": "Data",
-   "label": "Type Of Cargo"
+   "fieldtype": "Select",
+   "label": "Type Of Cargo",
+   "options": "\nCRG1-Genral Cargo\nCRG2-Perishable+2 to+ 8 Degree C\nCRG3-Frozen(Dry Ice)\nCRG4-Non Stackable\nCRG5-DG Cargo"
   },
   {
    "fieldname": "mode_of_shipment",
-   "fieldtype": "Data",
-   "label": "Mode Of Shipment"
+   "fieldtype": "Select",
+   "label": "Mode Of Shipment",
+   "options": "\nMOS1-AIR\nMOS2-OCEAN\nMOS3-ROAD"
   },
   {
    "fieldname": "group_email",
@@ -58,12 +60,13 @@
   },
   {
    "fieldname": "name_of_supplier",
-   "fieldtype": "Data",
-   "label": "Name Of Supplier"
+   "fieldtype": "Link",
+   "label": "Name Of Supplier",
+   "options": "Supplier"
   },
   {
    "fieldname": "pol",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
    "label": "POL"
   },
   {
@@ -97,7 +100,7 @@
   },
   {
    "fieldname": "gross_weight",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Gross Weight"
   },
   {
@@ -107,8 +110,9 @@
   },
   {
    "fieldname": "type_of_shipments",
-   "fieldtype": "Data",
-   "label": "Type Of Shipments"
+   "fieldtype": "Select",
+   "label": "Type Of Shipments",
+   "options": "\nSHP1-GENERAL\nSHP2-UNDER LC\nSHP3-UNDER EPCG\nSHP4-UNDER LC/EPCG"
   },
   {
    "default": "0",
@@ -117,13 +121,8 @@
    "label": "Insurance Intimation"
   },
   {
-   "fieldname": "origin_country",
-   "fieldtype": "Data",
-   "label": "Origin Country"
-  },
-  {
    "fieldname": "pod",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
    "label": "POD"
   },
   {
@@ -146,11 +145,17 @@
    "fieldtype": "Table",
    "label": "Purchase Order Details",
    "options": "Purchase Order Details"
+  },
+  {
+   "fieldname": "origin_country",
+   "fieldtype": "Link",
+   "label": "Origin Country",
+   "options": "Country"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-07 16:41:47.076044",
+ "modified": "2024-09-18 12:43:38.019907",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

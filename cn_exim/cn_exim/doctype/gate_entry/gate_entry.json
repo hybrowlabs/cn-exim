@@ -1,0 +1,130 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-30 12:22:04.410771",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_3qsr",
+  "gate_entry_date",
+  "supplier_name",
+  "material_short_description",
+  "vehicle_no",
+  "bill_date",
+  "driver_name",
+  "driver_mobile_no",
+  "section_break_e3zl",
+  "purchase_no",
+  "challan_no",
+  "quantity_received",
+  "bill_number",
+  "airway_bill_no",
+  "service_name",
+  "remark"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_3qsr",
+   "fieldtype": "Int",
+   "label": "Gate Entry No"
+  },
+  {
+   "fieldname": "gate_entry_date",
+   "fieldtype": "Date",
+   "label": "Gate Entry Date"
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name"
+  },
+  {
+   "fieldname": "material_short_description",
+   "fieldtype": "Small Text",
+   "label": "Material Short Description"
+  },
+  {
+   "fieldname": "vehicle_no",
+   "fieldtype": "Int",
+   "label": "Vehicle No"
+  },
+  {
+   "fieldname": "bill_date",
+   "fieldtype": "Date",
+   "label": "Bill Date"
+  },
+  {
+   "fieldname": "driver_name",
+   "fieldtype": "Data",
+   "label": "Driver Name"
+  },
+  {
+   "fieldname": "driver_mobile_no",
+   "fieldtype": "Int",
+   "label": "Driver Mobile No"
+  },
+  {
+   "fieldname": "purchase_no",
+   "fieldtype": "Int",
+   "label": "Purchase No"
+  },
+  {
+   "fieldname": "challan_no",
+   "fieldtype": "Int",
+   "label": "Challan No"
+  },
+  {
+   "fieldname": "quantity_received",
+   "fieldtype": "Data",
+   "label": "Quantity Received"
+  },
+  {
+   "fieldname": "bill_number",
+   "fieldtype": "Int",
+   "label": "Bill Number"
+  },
+  {
+   "fieldname": "airway_bill_no",
+   "fieldtype": "Int",
+   "label": "Airway Bill No"
+  },
+  {
+   "fieldname": "service_name",
+   "fieldtype": "Data",
+   "label": "Service Name"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Text",
+   "label": "Remark"
+  },
+  {
+   "fieldname": "section_break_e3zl",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-30 12:32:51.018459",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Gate Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
