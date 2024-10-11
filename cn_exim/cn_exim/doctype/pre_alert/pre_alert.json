@@ -120,8 +120,9 @@
   },
   {
    "fieldname": "cha",
-   "fieldtype": "Data",
-   "label": "CHA"
+   "fieldtype": "Link",
+   "label": "CHA",
+   "options": "CHA"
   },
   {
    "fieldname": "file_attachments",
@@ -258,7 +259,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-08 17:20:24.883723",
+ "modified": "2024-10-09 16:16:57.562742",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert",
