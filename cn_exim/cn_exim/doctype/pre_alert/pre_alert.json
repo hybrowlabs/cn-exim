@@ -1,18 +1,19 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:PA-{pickup_request}-{##}",
+ "autoname": "naming_series:",
  "creation": "2024-08-07 14:04:27.614232",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "pre_alert_header_details_section",
+  "naming_series",
   "pickup_request",
   "rfq_number",
   "vendor",
   "exch_rate",
   "remarks",
-  "cha",
+  "igcr",
   "column_break_6qpd",
   "total_doc_val",
   "accessible_val",
@@ -21,7 +22,7 @@
   "sws_amount",
   "igst_amount",
   "total_duty",
-  "file_attachments",
+  "cha",
   "column_break_cbel",
   "total_inr_val",
   "house_number",
@@ -36,17 +37,21 @@
   "other_charges",
   "insurance_amount",
   "insurance",
-  "igcr",
   "iin_number",
+  "check_list_no",
+  "check_list_date",
   "column_break_o1im",
   "invoice_details",
+  "invoice_no",
   "invoice_dt",
   "total_freight",
   "rem_rodtep",
   "tot_rodt_ut",
   "rodtep_utilization",
+  "file_attachments",
   "section_break_oobu",
-  "item_details"
+  "item_details",
+  "amended_from"
  ],
  "fields": [
   {
@@ -255,15 +260,47 @@
    "fieldtype": "Table",
    "label": "Item Details",
    "options": "Pre-Alert Item Details"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Pre Alert",
+   "options": "PRE-ALT-.###"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pre-Alert",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "check_list_no",
+   "fieldtype": "Data",
+   "label": "Check List No"
+  },
+  {
+   "fieldname": "check_list_date",
+   "fieldtype": "Date",
+   "label": "Check List Date"
+  },
+  {
+   "fieldname": "invoice_no",
+   "fieldtype": "Data",
+   "label": "Invoice No"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-10-09 16:16:57.562742",
+ "modified": "2024-10-11 12:22:05.945851",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert",
- "naming_rule": "Expression",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
