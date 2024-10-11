@@ -70,7 +70,8 @@
   {
    "fieldname": "pol",
    "fieldtype": "Select",
-   "label": "POL"
+   "label": "POL",
+   "options": "1\n2\n3"
   },
   {
    "fieldname": "billing_address",
@@ -108,8 +109,9 @@
   },
   {
    "fieldname": "incoterms",
-   "fieldtype": "Data",
-   "label": "Incoterms"
+   "fieldtype": "Select",
+   "label": "Incoterms",
+   "options": "\n1\n2\n3"
   },
   {
    "fieldname": "type_of_shipments",
@@ -126,7 +128,8 @@
   {
    "fieldname": "pod",
    "fieldtype": "Select",
-   "label": "POD"
+   "label": "POD",
+   "options": "1\n2\n3"
   },
   {
    "fieldname": "pickup_address",
@@ -144,6 +147,7 @@
    "label": "Remarks"
   },
   {
+   "allow_bulk_edit": 1,
    "fieldname": "purchase_order_details",
    "fieldtype": "Table",
    "label": "Purchase Order Details",
@@ -166,7 +170,6 @@
    "options": "Purchase Order List"
   },
   {
-   "fetch_from": "name_of_supplier.supplier_primary_address",
    "fieldname": "supplier_address",
    "fieldtype": "Link",
    "label": "Supplier Address",
@@ -175,7 +178,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-08 17:06:17.822636",
+ "modified": "2024-10-11 14:23:01.257523",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
