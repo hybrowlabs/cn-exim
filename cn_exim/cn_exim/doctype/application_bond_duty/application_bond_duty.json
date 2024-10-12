@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{hsn_code}",
+ "creation": "2024-10-12 01:27:29.987003",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "hsn_code",
+  "application_bond_duty_detail_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "hsn_code",
+   "fieldtype": "Link",
+   "label": "HSN Code",
+   "options": "GST HSN Code",
+   "unique": 1
+  },
+  {
+   "fieldname": "application_bond_duty_detail_item",
+   "fieldtype": "Table",
+   "label": "Application Bond Duty Detail Item",
+   "options": "Application Bond Duty Details"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-12 01:36:20.857117",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Application Bond Duty",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
