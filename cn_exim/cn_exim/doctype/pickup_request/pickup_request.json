@@ -32,7 +32,10 @@
   "section_break_wmor",
   "purchase_order_list",
   "section_break_4pdi",
-  "purchase_order_details"
+  "purchase_order_details",
+  "section_break_nzcy",
+  "total_amount",
+  "amended_from"
  ],
  "fields": [
   {
@@ -181,11 +184,31 @@
    "fieldtype": "Small Text",
    "label": "Supplier Address Display",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_nzcy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pickup Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-10-12 09:31:52.411559",
+ "modified": "2024-10-12 23:27:13.210015",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
