@@ -1,4 +1,10 @@
 frappe.ui.form.on("Request for Quotation", {
+    custom_shipment_address:function(frm) {
+        erpnext.utils.get_address_display(frm, "custom_shipment_address", "custom_shipment_address_details",false);
+	},
+    billing_address:function(frm) {
+        erpnext.utils.get_address_display(frm, "billing_address", "billing_address_display",false);
+	},
     custom_pickup_request:function(frm){
         frappe.call({
             method:"cn_exim.cn_exim.api.get_api_list",
@@ -6,7 +12,6 @@ frappe.ui.form.on("Request for Quotation", {
                 pr:frm.doc.custom_pickup_request
             },
             callback:function(r){
-                console.log("###################^78",r.message)
 
                 if(r.message){
                     frm.clear_table("suppliers")
