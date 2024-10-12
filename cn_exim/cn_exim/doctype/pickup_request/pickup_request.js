@@ -3,7 +3,18 @@
 
 frappe.ui.form.on("Pickup Request", {
 	refresh(frm) {
-        // frm.set_query("supplier_address", erpnext.queries.address_query);
+        frm.set_query('supplier_address', function(doc) {
+			return {
+				query: 'frappe.contacts.doctype.address.address.address_query',
+				filters: {
+					link_doctype: 'Supplier',
+					link_name: doc.name_of_supplier
+				}
+			};
+		})
+	},
+    supplier_address:function(frm) {
+        erpnext.utils.get_address_display(frm, "supplier_address", "supplier_address_display",false);
 	},
     custom_get_po_items:function(frm){
         frappe.call({
