@@ -1,0 +1,70 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-11 16:18:36.300925",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "material_tyep",
+  "valuation_class",
+  "value__updating",
+  "column_break_lhvg",
+  "counter",
+  "qty_updating"
+ ],
+ "fields": [
+  {
+   "fieldname": "material_tyep",
+   "fieldtype": "Data",
+   "label": "Material Tyep"
+  },
+  {
+   "fieldname": "valuation_class",
+   "fieldtype": "Data",
+   "label": "Valuation class"
+  },
+  {
+   "fieldname": "value__updating",
+   "fieldtype": "Data",
+   "label": "Value  updating"
+  },
+  {
+   "fieldname": "column_break_lhvg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "counter",
+   "fieldtype": "Int",
+   "label": "Counter"
+  },
+  {
+   "fieldname": "qty_updating",
+   "fieldtype": "Data",
+   "label": "Qty updating"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-11 16:20:54.107573",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Material Type",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
