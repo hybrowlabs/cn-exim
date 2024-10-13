@@ -2,38 +2,57 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "format:PR-{###}",
- "creation": "2024-08-07 13:38:37.549161",
+ "creation": "2024-10-13 13:39:55.691763",
+ "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "details_tab",
   "header_details_section",
+  "name_of_supplier",
   "no_of_boxes",
   "type_of_cargo",
   "mode_of_shipment",
   "group_email",
-  "name_of_supplier",
-  "pol",
   "dimension",
-  "supplier_address",
-  "pickup_address",
+  "pol",
   "file_attachements",
   "column_break_dm43",
+  "company",
   "pickup_date_by",
-  "gross_weight",
-  "incoterms",
   "type_of_shipments",
   "insurance_intimation",
+  "gross_weight",
+  "chargeable_weight",
   "origin_country",
   "pod",
-  "chargeable_weight",
-  "billing_address",
   "remarks",
   "section_break_wmor",
   "purchase_order_list",
   "section_break_4pdi",
-  "purchase_order_details"
+  "custom_get_po_items",
+  "purchase_order_details",
+  "terms_section",
+  "incoterms",
+  "description",
+  "address_tab",
+  "section_break_ahll",
+  "supplier_address",
+  "supplier_address_display",
+  "billing_address",
+  "billing_address_display",
+  "pickup_address",
+  "pickup_address_display",
+  "section_break_nzcy",
+  "total_amount",
+  "amended_from"
  ],
  "fields": [
+  {
+   "fieldname": "details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details"
+  },
   {
    "fieldname": "header_details_section",
    "fieldtype": "Section Break",
@@ -64,28 +83,20 @@
   {
    "fieldname": "name_of_supplier",
    "fieldtype": "Link",
-   "label": "Name Of Supplier",
-   "options": "Supplier"
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
   },
   {
    "fieldname": "pol",
-   "fieldtype": "Select",
-   "label": "POL"
-  },
-  {
-   "fieldname": "billing_address",
-   "fieldtype": "Small Text",
-   "label": "Billing Address"
+   "fieldtype": "Link",
+   "label": "Port Of Loading",
+   "options": "Port"
   },
   {
    "fieldname": "dimension",
    "fieldtype": "Int",
    "label": "Dimension(cm)"
-  },
-  {
-   "fieldname": "chargeable_weight",
-   "fieldtype": "Float",
-   "label": "Chargeable Weight"
   },
   {
    "fieldname": "file_attachements",
@@ -108,8 +119,9 @@
   },
   {
    "fieldname": "incoterms",
-   "fieldtype": "Data",
-   "label": "Incoterms"
+   "fieldtype": "Link",
+   "label": "Incoterms",
+   "options": "Incoterm"
   },
   {
    "fieldname": "type_of_shipments",
@@ -124,36 +136,27 @@
    "label": "Insurance Intimation"
   },
   {
+   "fieldname": "origin_country",
+   "fieldtype": "Link",
+   "label": "Origin Country",
+   "options": "Country"
+  },
+  {
    "fieldname": "pod",
-   "fieldtype": "Select",
-   "label": "POD"
+   "fieldtype": "Link",
+   "label": "Port Of Destination",
+   "options": "Port"
   },
   {
-   "fieldname": "pickup_address",
-   "fieldtype": "Small Text",
-   "label": "Pickup Address"
-  },
-  {
-   "fieldname": "section_break_4pdi",
-   "fieldtype": "Section Break"
+   "fieldname": "chargeable_weight",
+   "fieldtype": "Float",
+   "label": "Chargeable Weight"
   },
   {
    "columns": 2,
    "fieldname": "remarks",
    "fieldtype": "Small Text",
    "label": "Remarks"
-  },
-  {
-   "fieldname": "purchase_order_details",
-   "fieldtype": "Table",
-   "label": "Purchase Order Details",
-   "options": "Purchase Order Details"
-  },
-  {
-   "fieldname": "origin_country",
-   "fieldtype": "Link",
-   "label": "Origin Country",
-   "options": "Country"
   },
   {
    "fieldname": "section_break_wmor",
@@ -166,16 +169,110 @@
    "options": "Purchase Order List"
   },
   {
-   "fetch_from": "name_of_supplier.supplier_primary_address",
+   "fieldname": "section_break_4pdi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "purchase_order_details",
+   "fieldtype": "Table",
+   "label": "Purchase Order Details",
+   "options": "Purchase Order Details"
+  },
+  {
    "fieldname": "supplier_address",
    "fieldtype": "Link",
    "label": "Supplier Address",
    "options": "Address"
+  },
+  {
+   "fieldname": "supplier_address_display",
+   "fieldtype": "Small Text",
+   "label": "Supplier Address Display",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billing_address_display",
+   "fieldtype": "Small Text",
+   "label": "Billing Address Display",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pickup_address_display",
+   "fieldtype": "Small Text",
+   "label": "Pickup Address Display",
+   "read_only": 1
+  },
+  {
+   "fieldname": "address_tab",
+   "fieldtype": "Tab Break",
+   "label": "Address"
+  },
+  {
+   "fieldname": "section_break_ahll",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "custom_get_po_items",
+   "fieldtype": "Button",
+   "label": "Get Po Items"
+  },
+  {
+   "fieldname": "terms_section",
+   "fieldtype": "Section Break",
+   "label": "Terms"
+  },
+  {
+   "fetch_from": "incoterms.description",
+   "fetch_if_empty": 1,
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "billing_address",
+   "fieldtype": "Link",
+   "label": "Billing Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "pickup_address",
+   "fieldtype": "Link",
+   "label": "Pickup Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "section_break_nzcy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pickup Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-10-08 17:06:17.822636",
+ "modified": "2024-10-13 14:17:04.726494",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

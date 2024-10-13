@@ -14,3 +14,8 @@ def get_percentage_of_hsn_and_category_base(name, category):
 		data = frappe.db.sql(" select * from `tabApplication Bond Duty Details` where parent=%s and category=%s ",(name, category), as_dict=True)
 
 		return data
+
+@frappe.whitelist()
+def get_exchange_rate(name):
+    data = frappe.db.sql(" select exchange_rate from `tabPurchase Order List` where parent=%s",(name), as_dict=True)
+    return data

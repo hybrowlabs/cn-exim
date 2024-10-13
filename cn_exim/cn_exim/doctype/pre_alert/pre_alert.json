@@ -70,6 +70,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "pickup_request.total_amount",
    "fieldname": "total_doc_val",
    "fieldtype": "Float",
    "label": "Total Doc. Val"
@@ -296,7 +297,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-11 12:22:05.945851",
+ "modified": "2024-10-12 23:30:41.284159",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert",
