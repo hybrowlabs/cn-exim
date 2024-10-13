@@ -7,22 +7,20 @@
  "engine": "InnoDB",
  "field_order": [
   "po_no",
-  "material_code",
+  "item_code",
   "quantity",
-  "po_value",
-  "currency",
-  "exch_rate",
+  "amount",
   "insurance_amount",
   "hsn_code",
+  "category",
   "column_break_7soa",
-  "po_item",
+  "material_name",
   "description",
   "item_price",
   "total_inr_value",
   "freight_amount",
   "misc_charge_amt",
   "total_amount",
-  "category",
   "section_break_btbk",
   "bcd_",
   "bcd_amount",
@@ -41,21 +39,8 @@
    "fieldname": "po_no",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "PO No.",
+   "label": "PUrchase Order Number",
    "options": "Purchase Order"
-  },
-  {
-   "fieldname": "po_item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "PO Item",
-   "options": "Item"
-  },
-  {
-   "fieldname": "material_code",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Material Code"
   },
   {
    "fieldname": "description",
@@ -74,22 +59,6 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Item Price"
-  },
-  {
-   "fieldname": "po_value",
-   "fieldtype": "Currency",
-   "label": "PO Value"
-  },
-  {
-   "fieldname": "currency",
-   "fieldtype": "Link",
-   "label": "Currency",
-   "options": "Currency"
-  },
-  {
-   "fieldname": "exch_rate",
-   "fieldtype": "Float",
-   "label": "Exch. Rate"
   },
   {
    "fieldname": "insurance_amount",
@@ -122,16 +91,17 @@
    "label": "Total Amount"
   },
   {
+   "fetch_from": "item_code.gst_hsn_code",
    "fieldname": "hsn_code",
    "fieldtype": "Link",
    "label": "HSN Code",
-   "options": "Application Bond Duty"
+   "options": "GST HSN Code"
   },
   {
    "fieldname": "category",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Category",
-   "options": "\nn\n9\ne"
+   "options": "Application Bond Duty Category"
   },
   {
    "fieldname": "section_break_btbk",
@@ -188,12 +158,31 @@
    "fieldname": "igst_amount",
    "fieldtype": "Float",
    "label": "IGST Amount"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "material_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item name"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-12 02:09:09.746872",
+ "modified": "2024-10-13 17:21:34.672910",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Item Details",

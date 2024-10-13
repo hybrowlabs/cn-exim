@@ -2,69 +2,91 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2024-10-11 13:03:40.428564",
+ "creation": "2024-10-13 16:57:04.609428",
  "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "pre_alert_header_details_section",
-  "naming_series",
-  "pickup_request",
-  "rfq_number",
-  "vendor",
-  "exch_rate",
-  "remarks",
-  "igcr",
-  "column_break_6qpd",
-  "total_doc_val",
-  "accessible_val",
-  "bcd_amount",
-  "h_cess_amount",
-  "sws_amount",
-  "igst_amount",
-  "total_duty",
-  "cha",
-  "column_break_cbel",
-  "total_inr_val",
-  "house_number",
-  "master_number",
-  "etd",
-  "eta",
-  "payment_type",
-  "courier",
-  "column_break_2omd",
-  "freight_amt",
-  "ex_works",
-  "other_charges",
-  "insurance_amount",
-  "insurance",
-  "iin_number",
   "check_list_no",
   "check_list_date",
-  "column_break_o1im",
-  "invoice_details",
-  "invoice_no",
+  "column_break_vfqm",
+  "naming_series",
+  "pickup_request",
+  "bill_of_entry_no",
+  "column_break_kard",
+  "rfq_number",
+  "bill_of_entry_date",
+  "column_break_lnsc",
+  "vendor",
+  "section_break_xqat",
+  "currency",
+  "exch_rate",
+  "column_break_ryli",
+  "total_doc_val",
+  "column_break_qfjw",
+  "total_inr_val",
+  "section_break_emlr",
+  "freight_amt",
+  "insurance_amount",
+  "column_break_kwgh",
+  "ex_works",
+  "insurance",
+  "column_break_zyyj",
+  "other_charges",
+  "accessible_val",
+  "section_break_bccj",
+  "house_number",
   "invoice_dt",
-  "total_freight",
-  "rem_rodtep",
+  "invoice_details",
+  "column_break_lsky",
+  "master_number",
+  "eta",
+  "column_break_wlqh",
+  "invoice_no",
+  "etd",
+  "pre_alert_header_details_section",
+  "cha",
   "tot_rodt_ut",
+  "column_break_6qpd",
+  "courier",
   "rodtep_utilization",
+  "column_break_cbel",
+  "payment_type",
   "file_attachments",
+  "column_break_2omd",
+  "iin_number",
+  "igcr",
+  "column_break_o1im",
+  "rem_rodtep",
   "section_break_oobu",
   "item_details",
-  "amended_from"
+  "section_break_vpip",
+  "bcd_amount",
+  "igst_amount",
+  "column_break_ahqi",
+  "h_cess_amount",
+  "total_freight",
+  "column_break_xsmu",
+  "sws_amount",
+  "total_duty",
+  "section_break_feze",
+  "remarks",
+  "amended_from",
+  "bill_of_entry_details_tab",
+  "charge_type",
+  "column_break_lbdw",
+  "account_head"
  ],
  "fields": [
   {
-   "fieldname": "pre_alert_header_details_section",
-   "fieldtype": "Section Break",
-   "label": "Pre Alert Header Details"
-  },
-  {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "label": "Pre Alert Check List",
-   "options": "PRE-ALT-Check-.###"
+   "label": "Pre Alert",
+   "options": "PRE-ALT-CHECK-LIST-.###"
+  },
+  {
+   "fieldname": "column_break_vfqm",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "pickup_request",
@@ -73,10 +95,18 @@
    "options": "Pickup Request"
   },
   {
+   "fieldname": "column_break_kard",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "rfq_number",
    "fieldtype": "Link",
    "label": "RFQ Number",
    "options": "Quotation"
+  },
+  {
+   "fieldname": "column_break_lnsc",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "vendor",
@@ -85,68 +115,32 @@
    "options": "Supplier"
   },
   {
+   "fieldname": "section_break_xqat",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
    "fieldname": "exch_rate",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Exch. Rate"
   },
   {
-   "fieldname": "remarks",
-   "fieldtype": "Small Text",
-   "label": "Remarks"
-  },
-  {
-   "default": "0",
-   "fieldname": "igcr",
-   "fieldtype": "Check",
-   "label": "IGCR"
-  },
-  {
-   "fieldname": "column_break_6qpd",
+   "fieldname": "column_break_ryli",
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "pickup_request.total_amount",
    "fieldname": "total_doc_val",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Total Doc. Val"
   },
   {
-   "fieldname": "accessible_val",
-   "fieldtype": "Float",
-   "label": "Accessible Val"
-  },
-  {
-   "fieldname": "bcd_amount",
-   "fieldtype": "Currency",
-   "label": "BCD Amount"
-  },
-  {
-   "fieldname": "h_cess_amount",
-   "fieldtype": "Currency",
-   "label": "H. Cess Amount"
-  },
-  {
-   "fieldname": "sws_amount",
-   "fieldtype": "Currency",
-   "label": "SWS Amount"
-  },
-  {
-   "fieldname": "igst_amount",
-   "fieldtype": "Currency",
-   "label": "IGST Amount"
-  },
-  {
-   "fieldname": "total_duty",
-   "fieldtype": "Float",
-   "label": "Total Duty"
-  },
-  {
-   "fieldname": "cha",
-   "fieldtype": "Link",
-   "label": "CHA",
-   "options": "CHA"
-  },
-  {
-   "fieldname": "column_break_cbel",
+   "fieldname": "column_break_qfjw",
    "fieldtype": "Column Break"
   },
   {
@@ -155,24 +149,128 @@
    "label": "Total INR Val"
   },
   {
+   "fieldname": "section_break_emlr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "freight_amt",
+   "fieldtype": "Currency",
+   "label": "Freight Amount"
+  },
+  {
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount"
+  },
+  {
+   "fieldname": "column_break_kwgh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ex_works",
+   "fieldtype": "Currency",
+   "label": "Ex Works"
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Percent",
+   "label": "Insurance (%)"
+  },
+  {
+   "fieldname": "column_break_zyyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_charges",
+   "fieldtype": "Currency",
+   "label": "Other Charges"
+  },
+  {
+   "fieldname": "accessible_val",
+   "fieldtype": "Currency",
+   "label": "Accessible Val"
+  },
+  {
+   "fieldname": "section_break_bccj",
+   "fieldtype": "Section Break"
+  },
+  {
    "fieldname": "house_number",
    "fieldtype": "Data",
-   "label": "House Number"
+   "label": "House AWB Number"
+  },
+  {
+   "fieldname": "invoice_dt",
+   "fieldtype": "Date",
+   "label": "Invoice Dt."
+  },
+  {
+   "fieldname": "invoice_details",
+   "fieldtype": "Attach",
+   "label": "Invoice Details"
+  },
+  {
+   "fieldname": "column_break_lsky",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "master_number",
    "fieldtype": "Data",
-   "label": "Master Number"
-  },
-  {
-   "fieldname": "etd",
-   "fieldtype": "Datetime",
-   "label": "ETD"
+   "label": "Master AWB Number"
   },
   {
    "fieldname": "eta",
-   "fieldtype": "Datetime",
-   "label": "ETA"
+   "fieldtype": "Date",
+   "label": "Estimated Arrival (ETA)"
+  },
+  {
+   "fieldname": "column_break_wlqh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_no",
+   "fieldtype": "Data",
+   "label": "Invoice No"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "label": "Estimated Departure(ETD)"
+  },
+  {
+   "fieldname": "pre_alert_header_details_section",
+   "fieldtype": "Section Break",
+   "label": "Pre Alert Header Details"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Link",
+   "label": "CHA",
+   "options": "CHA"
+  },
+  {
+   "fieldname": "tot_rodt_ut",
+   "fieldtype": "Int",
+   "label": "Tot. Rodt. Ut"
+  },
+  {
+   "fieldname": "column_break_6qpd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "courier",
+   "fieldtype": "Link",
+   "label": "Courier",
+   "options": "Courier"
+  },
+  {
+   "fieldname": "rodtep_utilization",
+   "fieldtype": "Attach",
+   "label": "Rodtep Utilization"
+  },
+  {
+   "fieldname": "column_break_cbel",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "payment_type",
@@ -181,97 +279,34 @@
    "options": "\nDEFFERED PAYMENT\nTRANSATIONAL PAYMENT"
   },
   {
-   "fieldname": "courier",
-   "fieldtype": "Data",
-   "label": "Courier"
+   "fieldname": "file_attachments",
+   "fieldtype": "Attach",
+   "label": "File Attachments"
   },
   {
    "fieldname": "column_break_2omd",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "freight_amt",
-   "fieldtype": "Currency",
-   "label": "Freight Amt."
-  },
-  {
-   "fieldname": "ex_works",
-   "fieldtype": "Currency",
-   "label": "Ex. Works"
-  },
-  {
-   "fieldname": "other_charges",
-   "fieldtype": "Currency",
-   "label": "Other Charges"
-  },
-  {
-   "fieldname": "insurance_amount",
-   "fieldtype": "Currency",
-   "label": "Insurance Amount"
-  },
-  {
-   "fieldname": "insurance",
-   "fieldtype": "Percent",
-   "label": "Insurance (%)"
-  },
-  {
    "fieldname": "iin_number",
-   "fieldtype": "Data",
-   "label": "IIN Number"
+   "fieldtype": "Link",
+   "label": "IIN Number",
+   "options": "IIN"
   },
   {
-   "fieldname": "check_list_no",
-   "fieldtype": "Data",
-   "label": "Check List No"
-  },
-  {
-   "fieldname": "check_list_date",
-   "fieldtype": "Date",
-   "label": "Check List Date"
+   "default": "0",
+   "fieldname": "igcr",
+   "fieldtype": "Check",
+   "label": "IGCR"
   },
   {
    "fieldname": "column_break_o1im",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "invoice_details",
-   "fieldtype": "Attach",
-   "label": "Invoice Details"
-  },
-  {
-   "fieldname": "invoice_no",
-   "fieldtype": "Data",
-   "label": "Invoice No"
-  },
-  {
-   "fieldname": "invoice_dt",
-   "fieldtype": "Date",
-   "label": "Invoice Dt."
-  },
-  {
-   "fieldname": "total_freight",
-   "fieldtype": "Float",
-   "label": "Total Freight"
-  },
-  {
    "fieldname": "rem_rodtep",
    "fieldtype": "Float",
    "label": "Rem. Rodtep"
-  },
-  {
-   "fieldname": "tot_rodt_ut",
-   "fieldtype": "Int",
-   "label": "Tot. Rodt. Ut"
-  },
-  {
-   "fieldname": "rodtep_utilization",
-   "fieldtype": "Attach",
-   "label": "Rodtep Utilization"
-  },
-  {
-   "fieldname": "file_attachments",
-   "fieldtype": "Attach",
-   "label": "File Attachments"
   },
   {
    "fieldname": "section_break_oobu",
@@ -294,6 +329,57 @@
    "search_index": 1
   },
   {
+   "fieldname": "section_break_vpip",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "bcd_amount",
+   "fieldtype": "Currency",
+   "label": "Total BCD Amount"
+  },
+  {
+   "fieldname": "igst_amount",
+   "fieldtype": "Currency",
+   "label": "Total IGST Amount"
+  },
+  {
+   "fieldname": "column_break_ahqi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "h_cess_amount",
+   "fieldtype": "Currency",
+   "label": "Total HCS Amount"
+  },
+  {
+   "fieldname": "total_freight",
+   "fieldtype": "Float",
+   "label": "Total Freight"
+  },
+  {
+   "fieldname": "column_break_xsmu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sws_amount",
+   "fieldtype": "Currency",
+   "label": "Total SWS Amount"
+  },
+  {
+   "fieldname": "total_duty",
+   "fieldtype": "Float",
+   "label": "Total Duty"
+  },
+  {
+   "fieldname": "section_break_feze",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -302,12 +388,53 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "check_list_no",
+   "fieldtype": "Data",
+   "label": "Check List No"
+  },
+  {
+   "fieldname": "check_list_date",
+   "fieldtype": "Date",
+   "label": "Check List Date"
+  },
+  {
+   "fieldname": "bill_of_entry_no",
+   "fieldtype": "Data",
+   "label": "Bill of Entry No"
+  },
+  {
+   "fieldname": "bill_of_entry_date",
+   "fieldtype": "Date",
+   "label": "Bill of Entry Date"
+  },
+  {
+   "fieldname": "bill_of_entry_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Bill of Entry Details"
+  },
+  {
+   "fieldname": "charge_type",
+   "fieldtype": "Select",
+   "label": "Charge Type",
+   "options": "\nActual\nOn Net Total\nOn Item Quantity"
+  },
+  {
+   "fieldname": "column_break_lbdw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "account_head",
+   "fieldtype": "Link",
+   "label": "Account Head",
+   "options": "Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-11 14:14:36.434430",
+ "modified": "2024-10-14 00:14:36.817708",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",
