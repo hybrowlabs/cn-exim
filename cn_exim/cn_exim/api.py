@@ -1,4 +1,5 @@
 import frappe
+from frappe.utils import getdate, today
 
 @frappe.whitelist()
 def get_api_list(pr):
@@ -10,6 +11,12 @@ def get_api_list(pr):
 
 
 
-def validate_abc(seld ,method):
-    pass
+def validate_date(self ,method):
+    if self.quotation_number:
+        doc=frappe.get_doc("Request for Quotation",self.quotation_number)
+        if getdate(doc.schedule_date)<getdate(today()):
+            frappe.throw("You Cannot Submit?Edit Quotation After End Date")
+
+
+
     

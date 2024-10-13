@@ -122,13 +122,11 @@ doctype_js = {"Request for Quotation" :"public/js/rfq.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Supplier Quotation": {
+		"validate": "cn_exim.cn_exim.api.validate_date",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
