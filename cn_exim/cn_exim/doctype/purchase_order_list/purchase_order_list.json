@@ -26,9 +26,10 @@
   {
    "fetch_from": "po_number.transaction_date",
    "fieldname": "document_date",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Document Date"
+   "label": "Document Date",
+   "read_only": 1
   },
   {
    "fetch_from": "po_number.supplier",
@@ -36,14 +37,16 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Vendor",
-   "options": "Supplier"
+   "options": "Supplier",
+   "read_only": 1
   },
   {
    "fetch_from": "po_number.supplier_name",
    "fieldname": "vendor_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Vendor Name"
+   "label": "Vendor Name",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_hxwx",
@@ -55,14 +58,16 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Po Type",
-   "options": "Import\nServices\nDomestic"
+   "options": "Import\nServices\nDomestic",
+   "read_only": 1
   },
   {
    "fetch_from": "po_number.company",
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "read_only": 1
   },
   {
    "fetch_from": "po_number.payment_terms_template",
@@ -70,13 +75,14 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Pay. Term",
-   "options": "Payment Terms Template"
+   "options": "Payment Terms Template",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-11 12:22:42.370922",
+ "modified": "2024-10-13 14:15:48.476403",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Purchase Order List",

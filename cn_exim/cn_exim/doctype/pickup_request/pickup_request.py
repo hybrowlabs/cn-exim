@@ -1,7 +1,6 @@
 # Copyright (c) 2024, Prathamesh Jadhav and contributors
 # For license information, please see license.txt
 
-import json
 import frappe
 from frappe.model.document import Document
 
@@ -20,4 +19,3 @@ class PickupRequest(Document):
 					"po_number":i.get("po_number"),
 					"material_desc":j.description
 				})
-
