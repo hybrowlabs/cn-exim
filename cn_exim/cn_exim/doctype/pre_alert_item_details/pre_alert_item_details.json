@@ -13,6 +13,7 @@
   "currency",
   "exch_rate",
   "insurance_amount",
+  "hsn_code",
   "column_break_7soa",
   "po_item",
   "description",
@@ -20,7 +21,20 @@
   "total_inr_value",
   "freight_amount",
   "misc_charge_amt",
-  "total_amount"
+  "total_amount",
+  "category",
+  "section_break_btbk",
+  "bcd_",
+  "bcd_amount",
+  "column_break_bknr",
+  "hcs_",
+  "hcs_amount",
+  "column_break_xikd",
+  "swl_",
+  "swl_amount",
+  "column_break_iepn",
+  "igst_",
+  "igst_amount"
  ],
  "fields": [
   {
@@ -106,12 +120,80 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Total Amount"
+  },
+  {
+   "fieldname": "hsn_code",
+   "fieldtype": "Link",
+   "label": "HSN Code",
+   "options": "Application Bond Duty"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "\nn\n9\ne"
+  },
+  {
+   "fieldname": "section_break_btbk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "bcd_",
+   "fieldtype": "Percent",
+   "label": "BCD (%)"
+  },
+  {
+   "fieldname": "bcd_amount",
+   "fieldtype": "Float",
+   "label": "BCD Amount"
+  },
+  {
+   "fieldname": "column_break_bknr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hcs_",
+   "fieldtype": "Percent",
+   "label": "HCS (%)"
+  },
+  {
+   "fieldname": "hcs_amount",
+   "fieldtype": "Float",
+   "label": "HCS Amount"
+  },
+  {
+   "fieldname": "column_break_xikd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "swl_",
+   "fieldtype": "Percent",
+   "label": "SWL (%)"
+  },
+  {
+   "fieldname": "swl_amount",
+   "fieldtype": "Float",
+   "label": "SWL Amount"
+  },
+  {
+   "fieldname": "column_break_iepn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "igst_",
+   "fieldtype": "Percent",
+   "label": "IGST (%)"
+  },
+  {
+   "fieldname": "igst_amount",
+   "fieldtype": "Float",
+   "label": "IGST Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-07 15:03:36.532423",
+ "modified": "2024-10-12 02:09:09.746872",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Item Details",

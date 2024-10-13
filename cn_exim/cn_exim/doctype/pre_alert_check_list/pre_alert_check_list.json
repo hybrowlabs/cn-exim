@@ -2,7 +2,8 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2024-08-07 14:04:27.614232",
+ "creation": "2024-10-11 13:03:40.428564",
+ "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -60,47 +61,16 @@
    "label": "Pre Alert Header Details"
   },
   {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Pre Alert Check List",
+   "options": "PRE-ALT-Check-.###"
+  },
+  {
    "fieldname": "pickup_request",
    "fieldtype": "Link",
    "label": "Pickup Request",
    "options": "Pickup Request"
-  },
-  {
-   "fieldname": "column_break_6qpd",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "pickup_request.total_amount",
-   "fieldname": "total_doc_val",
-   "fieldtype": "Float",
-   "label": "Total Doc. Val"
-  },
-  {
-   "fieldname": "column_break_cbel",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "total_inr_val",
-   "fieldtype": "Currency",
-   "label": "Total INR Val"
-  },
-  {
-   "fieldname": "column_break_2omd",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "freight_amt",
-   "fieldtype": "Currency",
-   "label": "Freight Amt."
-  },
-  {
-   "fieldname": "column_break_o1im",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "invoice_details",
-   "fieldtype": "Attach",
-   "label": "Invoice Details"
   },
   {
    "fieldname": "rfq_number",
@@ -125,15 +95,19 @@
    "label": "Remarks"
   },
   {
-   "fieldname": "cha",
-   "fieldtype": "Link",
-   "label": "CHA",
-   "options": "CHA"
+   "default": "0",
+   "fieldname": "igcr",
+   "fieldtype": "Check",
+   "label": "IGCR"
   },
   {
-   "fieldname": "file_attachments",
-   "fieldtype": "Attach",
-   "label": "File Attachments"
+   "fieldname": "column_break_6qpd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_doc_val",
+   "fieldtype": "Float",
+   "label": "Total Doc. Val"
   },
   {
    "fieldname": "accessible_val",
@@ -164,6 +138,21 @@
    "fieldname": "total_duty",
    "fieldtype": "Float",
    "label": "Total Duty"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Link",
+   "label": "CHA",
+   "options": "CHA"
+  },
+  {
+   "fieldname": "column_break_cbel",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_inr_val",
+   "fieldtype": "Currency",
+   "label": "Total INR Val"
   },
   {
    "fieldname": "house_number",
@@ -197,6 +186,15 @@
    "label": "Courier"
   },
   {
+   "fieldname": "column_break_2omd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "freight_amt",
+   "fieldtype": "Currency",
+   "label": "Freight Amt."
+  },
+  {
    "fieldname": "ex_works",
    "fieldtype": "Currency",
    "label": "Ex. Works"
@@ -217,15 +215,33 @@
    "label": "Insurance (%)"
   },
   {
-   "default": "0",
-   "fieldname": "igcr",
-   "fieldtype": "Check",
-   "label": "IGCR"
-  },
-  {
    "fieldname": "iin_number",
    "fieldtype": "Data",
    "label": "IIN Number"
+  },
+  {
+   "fieldname": "check_list_no",
+   "fieldtype": "Data",
+   "label": "Check List No"
+  },
+  {
+   "fieldname": "check_list_date",
+   "fieldtype": "Date",
+   "label": "Check List Date"
+  },
+  {
+   "fieldname": "column_break_o1im",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_details",
+   "fieldtype": "Attach",
+   "label": "Invoice Details"
+  },
+  {
+   "fieldname": "invoice_no",
+   "fieldtype": "Data",
+   "label": "Invoice No"
   },
   {
    "fieldname": "invoice_dt",
@@ -253,6 +269,11 @@
    "label": "Rodtep Utilization"
   },
   {
+   "fieldname": "file_attachments",
+   "fieldtype": "Attach",
+   "label": "File Attachments"
+  },
+  {
    "fieldname": "section_break_oobu",
    "fieldtype": "Section Break"
   },
@@ -263,44 +284,33 @@
    "options": "Pre-Alert Item Details"
   },
   {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Pre Alert",
-   "options": "PRE-ALT-.###"
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pre-Alert Check List",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Pre-Alert",
+   "options": "Pre-Alert Check List",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "check_list_no",
-   "fieldtype": "Data",
-   "label": "Check List No"
-  },
-  {
-   "fieldname": "check_list_date",
-   "fieldtype": "Date",
-   "label": "Check List Date"
-  },
-  {
-   "fieldname": "invoice_no",
-   "fieldtype": "Data",
-   "label": "Invoice No"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-12 23:30:41.284159",
+ "modified": "2024-10-11 14:14:36.434430",
  "modified_by": "Administrator",
  "module": "Cn Exim",
- "name": "Pre-Alert",
+ "name": "Pre-Alert Check List",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

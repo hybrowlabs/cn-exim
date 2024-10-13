@@ -53,4 +53,11 @@ frappe.ui.form.on("Pickup Request", {
 
         })
     },
+    before_save:function(frm){
+        var total_amount = 0
+        frm.doc.purchase_order_details.forEach( item =>{
+            total_amount += item.amount
+        })
+        frm.set_value("total_amount", total_amount)
+    }
 });
