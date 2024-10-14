@@ -79,7 +79,6 @@
    "label": "Pay. Term",
    "options": "Payment Terms Template",
    "read_only": 1
-   "options": "Payment Terms Template"
   },
   {
    "fetch_from": "po_number.conversion_rate",
