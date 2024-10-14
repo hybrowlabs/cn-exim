@@ -77,10 +77,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Pay. Term",
-<<<<<<< HEAD
    "options": "Payment Terms Template",
    "read_only": 1
-=======
    "options": "Payment Terms Template"
   },
   {
