@@ -19,4 +19,8 @@ def validate_date(self ,method):
 
 
 
-    
+
+@frappe.whitelist()
+def supplier_quotation(supplier,rfq):
+    pass
+

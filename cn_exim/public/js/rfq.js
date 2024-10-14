@@ -14,11 +14,11 @@ frappe.ui.form.on("Request for Quotation", {
             callback:function(r){
 
                 if(r.message){
-                    frm.clear_table("suppliers")
+                    // frm.clear_table("suppliers")
                     frm.clear_table("items")
-                    var d = frm.add_child("suppliers");
-                    frappe.model.set_value(d.doctype, d.name, 'supplier', r.message[0]);
-                    frm.refresh_fields("suppliers")
+                    // var d = frm.add_child("suppliers");
+                    // frappe.model.set_value(d.doctype, d.name, 'supplier', r.message[0]);
+                    // frm.refresh_fields("suppliers")
                     
                     $.each(r.message[1],function(i,m){
                         var child = frm.add_child("items");
