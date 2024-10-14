@@ -39,7 +39,7 @@
    "fieldname": "po_no",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "PUrchase Order Number",
+   "label": "Purchase Order Number",
    "options": "Purchase Order"
   },
   {
@@ -182,7 +182,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-13 17:21:34.672910",
+ "modified": "2024-10-14 11:15:24.395355",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Item Details",
