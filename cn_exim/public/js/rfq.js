@@ -37,5 +37,27 @@ frappe.ui.form.on("Request for Quotation", {
 
 
         })
-    }
+    },
+    custom_select_service:function(frm){
+    frappe.call({
+        method:"cn_exim.cn_exim.api.supplier_quotation",
+        args:{
+            service:frm.doc.custom_select_service
+        },
+        callback:function(r){
+
+            if(r.message){
+                frm.set_query('supplier','suppliers', (doc, cdt, cdn) => {
+                    return {
+                        filters: [
+                            ['Supplier', 'name', 'in', r.message]
+                        ]
+                    };
+                })
+            }
+        }
+
+
+    })
+}
 })
