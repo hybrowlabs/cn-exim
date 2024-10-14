@@ -6,52 +6,67 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "pre_alert_header_details_section",
   "naming_series",
+  "column_break_vfqm",
   "pickup_request",
+  "column_break_kard",
   "rfq_number",
+  "column_break_lnsc",
   "vendor",
+  "section_break_xqat",
+  "currency",
   "exch_rate",
-  "remarks",
-  "igcr",
-  "column_break_6qpd",
+  "column_break_ryli",
   "total_doc_val",
-  "accessible_val",
-  "bcd_amount",
-  "h_cess_amount",
-  "sws_amount",
-  "igst_amount",
-  "total_duty",
-  "cha",
-  "column_break_cbel",
+  "column_break_qfjw",
   "total_inr_val",
-  "house_number",
-  "master_number",
-  "etd",
-  "eta",
-  "payment_type",
-  "courier",
-  "column_break_2omd",
+  "section_break_emlr",
   "freight_amt",
-  "ex_works",
-  "other_charges",
   "insurance_amount",
+  "column_break_kwgh",
+  "ex_works",
   "insurance",
-  "iin_number",
-  "check_list_no",
-  "check_list_date",
-  "column_break_o1im",
-  "invoice_details",
-  "invoice_no",
+  "column_break_zyyj",
+  "other_charges",
+  "accessible_val",
+  "section_break_bccj",
+  "house_number",
   "invoice_dt",
-  "total_freight",
-  "rem_rodtep",
+  "invoice_details",
+  "column_break_lsky",
+  "master_number",
+  "eta",
+  "column_break_wlqh",
+  "invoice_no",
+  "etd",
+  "pre_alert_header_details_section",
+  "cha",
   "tot_rodt_ut",
+  "column_break_6qpd",
+  "courier",
   "rodtep_utilization",
+  "column_break_cbel",
+  "payment_type",
   "file_attachments",
+  "column_break_2omd",
+  "iin_number",
+  "igcr",
+  "column_break_o1im",
+  "rem_rodtep",
   "section_break_oobu",
   "item_details",
-  "amended_from"
+  "amended_from",
+  "section_break_vpip",
+  "bcd_amount",
+  "igst_amount",
+  "column_break_ahqi",
+  "h_cess_amount",
+  "total_freight",
+  "column_break_xsmu",
+  "sws_amount",
+  "total_duty",
+  "section_break_feze",
+  "remarks"
  ],
  "fields": [
   {
@@ -72,7 +87,7 @@
   {
    "fetch_from": "pickup_request.total_amount",
    "fieldname": "total_doc_val",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Total Doc. Val"
   },
   {
@@ -91,7 +106,7 @@
   {
    "fieldname": "freight_amt",
    "fieldtype": "Currency",
-   "label": "Freight Amt."
+   "label": "Freight Amount"
   },
   {
    "fieldname": "column_break_o1im",
@@ -106,7 +121,7 @@
    "fieldname": "rfq_number",
    "fieldtype": "Link",
    "label": "RFQ Number",
-   "options": "Quotation"
+   "options": "Request for Quotation"
   },
   {
    "fieldname": "vendor",
@@ -116,7 +131,7 @@
   },
   {
    "fieldname": "exch_rate",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Exch. Rate"
   },
   {
@@ -137,28 +152,28 @@
   },
   {
    "fieldname": "accessible_val",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Accessible Val"
   },
   {
    "fieldname": "bcd_amount",
    "fieldtype": "Currency",
-   "label": "BCD Amount"
+   "label": "Total BCD Amount"
   },
   {
    "fieldname": "h_cess_amount",
    "fieldtype": "Currency",
-   "label": "H. Cess Amount"
+   "label": "Total HCS Amount"
   },
   {
    "fieldname": "sws_amount",
    "fieldtype": "Currency",
-   "label": "SWS Amount"
+   "label": "Total SWS Amount"
   },
   {
    "fieldname": "igst_amount",
    "fieldtype": "Currency",
-   "label": "IGST Amount"
+   "label": "Total IGST Amount"
   },
   {
    "fieldname": "total_duty",
@@ -168,22 +183,22 @@
   {
    "fieldname": "house_number",
    "fieldtype": "Data",
-   "label": "House Number"
+   "label": "House AWB Number"
   },
   {
    "fieldname": "master_number",
    "fieldtype": "Data",
-   "label": "Master Number"
+   "label": "Master AWB Number"
   },
   {
    "fieldname": "etd",
-   "fieldtype": "Datetime",
-   "label": "ETD"
+   "fieldtype": "Date",
+   "label": "Estimated Departure(ETD)"
   },
   {
    "fieldname": "eta",
-   "fieldtype": "Datetime",
-   "label": "ETA"
+   "fieldtype": "Date",
+   "label": "Estimated Arrival (ETA)"
   },
   {
    "fieldname": "payment_type",
@@ -193,13 +208,14 @@
   },
   {
    "fieldname": "courier",
-   "fieldtype": "Data",
-   "label": "Courier"
+   "fieldtype": "Link",
+   "label": "Courier",
+   "options": "Courier"
   },
   {
    "fieldname": "ex_works",
    "fieldtype": "Currency",
-   "label": "Ex. Works"
+   "label": "Ex Works"
   },
   {
    "fieldname": "other_charges",
@@ -224,8 +240,9 @@
   },
   {
    "fieldname": "iin_number",
-   "fieldtype": "Data",
-   "label": "IIN Number"
+   "fieldtype": "Link",
+   "label": "IIN Number",
+   "options": "IIN"
   },
   {
    "fieldname": "invoice_dt",
@@ -273,34 +290,94 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Pre-Alert",
+   "options": "Pre Alert",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
   },
   {
-   "fieldname": "check_list_no",
-   "fieldtype": "Data",
-   "label": "Check List No"
-  },
-  {
-   "fieldname": "check_list_date",
-   "fieldtype": "Date",
-   "label": "Check List Date"
-  },
-  {
    "fieldname": "invoice_no",
    "fieldtype": "Data",
    "label": "Invoice No"
+  },
+  {
+   "fieldname": "column_break_vfqm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_kard",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xqat",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "column_break_ryli",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qfjw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_emlr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_kwgh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_zyyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vpip",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ahqi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_xsmu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bccj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_lsky",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_wlqh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_lnsc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_feze",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-12 23:30:41.284159",
+ "modified": "2024-10-13 17:28:03.380805",
  "modified_by": "Administrator",
  "module": "Cn Exim",
- "name": "Pre-Alert",
+ "name": "Pre Alert",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

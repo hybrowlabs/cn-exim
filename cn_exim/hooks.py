@@ -40,6 +40,12 @@ doctype_js = {"Request for Quotation" :"public/js/rfq.js"}
 
 # Home Pages
 # ----------
+fixtures = [
+    {
+        "dt": "Funnel"
+    }
+]
+
 
 # application home page (will override Website Settings)
 # home_page = "login"
@@ -114,9 +120,9 @@ doctype_js = {"Request for Quotation" :"public/js/rfq.js"}
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Bill of Entry": "cn_exim.config.py.bill_of_entry_override.BillofEntry"
+}
 
 # Document Events
 # ---------------
