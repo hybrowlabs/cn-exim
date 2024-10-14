@@ -1,4 +1,4 @@
-frappe.ui.form.on("Pre-Alert", {
+frappe.ui.form.on("Pre Alert", {
     pickup_request: function (frm) {
         frappe.call({
             method: "cn_exim.cn_exim.doctype.pre_alert.pre_alert.get_exchange_rate",
@@ -89,7 +89,7 @@ frappe.ui.form.on("Pre-Alert", {
                 method: "frappe.client.insert",
                 args: {
                     doc: {
-                        'doctype': 'Pre-Alert Check List',
+                        'doctype': 'Pre Alert Check List',
                         'pickup_request': frm.doc.pickup_request,
                         'rfq_number': frm.doc.rfq_number,
                         'vendor': frm.doc.vendor,
@@ -132,11 +132,11 @@ frappe.ui.form.on("Pre-Alert", {
                 callback: function (r) {
                     if (!r.exc) {
                         frappe.show_alert({
-                            message: __('Pre-Alert Check List created successfully!'),
+                            message: __('Pre Alert Check List created successfully!'),
                             indicator: 'green'
                         }, 5);
                     } else {
-                        frappe.msgprint('There was an error saving the Pre-Alert Check List');
+                        frappe.msgprint('There was an error saving the Pre Alert Check List');
                         console.error('Error Saving Document:', r.exc);
                     }
                 }
@@ -149,7 +149,7 @@ frappe.ui.form.on("Pre-Alert", {
     },
 });
 
-frappe.ui.form.on("Pre-Alert Item Details", {
+frappe.ui.form.on("Pre Alert Item Details", {
     item_code: function (frm, cdt, cdn) {
         var row = locals[cdt][cdn]
         get_percentage_of_hsn_and_category_base(frm, row)

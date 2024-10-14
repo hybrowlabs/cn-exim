@@ -9,6 +9,7 @@
  "field_order": [
   "check_list_no",
   "check_list_date",
+  "pre_alert",
   "column_break_vfqm",
   "naming_series",
   "pickup_request",
@@ -81,7 +82,7 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "label": "Pre Alert",
+   "label": "Check List Naming Series",
    "options": "PRE-ALT-CHECK-LIST-.###"
   },
   {
@@ -429,12 +430,18 @@
    "fieldtype": "Link",
    "label": "Account Head",
    "options": "Account"
+  },
+  {
+   "fieldname": "pre_alert",
+   "fieldtype": "Link",
+   "label": "Pre Alert",
+   "options": "Pre Alert"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-14 00:14:36.817708",
+ "modified": "2024-10-14 12:24:30.187904",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",
