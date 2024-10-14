@@ -40,6 +40,12 @@ doctype_js = {"Request for Quotation" :"public/js/rfq.js"}
 
 # Home Pages
 # ----------
+fixtures = [
+    {
+        "dt": "Funnel"
+    }
+]
+
 
 # application home page (will override Website Settings)
 # home_page = "login"
