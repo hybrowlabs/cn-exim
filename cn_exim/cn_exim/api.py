@@ -42,4 +42,3 @@ def supplier_quotation(service):
                 supplier.append(i.name)
         return supplier
         
-
