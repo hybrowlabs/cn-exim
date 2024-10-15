@@ -23,7 +23,22 @@
   "tax_withholding_category",
   "is_subcontracted",
   "supplier_warehouse",
-  "amended_from",
+  "section_break_pjky",
+  "pre_alert_request",
+  "column_break_tsyz",
+  "pickup_request",
+  "column_break_kqqt",
+  "rfq_number",
+  "cha_details_section",
+  "cha",
+  "cha_agency_charges",
+  "fill_attach",
+  "column_break_xkew",
+  "cha_clearing_charges",
+  "local_freight_vendocr_charges",
+  "column_break_mqzf",
+  "local_transport_charges",
+  "freight_and_forwarding_charges",
   "accounting_dimensions_section",
   "cost_center",
   "dimension_col_break",
@@ -156,7 +171,27 @@
   "inter_company_order_reference",
   "is_old_subcontracting_flow",
   "connections_tab",
-  "amended_from"
+  "amended_from",
+  "pre_alert_details_tab",
+  "bcd_amount",
+  "igst_amount",
+  "column_break_qmvj",
+  "hcs_amount",
+  "totel_duty",
+  "column_break_dcny",
+  "sws_amount",
+  "section_break_czfa",
+  "freight_amount",
+  "insurance_amount",
+  "column_break_ukfl",
+  "ex_works",
+  "insurance_",
+  "column_break_cmrj",
+  "other_charges",
+  "section_break_mgjp",
+  "house_number",
+  "column_break_hzoh",
+  "master_number"
  ],
  "fields": [
   {
@@ -182,7 +217,7 @@
    "no_copy": 1,
    "oldfieldname": "naming_series",
    "oldfieldtype": "Select",
-   "options": "PUR-ORD-.YYYY.-",
+   "options": "UP-PUR-.YYYY.-",
    "print_hide": 1,
    "reqd": 1,
    "set_only_once": 1
@@ -1280,15 +1315,188 @@
    "options": "Purchase Order",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_pjky",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "pre_alert_request",
+   "fieldtype": "Link",
+   "label": "Pre Alert Request",
+   "options": "Pre-Alert Check List"
+  },
+  {
+   "fieldname": "column_break_tsyz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pickup_request",
+   "fieldtype": "Link",
+   "label": "Pickup Request",
+   "options": "Pickup Request"
+  },
+  {
+   "fieldname": "column_break_kqqt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rfq_number",
+   "fieldtype": "Link",
+   "label": "RFQ Number",
+   "options": "Request for Quotation"
+  },
+  {
+   "fieldname": "cha_details_section",
+   "fieldtype": "Section Break",
+   "label": "CHA Details"
+  },
+  {
+   "fieldname": "cha_agency_charges",
+   "fieldtype": "Currency",
+   "label": "CHA Agency Charges"
+  },
+  {
+   "fieldname": "local_freight_vendocr_charges",
+   "fieldtype": "Currency",
+   "label": "Local freight Vendocr charges"
+  },
+  {
+   "fieldname": "column_break_xkew",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cha_clearing_charges",
+   "fieldtype": "Currency",
+   "label": "CHA Clearing Charges"
+  },
+  {
+   "fieldname": "freight_and_forwarding_charges",
+   "fieldtype": "Currency",
+   "label": "freight and forwarding charges"
+  },
+  {
+   "fieldname": "column_break_mqzf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "local_transport_charges",
+   "fieldtype": "Currency",
+   "label": "Local Transport Charges"
+  },
+  {
+   "fieldname": "pre_alert_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Pre Alert Details"
+  },
+  {
+   "fieldname": "bcd_amount",
+   "fieldtype": "Currency",
+   "label": "BCD Amount"
+  },
+  {
+   "fieldname": "igst_amount",
+   "fieldtype": "Currency",
+   "label": "IGST AMount"
+  },
+  {
+   "fieldname": "column_break_qmvj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hcs_amount",
+   "fieldtype": "Currency",
+   "label": "HCS Amount"
+  },
+  {
+   "fieldname": "totel_duty",
+   "fieldtype": "Currency",
+   "label": "Totel Duty"
+  },
+  {
+   "fieldname": "column_break_dcny",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sws_amount",
+   "fieldtype": "Currency",
+   "label": "SWS Amount"
+  },
+  {
+   "fieldname": "section_break_czfa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "freight_amount",
+   "fieldtype": "Currency",
+   "label": "Freight Amount"
+  },
+  {
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount "
+  },
+  {
+   "fieldname": "column_break_ukfl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ex_works",
+   "fieldtype": "Currency",
+   "label": "Ex Works"
+  },
+  {
+   "fieldname": "insurance_",
+   "fieldtype": "Percent",
+   "label": "Insurance %"
+  },
+  {
+   "fieldname": "column_break_cmrj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_charges",
+   "fieldtype": "Currency",
+   "label": "Other Charges"
+  },
+  {
+   "fieldname": "section_break_mgjp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "house_number",
+   "fieldtype": "Data",
+   "label": "House Number"
+  },
+  {
+   "fieldname": "column_break_hzoh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "master_number",
+   "fieldtype": "Data",
+   "label": "Master Number"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Link",
+   "label": "CHA",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "fill_attach",
+   "fieldtype": "Attach",
+   "label": "Fill Attach"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-11 16:36:49.946083",
+ "modified": "2024-10-14 12:27:46.035400",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Update Po",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

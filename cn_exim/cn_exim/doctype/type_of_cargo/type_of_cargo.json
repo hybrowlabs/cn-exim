@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{type_of_cargo}",
+ "creation": "2024-10-14 16:51:54.733058",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "type_of_cargo"
+ ],
+ "fields": [
+  {
+   "fieldname": "type_of_cargo",
+   "fieldtype": "Data",
+   "label": "Type Of Cargo"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-14 16:52:23.690929",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Type Of Cargo",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

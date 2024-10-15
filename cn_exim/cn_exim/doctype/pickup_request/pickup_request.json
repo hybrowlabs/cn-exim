@@ -7,9 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "name_of_supplier",
+  "supplier_address",
   "supplier_address_display",
   "column_break_xqrj",
-  "supplier_address",
+  "supplier_pickup_address",
   "pickup_address",
   "section_break_xfze",
   "no_of_boxes",
@@ -45,8 +46,7 @@
  "fields": [
   {
    "fieldname": "header_details_section",
-   "fieldtype": "Section Break",
-   "label": "Header Details"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "no_of_boxes",
@@ -73,14 +73,14 @@
   {
    "fieldname": "name_of_supplier",
    "fieldtype": "Link",
-   "label": "Name Of Supplier",
+   "label": "Supplier",
    "options": "Supplier"
   },
   {
    "fieldname": "pol",
-   "fieldtype": "Select",
-   "label": "POL",
-   "options": "1\n2\n3"
+   "fieldtype": "Link",
+   "label": "Port of Loading (POL)",
+   "options": "Port"
   },
   {
    "fieldname": "dimension",
@@ -108,9 +108,9 @@
   },
   {
    "fieldname": "incoterms",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Incoterms",
-   "options": "\n1\n2\n3"
+   "options": "Incoterm"
   },
   {
    "fieldname": "type_of_shipments",
@@ -132,9 +132,9 @@
   },
   {
    "fieldname": "pod",
-   "fieldtype": "Select",
-   "label": "POD",
-   "options": "1\n2\n3"
+   "fieldtype": "Link",
+   "label": "Port of Destination (POD)",
+   "options": "Port"
   },
   {
    "fieldname": "chargeable_weight",
@@ -177,7 +177,7 @@
   {
    "fieldname": "pickup_address",
    "fieldtype": "Small Text",
-   "label": "Pickup Address"
+   "label": "Pickup Address Display"
   },
   {
    "fieldname": "section_break_nzcy",
@@ -197,12 +197,6 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "supplier_address",
-   "fieldtype": "Link",
-   "label": "Supplier Address",
-   "options": "Address"
   },
   {
    "fieldname": "column_break_xqrj",
@@ -227,12 +221,24 @@
   {
    "fieldname": "section_break_kjsg",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "supplier_address",
+   "fieldtype": "Link",
+   "label": "Supplier Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "supplier_pickup_address",
+   "fieldtype": "Link",
+   "label": "Supplier Pickup Address",
+   "options": "Address"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-14 01:44:07.282604",
+ "modified": "2024-10-14 16:51:20.255342",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

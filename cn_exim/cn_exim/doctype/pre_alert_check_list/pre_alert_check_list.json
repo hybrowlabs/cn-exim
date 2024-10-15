@@ -7,18 +7,18 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "check_list_no",
-  "check_list_date",
   "pre_alert",
+  "check_list_no",
   "column_break_vfqm",
   "naming_series",
-  "pickup_request",
   "bill_of_entry_no",
+  "check_list_date",
   "column_break_kard",
   "rfq_number",
-  "bill_of_entry_date",
+  "pickup_request",
   "column_break_lnsc",
   "vendor",
+  "bill_of_entry_date",
   "section_break_xqat",
   "currency",
   "exch_rate",
@@ -103,7 +103,7 @@
    "fieldname": "rfq_number",
    "fieldtype": "Link",
    "label": "RFQ Number",
-   "options": "Quotation"
+   "options": "Request for Quotation"
   },
   {
    "fieldname": "column_break_lnsc",
@@ -247,7 +247,7 @@
    "fieldname": "cha",
    "fieldtype": "Link",
    "label": "CHA",
-   "options": "CHA"
+   "options": "Supplier"
   },
   {
    "fieldname": "tot_rodt_ut",
@@ -441,7 +441,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-14 12:24:30.187904",
+ "modified": "2024-10-14 14:29:28.088104",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",

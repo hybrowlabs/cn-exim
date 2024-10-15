@@ -27,9 +27,9 @@ frappe.ui.form.on("Pre-Alert Check List", {
             })
             taxes.push({
                 'charge_type': frm.doc.charge_type,
-                'account_head':frm.doc.account_head,
+                'account_head': frm.doc.account_head,
                 'rate': tax_rate,
-                'tax_amount':frm.doc.igst_amount
+                'tax_amount': frm.doc.igst_amount
             })
 
 
@@ -41,8 +41,8 @@ frappe.ui.form.on("Pre-Alert Check List", {
                         'custom_prealert_check_list': frm.doc.name,
                         'bill_of_entry_no': frm.doc.bill_of_entry_no,
                         'bill_of_entry_date': frm.doc.bill_of_entry_date,
-                        'items':items,
-                        'taxes':taxes
+                        'items': items,
+                        'taxes': taxes
                     }
                 },
                 callback: function (r) {
@@ -58,6 +58,14 @@ frappe.ui.form.on("Pre-Alert Check List", {
                 }
             })
         }, __("Create"))
+
+        frm.set_query('cha', function () {
+            return {
+                filters: {
+                    'supplier_group': "CHA"
+                }
+            }
+        })
     },
     total_doc_val: function (frm) {
         var total_inr = frm.doc.exch_rate * frm.doc.total_doc_val

@@ -30,6 +30,13 @@ frappe.ui.form.on("Pickup Request", {
 				}
 			};
 		});
+		frm.set_query('name_of_supplier', function () {
+            return {
+                filters: {
+                    'supplier_group': ['!=',"CHA"]
+                }
+            }
+        })
 	},
     supplier_address:function(frm) {
         erpnext.utils.get_address_display(frm, "supplier_address", "supplier_address_display",false);

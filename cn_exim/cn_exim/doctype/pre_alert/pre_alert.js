@@ -89,13 +89,14 @@ frappe.ui.form.on("Pre Alert", {
                 method: "frappe.client.insert",
                 args: {
                     doc: {
-                        'doctype': 'Pre Alert Check List',
+                        'doctype': 'Pre-Alert Check List',
+                        'pre_alert': frm.doc.name,
                         'pickup_request': frm.doc.pickup_request,
                         'rfq_number': frm.doc.rfq_number,
                         'vendor': frm.doc.vendor,
                         'currency': frm.doc.currency,
                         'total_doc_val': frm.doc.total_doc_val,
-                        'total_inr_val':frm.doc.total_inr_val,
+                        'total_inr_val': frm.doc.total_inr_val,
                         'exch_rate': frm.doc.exch_rate,
                         'freight_amt': frm.doc.freight_amt,
                         'ex_works': frm.doc.ex_works,
@@ -142,6 +143,14 @@ frappe.ui.form.on("Pre Alert", {
                 }
             });
         }, __('Create'));
+
+        frm.set_query('cha', function () {
+            return {
+                filters: {
+                    'supplier_group': "CHA"
+                }
+            }
+        })
     },
     total_doc_val: function (frm) {
         var total_inr = frm.doc.exch_rate * frm.doc.total_doc_val
@@ -149,7 +158,7 @@ frappe.ui.form.on("Pre Alert", {
     },
 });
 
-frappe.ui.form.on("Pre Alert Item Details", {
+frappe.ui.form.on("Pre-Alert Item Details", {
     item_code: function (frm, cdt, cdn) {
         var row = locals[cdt][cdn]
         get_percentage_of_hsn_and_category_base(frm, row)
