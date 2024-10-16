@@ -1,0 +1,316 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-14 15:35:10.998547",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rfq_no",
+  "freight_mode",
+  "freight_basis",
+  "package_type",
+  "actual_weight",
+  "column_break_kotc",
+  "rfq_date",
+  "origin_country",
+  "meril_invoice_no",
+  "pkg_units",
+  "shipment_date_meril",
+  "column_break_fcko",
+  "freight_forwarder",
+  "destination_port",
+  "invoice_date",
+  "product_category",
+  "statutory_permission",
+  "column_break_oyhb",
+  "ff_ref_no",
+  "port_code",
+  "shipper_name",
+  "vol_weight",
+  "details_need_to_fill_by_service_provider_section",
+  "shipment_mode",
+  "rate_kg",
+  "xray",
+  "total_freight",
+  "exchange_ratexecom",
+  "shipping_line_charges",
+  "transit_days",
+  "column_break_sslx",
+  "airlinevessel_name",
+  "fsc",
+  "pick_up_origin",
+  "from_currency",
+  "base_total_freight",
+  "cfs_charges",
+  "column_break_jdca",
+  "cw",
+  "sc",
+  "ex_works",
+  "to_currency",
+  "dc",
+  "total_landing_price"
+ ],
+ "fields": [
+  {
+   "fieldname": "rfq_no",
+   "fieldtype": "Link",
+   "label": "RFQ No.",
+   "options": "Request for Quotation"
+  },
+  {
+   "fieldname": "freight_mode",
+   "fieldtype": "Data",
+   "label": "Freight Mode"
+  },
+  {
+   "fieldname": "freight_basis",
+   "fieldtype": "Data",
+   "label": "Freight Basis"
+  },
+  {
+   "fieldname": "package_type",
+   "fieldtype": "Link",
+   "label": "Package Type",
+   "options": "Package Type"
+  },
+  {
+   "fieldname": "actual_weight",
+   "fieldtype": "Float",
+   "label": "Actual Weight"
+  },
+  {
+   "fieldname": "column_break_kotc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rfq_date",
+   "fieldtype": "Date",
+   "label": "RFQ Date"
+  },
+  {
+   "fieldname": "origin_country",
+   "fieldtype": "Link",
+   "label": "Origin Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "meril_invoice_no",
+   "fieldtype": "Data",
+   "label": "Meril Invoice No"
+  },
+  {
+   "fieldname": "pkg_units",
+   "fieldtype": "Data",
+   "label": "PKG Units"
+  },
+  {
+   "fieldname": "shipment_date_meril",
+   "fieldtype": "Date",
+   "label": "Shipment Date Meril"
+  },
+  {
+   "fieldname": "column_break_fcko",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "freight_forwarder",
+   "fieldtype": "Data",
+   "label": "Freight Forwarder"
+  },
+  {
+   "fieldname": "destination_port",
+   "fieldtype": "Link",
+   "label": "Destination Port",
+   "options": "Port"
+  },
+  {
+   "fieldname": "invoice_date",
+   "fieldtype": "Date",
+   "label": "Invoice Date"
+  },
+  {
+   "fieldname": "product_category",
+   "fieldtype": "Link",
+   "label": "Product Category",
+   "options": "Product Category"
+  },
+  {
+   "fieldname": "statutory_permission",
+   "fieldtype": "Data",
+   "label": "Statutory Permission"
+  },
+  {
+   "fieldname": "column_break_oyhb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ff_ref_no",
+   "fieldtype": "Data",
+   "label": "FF Ref No"
+  },
+  {
+   "fieldname": "port_code",
+   "fieldtype": "Data",
+   "label": "Port Code"
+  },
+  {
+   "fieldname": "shipper_name",
+   "fieldtype": "Link",
+   "label": "Shipper Name",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "vol_weight",
+   "fieldtype": "Float",
+   "label": "Vol Weight"
+  },
+  {
+   "fieldname": "details_need_to_fill_by_service_provider_section",
+   "fieldtype": "Section Break",
+   "label": "Details Need To Fill By Service Provider"
+  },
+  {
+   "fieldname": "shipment_mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Shipment Mode",
+   "options": "Air\nShip\nRoad",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rate_kg",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate/kg",
+   "reqd": 1
+  },
+  {
+   "fieldname": "xray",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "X-Ray",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_freight",
+   "fieldtype": "Float",
+   "label": "Total Freight"
+  },
+  {
+   "fieldname": "exchange_ratexecom",
+   "fieldtype": "Float",
+   "label": "Exchange Rate(XE.COM)"
+  },
+  {
+   "fieldname": "shipping_line_charges",
+   "fieldtype": "Float",
+   "label": "Shipping Line Charges"
+  },
+  {
+   "fieldname": "transit_days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Transit Days",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_sslx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "airlinevessel_name",
+   "fieldtype": "Data",
+   "label": "Airline/Vessel Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fsc",
+   "fieldtype": "Data",
+   "label": "FSC",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pick_up_origin",
+   "fieldtype": "Data",
+   "label": "Pick Up/Origin",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_currency",
+   "fieldtype": "Link",
+   "label": "From Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "base_total_freight",
+   "fieldtype": "Currency",
+   "label": "Total Freight"
+  },
+  {
+   "fieldname": "cfs_charges",
+   "fieldtype": "Data",
+   "label": "CFS Charges"
+  },
+  {
+   "fieldname": "column_break_jdca",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cw",
+   "fieldtype": "Float",
+   "label": "CW",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sc",
+   "fieldtype": "Data",
+   "label": "SC"
+  },
+  {
+   "fieldname": "ex_works",
+   "fieldtype": "Data",
+   "label": "Ex Works"
+  },
+  {
+   "fieldname": "to_currency",
+   "fieldtype": "Link",
+   "label": "To Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "dc",
+   "fieldtype": "Currency",
+   "label": "DC"
+  },
+  {
+   "fieldname": "total_landing_price",
+   "fieldtype": "Currency",
+   "label": "Total Landing Price"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-14 16:06:16.654709",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Import Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
