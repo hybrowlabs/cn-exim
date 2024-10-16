@@ -76,7 +76,9 @@
   "bill_of_entry_details_tab",
   "charge_type",
   "column_break_lbdw",
-  "account_head"
+  "account_head",
+  "tab_3_tab",
+  "table_qjql"
  ],
  "fields": [
   {
@@ -436,12 +438,22 @@
    "fieldtype": "Link",
    "label": "Pre Alert",
    "options": "Pre Alert"
+  },
+  {
+   "fieldname": "tab_3_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attach Document"
+  },
+  {
+   "fieldname": "table_qjql",
+   "fieldtype": "Table",
+   "options": "Attach Document"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-14 14:29:28.088104",
+ "modified": "2024-10-15 16:12:13.377129",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",

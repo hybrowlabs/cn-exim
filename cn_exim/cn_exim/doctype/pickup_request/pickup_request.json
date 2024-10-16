@@ -55,15 +55,15 @@
   },
   {
    "fieldname": "type_of_cargo",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Type Of Cargo",
-   "options": "\nCRG1-Genral Cargo\nCRG2-Perishable+2 to+ 8 Degree C\nCRG3-Frozen(Dry Ice)\nCRG4-Non Stackable\nCRG5-DG Cargo"
+   "options": "Type Of Cargo"
   },
   {
    "fieldname": "mode_of_shipment",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Mode Of Shipment",
-   "options": "\nMOS1-AIR\nMOS2-OCEAN\nMOS3-ROAD"
+   "options": "Mode of Shipment"
   },
   {
    "fieldname": "group_email",
@@ -114,9 +114,9 @@
   },
   {
    "fieldname": "type_of_shipments",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Type Of Shipments",
-   "options": "\nSHP1-GENERAL\nSHP2-UNDER LC\nSHP3-UNDER EPCG\nSHP4-UNDER LC/EPCG"
+   "options": "Type Of Shipments"
   },
   {
    "default": "0",
@@ -177,7 +177,8 @@
   {
    "fieldname": "pickup_address",
    "fieldtype": "Small Text",
-   "label": "Pickup Address Display"
+   "label": "Pickup Address Display",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_nzcy",
@@ -238,7 +239,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-14 16:51:20.255342",
+ "modified": "2024-10-15 17:36:55.268148",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

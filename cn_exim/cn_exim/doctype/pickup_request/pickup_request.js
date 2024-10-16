@@ -44,8 +44,8 @@ frappe.ui.form.on("Pickup Request", {
     billing_address:function(frm) {
         erpnext.utils.get_address_display(frm, "billing_address", "billing_address_display",false);
 	},
-    pickup_address:function(frm) {
-        erpnext.utils.get_address_display(frm, "pickup_address", "pickup_address_display",false);
+    supplier_pickup_address:function(frm) {
+        erpnext.utils.get_address_display(frm, "supplier_pickup_address", "pickup_address",false);
 	},
     custom_get_po_items:function(frm){
         frappe.call({

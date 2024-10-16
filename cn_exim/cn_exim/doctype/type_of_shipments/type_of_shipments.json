@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{type_of_shipments}",
+ "creation": "2024-10-15 17:35:14.189503",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "type_of_shipments",
+  "column_break_vlej",
+  "type_of_shipments_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "type_of_shipments",
+   "fieldtype": "Data",
+   "label": "Type Of Shipments"
+  },
+  {
+   "fieldname": "column_break_vlej",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "type_of_shipments_details",
+   "fieldtype": "Small Text",
+   "label": "Type Of Shipments Details"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-15 17:36:36.521101",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Type Of Shipments",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
