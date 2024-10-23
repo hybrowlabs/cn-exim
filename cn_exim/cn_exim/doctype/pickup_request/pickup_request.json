@@ -240,7 +240,6 @@
    "options": "Attach Document"
   },
   {
-   "collapsible": 1,
    "fieldname": "dimension_calculation_section",
    "fieldtype": "Section Break",
    "label": "Dimension Calculation"
@@ -265,7 +264,7 @@
    "link_fieldname": "custom_pickup_request"
   }
  ],
- "modified": "2024-10-19 12:46:49.216063",
+ "modified": "2024-10-23 12:02:53.880290",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

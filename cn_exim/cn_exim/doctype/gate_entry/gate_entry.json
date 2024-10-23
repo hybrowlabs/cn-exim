@@ -7,27 +7,32 @@
  "engine": "InnoDB",
  "field_order": [
   "gate_entry_no",
+  "purchase_no",
+  "column_break_ughx",
   "gate_entry_date",
-  "challan_no",
+  "supplier",
+  "column_break_bhln",
+  "supplier_name",
+  "section_break_khbh",
   "vehicle_no",
-  "bill_date",
+  "column_break_ggqh",
   "driver_name",
+  "column_break_crir",
   "driver_mobile_no",
+  "section_break_xlfw",
+  "challan_no",
+  "bill_date",
+  "bill_number",
   "material_short_description",
   "section_break_e3zl",
-  "purchase_no",
-  "supplier_name",
-  "quantity_received",
-  "bill_number",
   "airway_bill_no",
   "service_name",
-  "remark",
-  "amended_from",
-  "section_break_ksss",
+  "quantity_received",
   "received_remark",
   "section_break_yjdd",
   "handover_to_person",
-  "handover_remark"
+  "handover_remark",
+  "amended_from"
  ],
  "fields": [
   {
@@ -100,11 +105,6 @@
    "label": "Service Name"
   },
   {
-   "fieldname": "remark",
-   "fieldtype": "Text",
-   "label": "Remark"
-  },
-  {
    "fieldname": "section_break_e3zl",
    "fieldtype": "Column Break"
   },
@@ -127,10 +127,6 @@
    "search_index": 1
   },
   {
-   "fieldname": "section_break_ksss",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "received_remark",
    "fieldtype": "Small Text",
    "label": "Received Remark"
@@ -149,12 +145,43 @@
    "fieldname": "handover_remark",
    "fieldtype": "Small Text",
    "label": "Handover Remark"
+  },
+  {
+   "fieldname": "column_break_ughx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "purchase_no.supplier",
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "section_break_xlfw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_bhln",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_khbh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ggqh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_crir",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-08 16:12:23.155734",
+ "modified": "2024-10-23 11:45:57.611832",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
