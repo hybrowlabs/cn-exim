@@ -255,6 +255,9 @@ function other_charges_calculation(frm) {
     });
     frm.doc.item_details.forEach(item => {
         let misc_charge_amt = (item.total_inr_value / total_value) * other_charges
+        if (isNaN(misc_charge_amt)) {
+            misc_charge_amt = 0;
+        }
         frappe.model.set_value(item.doctype, item.name, "misc_charge_amt", misc_charge_amt)
         let total_inr_value = isNaN(item.total_inr_value) || item.total_inr_value == null ? 0 : item.total_inr_value;
         let freight_amount = isNaN(item.freight_amount) || item.freight_amount == null ? 0 : item.freight_amount;
@@ -281,6 +284,9 @@ function calculation_tax(frm) {
         var total_igst = bcd_amount + hcs_amount + swl_amount + item.total_amount
         var igst_amount = (item.igst_ * total_igst) / 100
         frappe.model.set_value(item.doctype, item.name, 'igst_amount', igst_amount)
+
+        var total = item.freight_amount + item.insurance_amount + item.bcd_amount + item.hcs_amount + item.swl_amount + item.igst_amount
+        frappe.model.set_value(item.doctype, item.name, 'total', total)
     })
     frm.refresh_field('item_details');
 }

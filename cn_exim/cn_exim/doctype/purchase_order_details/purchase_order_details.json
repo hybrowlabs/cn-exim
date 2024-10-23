@@ -9,11 +9,14 @@
   "item",
   "material",
   "pick_qty",
-  "rate",
+  "currency",
+  "currency_rate",
+  "amount_in_inr",
   "column_break_aost",
   "quantity",
   "material_desc",
   "po_number",
+  "rate",
   "amount"
  ],
  "fields": [
@@ -61,18 +64,36 @@
   {
    "fieldname": "rate",
    "fieldtype": "Currency",
-   "label": "Rate"
+   "label": "Rate",
+   "options": "currency"
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
-   "label": "Amount"
+   "label": "Amount",
+   "options": "currency"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "currency_rate",
+   "fieldtype": "Currency",
+   "label": "Currency Rate"
+  },
+  {
+   "fieldname": "amount_in_inr",
+   "fieldtype": "Currency",
+   "label": "Amount In (INR)"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-14 16:32:20.833504",
+ "modified": "2024-10-17 17:34:16.414171",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Purchase Order Details",

@@ -28,7 +28,10 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Request for Quotation" :"public/js/rfq.js"}
+doctype_js = {
+    "Request for Quotation": "public/js/rfq.js",
+    "Purchase Receipt": "public/js/purchase_receipt.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -40,11 +43,7 @@ doctype_js = {"Request for Quotation" :"public/js/rfq.js"}
 
 # Home Pages
 # ----------
-fixtures = [
-    {
-        "dt": "Funnel"
-    }
-]
+fixtures = [{"dt": "Funnel"}]
 
 
 # application home page (will override Website Settings)
@@ -121,7 +120,7 @@ fixtures = [
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Bill of Entry": "cn_exim.config.py.bill_of_entry_override.BillofEntry"
+    "Bill of Entry": "cn_exim.config.py.bill_of_entry_override.BillofEntry"
 }
 
 # Document Events
@@ -129,9 +128,9 @@ override_doctype_class = {
 # Hook on document methods and events
 
 doc_events = {
-	"Supplier Quotation": {
-		"validate": "cn_exim.cn_exim.api.validate_date",
-	}
+    "Supplier Quotation": {
+        "validate": "cn_exim.cn_exim.api.validate_date",
+    }
 }
 
 # Scheduled Tasks
@@ -230,4 +229,3 @@ doc_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-

@@ -44,13 +44,11 @@
   "tot_rodt_ut",
   "column_break_6qpd",
   "courier",
-  "rodtep_utilization",
+  "igcr",
   "column_break_cbel",
   "payment_type",
-  "file_attachments",
   "column_break_2omd",
   "iin_number",
-  "igcr",
   "column_break_o1im",
   "rem_rodtep",
   "section_break_oobu",
@@ -90,7 +88,8 @@
    "fetch_from": "pickup_request.total_amount",
    "fieldname": "total_doc_val",
    "fieldtype": "Currency",
-   "label": "Total Doc. Val"
+   "label": "Total Doc. Val",
+   "options": "currency"
   },
   {
    "fieldname": "column_break_cbel",
@@ -148,11 +147,6 @@
    "options": "Supplier"
   },
   {
-   "fieldname": "file_attachments",
-   "fieldtype": "Attach",
-   "label": "File Attachments"
-  },
-  {
    "fieldname": "accessible_val",
    "fieldtype": "Currency",
    "label": "Accessible Val"
@@ -179,7 +173,7 @@
   },
   {
    "fieldname": "total_duty",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Total Duty"
   },
   {
@@ -249,11 +243,11 @@
   {
    "fieldname": "invoice_dt",
    "fieldtype": "Date",
-   "label": "Invoice Dt."
+   "label": "Purchase Order Invoice Date"
   },
   {
    "fieldname": "total_freight",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Total Freight"
   },
   {
@@ -265,11 +259,6 @@
    "fieldname": "tot_rodt_ut",
    "fieldtype": "Int",
    "label": "Tot. Rodt. Ut"
-  },
-  {
-   "fieldname": "rodtep_utilization",
-   "fieldtype": "Attach",
-   "label": "Rodtep Utilization"
   },
   {
    "fieldname": "section_break_oobu",
@@ -300,7 +289,7 @@
   {
    "fieldname": "invoice_no",
    "fieldtype": "Data",
-   "label": "Invoice No"
+   "label": "Purchase Order Invoice No"
   },
   {
    "fieldname": "column_break_vfqm",
@@ -387,7 +376,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-15 15:22:14.032679",
+ "modified": "2024-10-17 16:59:30.338953",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre Alert",

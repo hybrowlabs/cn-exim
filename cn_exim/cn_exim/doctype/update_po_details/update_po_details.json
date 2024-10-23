@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-19 15:11:17.181476",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "purchase_order",
+  "order_quantity",
+  "total_inr_value",
+  "column_break_adoy",
+  "item_code",
+  "plant",
+  "total_charges_of_types",
+  "column_break_frqb",
+  "item_name",
+  "currency",
+  "charges_types_section",
+  "charges_html"
+ ],
+ "fields": [
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Purchase Order",
+   "options": "Purchase Order"
+  },
+  {
+   "fieldname": "order_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Order Quantity"
+  },
+  {
+   "fieldname": "column_break_adoy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fieldname": "plant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant",
+   "options": "Plant"
+  },
+  {
+   "fieldname": "column_break_frqb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "charges_types_section",
+   "fieldtype": "Section Break",
+   "label": "Charges Types"
+  },
+  {
+   "fieldname": "charges_html",
+   "fieldtype": "HTML",
+   "label": "Charegs Type"
+  },
+  {
+   "fieldname": "total_inr_value",
+   "fieldtype": "Currency",
+   "label": "Total Inr Value"
+  },
+  {
+   "fieldname": "total_charges_of_types",
+   "fieldtype": "Currency",
+   "label": "Total charges of types"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-21 17:38:40.799949",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Update Po Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

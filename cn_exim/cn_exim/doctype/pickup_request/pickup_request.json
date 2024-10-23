@@ -19,10 +19,12 @@
   "column_break_uctn",
   "type_of_cargo",
   "type_of_shipments",
-  "dimension",
+  "type_wise_value",
   "column_break_hymj",
   "mode_of_shipment",
   "origin_country",
+  "dimension_calculation_section",
+  "dimension_calculation",
   "header_details_section",
   "group_email",
   "pol",
@@ -32,7 +34,6 @@
   "chargeable_weight",
   "column_break_nzpn",
   "pod",
-  "file_attachements",
   "section_break_wmor",
   "purchase_order_list",
   "section_break_4pdi",
@@ -41,7 +42,9 @@
   "total_amount",
   "amended_from",
   "section_break_kjsg",
-  "remarks"
+  "remarks",
+  "document_attech_tab",
+  "attach_document"
  ],
  "fields": [
   {
@@ -81,16 +84,6 @@
    "fieldtype": "Link",
    "label": "Port of Loading (POL)",
    "options": "Port"
-  },
-  {
-   "fieldname": "dimension",
-   "fieldtype": "Int",
-   "label": "Dimension(cm)"
-  },
-  {
-   "fieldname": "file_attachements",
-   "fieldtype": "Attach",
-   "label": "File Attachements"
   },
   {
    "fieldname": "column_break_dm43",
@@ -234,12 +227,45 @@
    "fieldtype": "Link",
    "label": "Supplier Pickup Address",
    "options": "Address"
+  },
+  {
+   "fieldname": "document_attech_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attach Documents"
+  },
+  {
+   "fieldname": "attach_document",
+   "fieldtype": "Table",
+   "label": "Attach Document",
+   "options": "Attach Document"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "dimension_calculation_section",
+   "fieldtype": "Section Break",
+   "label": "Dimension Calculation"
+  },
+  {
+   "fieldname": "dimension_calculation",
+   "fieldtype": "Table",
+   "label": "Dimension Calculation",
+   "options": "Dimension Calculation"
+  },
+  {
+   "fieldname": "type_wise_value",
+   "fieldtype": "Float",
+   "label": "Mode of Shipment Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-10-15 17:36:55.268148",
+ "links": [
+  {
+   "link_doctype": "Request for Quotation",
+   "link_fieldname": "custom_pickup_request"
+  }
+ ],
+ "modified": "2024-10-19 12:46:49.216063",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

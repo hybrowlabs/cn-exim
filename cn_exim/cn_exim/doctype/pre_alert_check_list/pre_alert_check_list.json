@@ -50,13 +50,11 @@
   "tot_rodt_ut",
   "column_break_6qpd",
   "courier",
-  "rodtep_utilization",
+  "igcr",
   "column_break_cbel",
   "payment_type",
-  "file_attachments",
   "column_break_2omd",
   "iin_number",
-  "igcr",
   "column_break_o1im",
   "rem_rodtep",
   "section_break_oobu",
@@ -72,13 +70,13 @@
   "total_duty",
   "section_break_feze",
   "remarks",
-  "amended_from",
   "bill_of_entry_details_tab",
   "charge_type",
   "column_break_lbdw",
   "account_head",
   "tab_3_tab",
-  "table_qjql"
+  "table_qjql",
+  "amended_from"
  ],
  "fields": [
   {
@@ -140,7 +138,8 @@
    "fetch_from": "pickup_request.total_amount",
    "fieldname": "total_doc_val",
    "fieldtype": "Currency",
-   "label": "Total Doc. Val"
+   "label": "Total Doc. Val",
+   "options": "currency"
   },
   {
    "fieldname": "column_break_qfjw",
@@ -267,11 +266,6 @@
    "options": "Courier"
   },
   {
-   "fieldname": "rodtep_utilization",
-   "fieldtype": "Attach",
-   "label": "Rodtep Utilization"
-  },
-  {
    "fieldname": "column_break_cbel",
    "fieldtype": "Column Break"
   },
@@ -280,11 +274,6 @@
    "fieldtype": "Select",
    "label": "Payment Type",
    "options": "\nDEFFERED PAYMENT\nTRANSATIONAL PAYMENT"
-  },
-  {
-   "fieldname": "file_attachments",
-   "fieldtype": "Attach",
-   "label": "File Attachments"
   },
   {
    "fieldname": "column_break_2omd",
@@ -356,7 +345,7 @@
   },
   {
    "fieldname": "total_freight",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Total Freight"
   },
   {
@@ -370,7 +359,7 @@
   },
   {
    "fieldname": "total_duty",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "label": "Total Duty"
   },
   {
@@ -453,7 +442,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-15 16:12:13.377129",
+ "modified": "2024-10-17 17:00:40.616036",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",
@@ -469,7 +458,9 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "select": 1,
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

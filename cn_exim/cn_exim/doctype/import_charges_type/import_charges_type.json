@@ -1,37 +1,37 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{mode_of_shipment}",
- "creation": "2024-10-15 16:19:22.006206",
+ "autoname": "format:{charges_code}",
+ "creation": "2024-10-19 15:43:32.780847",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "mode_of_shipment",
-  "column_break_fiic",
-  "mode_of_shipment_details"
+  "charges_code",
+  "column_break_ppkw",
+  "charges_description"
  ],
  "fields": [
   {
-   "fieldname": "mode_of_shipment",
+   "fieldname": "charges_code",
    "fieldtype": "Data",
-   "label": "Mode of Shipment"
+   "label": "Charges Code"
   },
   {
-   "fieldname": "column_break_fiic",
+   "fieldname": "column_break_ppkw",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "mode_of_shipment_details",
+   "fieldname": "charges_description",
    "fieldtype": "Small Text",
-   "label": "Mode of Shipment Details"
+   "label": "Charges Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-16 11:56:14.404138",
+ "modified": "2024-10-19 15:44:37.209958",
  "modified_by": "Administrator",
  "module": "Cn Exim",
- "name": "Mode of Shipment",
+ "name": "Import Charges Type",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [

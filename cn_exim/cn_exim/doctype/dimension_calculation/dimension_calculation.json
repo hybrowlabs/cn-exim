@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-19 10:53:37.886690",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "length_uom",
+  "widht_uom",
+  "height_uom",
+  "box",
+  "column_break_uyke",
+  "length",
+  "width",
+  "height",
+  "weight"
+ ],
+ "fields": [
+  {
+   "fieldname": "length_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Length Uom",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "widht_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Widht Uom",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "height_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Height Uom",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "box",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Box"
+  },
+  {
+   "fieldname": "column_break_uyke",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "length",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Length"
+  },
+  {
+   "fieldname": "width",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Width"
+  },
+  {
+   "fieldname": "height",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Height"
+  },
+  {
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Weight",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-19 11:51:02.151491",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Dimension Calculation",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
