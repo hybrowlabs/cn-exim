@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-29 14:31:36.757812",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "transport_group",
+  "excise_type",
+  "issue_unit",
+  "column_break_skvh",
+  "loading_group",
+  "profit_center",
+  "production_section",
+  "production_supervisor",
+  "column_break_nyms",
+  "production_schedular_profile"
+ ],
+ "fields": [
+  {
+   "fieldname": "transport_group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Transport Group"
+  },
+  {
+   "fieldname": "excise_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Excise type"
+  },
+  {
+   "fieldname": "issue_unit",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Issue Unit",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_skvh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "loading_group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Loading Group"
+  },
+  {
+   "fieldname": "profit_center",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Profit Center"
+  },
+  {
+   "fieldname": "production_section",
+   "fieldtype": "Section Break",
+   "label": "Production"
+  },
+  {
+   "fieldname": "production_supervisor",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Production Supervisor",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "column_break_nyms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "production_schedular_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Production Schedular profile",
+   "options": "Employee"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-29 14:38:06.262650",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Plant View",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
