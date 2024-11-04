@@ -7,41 +7,42 @@
  "engine": "InnoDB",
  "field_order": [
   "po_no",
-  "material_code",
+  "item_code",
   "quantity",
-  "po_value",
-  "currency",
-  "exch_rate",
+  "amount",
   "insurance_amount",
+  "hsn_code",
+  "category",
   "column_break_7soa",
-  "po_item",
+  "material_name",
   "description",
   "item_price",
   "total_inr_value",
   "freight_amount",
   "misc_charge_amt",
-  "total_amount"
+  "total_amount",
+  "section_break_btbk",
+  "bcd_",
+  "bcd_amount",
+  "column_break_bknr",
+  "hcs_",
+  "hcs_amount",
+  "column_break_xikd",
+  "swl_",
+  "swl_amount",
+  "column_break_iepn",
+  "igst_",
+  "igst_amount",
+  "section_break_fyss",
+  "total"
  ],
  "fields": [
   {
    "fieldname": "po_no",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "PO No.",
+   "label": "Purchase Order Number",
    "options": "Purchase Order"
-  },
-  {
-   "fieldname": "po_item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "PO Item",
-   "options": "Item"
-  },
-  {
-   "fieldname": "material_code",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Material Code"
   },
   {
    "fieldname": "description",
@@ -59,23 +60,8 @@
    "fieldname": "item_price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Item Price"
-  },
-  {
-   "fieldname": "po_value",
-   "fieldtype": "Currency",
-   "label": "PO Value"
-  },
-  {
-   "fieldname": "currency",
-   "fieldtype": "Link",
-   "label": "Currency",
-   "options": "Currency"
-  },
-  {
-   "fieldname": "exch_rate",
-   "fieldtype": "Float",
-   "label": "Exch. Rate"
+   "label": "Item Price",
+   "options": "currency"
   },
   {
    "fieldname": "insurance_amount",
@@ -103,15 +89,113 @@
   },
   {
    "fieldname": "total_amount",
-   "fieldtype": "Data",
+   "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total Amount"
+  },
+  {
+   "fetch_from": "item_code.gst_hsn_code",
+   "fieldname": "hsn_code",
+   "fieldtype": "Link",
+   "label": "HSN Code",
+   "options": "GST HSN Code"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "label": "Category",
+   "options": "Application Bond Duty Category"
+  },
+  {
+   "fieldname": "section_break_btbk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "bcd_",
+   "fieldtype": "Percent",
+   "label": "BCD (%)"
+  },
+  {
+   "fieldname": "bcd_amount",
+   "fieldtype": "Float",
+   "label": "BCD Amount"
+  },
+  {
+   "fieldname": "column_break_bknr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hcs_",
+   "fieldtype": "Percent",
+   "label": "HCS (%)"
+  },
+  {
+   "fieldname": "hcs_amount",
+   "fieldtype": "Float",
+   "label": "HCS Amount"
+  },
+  {
+   "fieldname": "column_break_xikd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "swl_",
+   "fieldtype": "Percent",
+   "label": "SWL (%)"
+  },
+  {
+   "fieldname": "swl_amount",
+   "fieldtype": "Float",
+   "label": "SWL Amount"
+  },
+  {
+   "fieldname": "column_break_iepn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "igst_",
+   "fieldtype": "Percent",
+   "label": "IGST (%)"
+  },
+  {
+   "fieldname": "igst_amount",
+   "fieldtype": "Float",
+   "label": "IGST Amount"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "material_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item name"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "currency"
+  },
+  {
+   "fieldname": "section_break_fyss",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-07 15:03:36.532423",
+ "modified": "2024-10-19 11:54:56.717966",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Item Details",

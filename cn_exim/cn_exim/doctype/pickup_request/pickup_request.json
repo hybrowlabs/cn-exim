@@ -6,50 +6,67 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "header_details_section",
-  "no_of_boxes",
-  "type_of_cargo",
-  "mode_of_shipment",
-  "group_email",
   "name_of_supplier",
-  "pol",
-  "dimension",
-  "billing_address",
-  "file_attachements",
-  "column_break_dm43",
-  "pickup_date_by",
-  "gross_weight",
-  "incoterms",
-  "type_of_shipments",
-  "insurance_intimation",
-  "origin_country",
-  "pod",
+  "supplier_address",
+  "supplier_address_display",
+  "column_break_xqrj",
+  "supplier_pickup_address",
   "pickup_address",
+  "section_break_xfze",
+  "no_of_boxes",
+  "pickup_date_by",
+  "incoterms",
+  "column_break_uctn",
+  "type_of_cargo",
+  "type_of_shipments",
+  "type_wise_value",
+  "column_break_hymj",
+  "mode_of_shipment",
+  "origin_country",
+  "dimension_calculation_section",
+  "dimension_calculation",
+  "header_details_section",
+  "group_email",
+  "pol",
+  "insurance_intimation",
+  "column_break_dm43",
+  "gross_weight",
   "chargeable_weight",
+  "column_break_nzpn",
+  "pod",
+  "section_break_wmor",
+  "purchase_order_list",
   "section_break_4pdi",
+  "purchase_order_details",
+  "section_break_nzcy",
+  "total_amount",
+  "amended_from",
+  "section_break_kjsg",
   "remarks",
-  "purchase_order_details"
+  "document_attech_tab",
+  "attach_document"
  ],
  "fields": [
   {
    "fieldname": "header_details_section",
-   "fieldtype": "Section Break",
-   "label": "Header Details"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "no_of_boxes",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "No. Of Boxes"
   },
   {
    "fieldname": "type_of_cargo",
-   "fieldtype": "Data",
-   "label": "Type Of Cargo"
+   "fieldtype": "Link",
+   "label": "Type Of Cargo",
+   "options": "Type Of Cargo"
   },
   {
    "fieldname": "mode_of_shipment",
-   "fieldtype": "Data",
-   "label": "Mode Of Shipment"
+   "fieldtype": "Link",
+   "label": "Mode Of Shipment",
+   "options": "Mode of Shipment"
   },
   {
    "fieldname": "group_email",
@@ -58,33 +75,15 @@
   },
   {
    "fieldname": "name_of_supplier",
-   "fieldtype": "Data",
-   "label": "Name Of Supplier"
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
   },
   {
    "fieldname": "pol",
-   "fieldtype": "Data",
-   "label": "POL"
-  },
-  {
-   "fieldname": "billing_address",
-   "fieldtype": "Small Text",
-   "label": "Billing Address"
-  },
-  {
-   "fieldname": "dimension",
-   "fieldtype": "Int",
-   "label": "Dimension(cm)"
-  },
-  {
-   "fieldname": "chargeable_weight",
-   "fieldtype": "Float",
-   "label": "Chargeable Weight"
-  },
-  {
-   "fieldname": "file_attachements",
-   "fieldtype": "Attach",
-   "label": "File Attachements"
+   "fieldtype": "Link",
+   "label": "Port of Loading (POL)",
+   "options": "Port"
   },
   {
    "fieldname": "column_break_dm43",
@@ -97,18 +96,20 @@
   },
   {
    "fieldname": "gross_weight",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Gross Weight"
   },
   {
    "fieldname": "incoterms",
-   "fieldtype": "Data",
-   "label": "Incoterms"
+   "fieldtype": "Link",
+   "label": "Incoterms",
+   "options": "Incoterm"
   },
   {
    "fieldname": "type_of_shipments",
-   "fieldtype": "Data",
-   "label": "Type Of Shipments"
+   "fieldtype": "Link",
+   "label": "Type Of Shipments",
+   "options": "Type Of Shipments"
   },
   {
    "default": "0",
@@ -118,22 +119,20 @@
   },
   {
    "fieldname": "origin_country",
-   "fieldtype": "Data",
-   "label": "Origin Country"
+   "fieldtype": "Link",
+   "label": "Origin Country",
+   "options": "Country"
   },
   {
    "fieldname": "pod",
-   "fieldtype": "Data",
-   "label": "POD"
+   "fieldtype": "Link",
+   "label": "Port of Destination (POD)",
+   "options": "Port"
   },
   {
-   "fieldname": "pickup_address",
-   "fieldtype": "Small Text",
-   "label": "Pickup Address"
-  },
-  {
-   "fieldname": "section_break_4pdi",
-   "fieldtype": "Section Break"
+   "fieldname": "chargeable_weight",
+   "fieldtype": "Float",
+   "label": "Chargeable Weight"
   },
   {
    "columns": 2,
@@ -142,15 +141,130 @@
    "label": "Remarks"
   },
   {
+   "fieldname": "section_break_wmor",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_order_list",
+   "fieldtype": "Table",
+   "label": "Purchase Order List",
+   "options": "Purchase Order List"
+  },
+  {
+   "fieldname": "section_break_4pdi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_bulk_edit": 1,
    "fieldname": "purchase_order_details",
    "fieldtype": "Table",
    "label": "Purchase Order Details",
    "options": "Purchase Order Details"
+  },
+  {
+   "fieldname": "supplier_address_display",
+   "fieldtype": "Small Text",
+   "label": "Supplier Address Display",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pickup_address",
+   "fieldtype": "Small Text",
+   "label": "Pickup Address Display",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_nzcy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pickup Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_xqrj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xfze",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_uctn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hymj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_nzpn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_kjsg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "supplier_address",
+   "fieldtype": "Link",
+   "label": "Supplier Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "supplier_pickup_address",
+   "fieldtype": "Link",
+   "label": "Supplier Pickup Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "document_attech_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attach Documents"
+  },
+  {
+   "fieldname": "attach_document",
+   "fieldtype": "Table",
+   "label": "Attach Document",
+   "options": "Attach Document"
+  },
+  {
+   "fieldname": "dimension_calculation_section",
+   "fieldtype": "Section Break",
+   "label": "Dimension Calculation"
+  },
+  {
+   "fieldname": "dimension_calculation",
+   "fieldtype": "Table",
+   "label": "Dimension Calculation",
+   "options": "Dimension Calculation"
+  },
+  {
+   "fieldname": "type_wise_value",
+   "fieldtype": "Float",
+   "label": "Mode of Shipment Value"
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2024-08-07 16:41:47.076044",
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Request for Quotation",
+   "link_fieldname": "custom_pickup_request"
+  }
+ ],
+ "modified": "2024-10-23 12:02:53.880290",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

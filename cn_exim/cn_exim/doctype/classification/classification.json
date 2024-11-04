@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{class_no}",
+ "creation": "2024-10-29 14:12:49.376890",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "class_no",
+  "column_break_cdzh",
+  "class_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "class_no",
+   "fieldtype": "Data",
+   "label": "class no"
+  },
+  {
+   "fieldname": "column_break_cdzh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "class_type",
+   "fieldtype": "Small Text",
+   "label": "class type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-29 14:13:29.916809",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Classification",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,207 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:gate_entry_no",
+ "creation": "2024-09-30 12:22:04.410771",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "gate_entry_no",
+  "purchase_no",
+  "column_break_ughx",
+  "gate_entry_date",
+  "supplier",
+  "column_break_bhln",
+  "supplier_name",
+  "section_break_khbh",
+  "vehicle_no",
+  "column_break_ggqh",
+  "driver_name",
+  "column_break_crir",
+  "driver_mobile_no",
+  "section_break_xlfw",
+  "challan_no",
+  "bill_date",
+  "bill_number",
+  "material_short_description",
+  "section_break_e3zl",
+  "airway_bill_no",
+  "service_name",
+  "quantity_received",
+  "received_remark",
+  "section_break_yjdd",
+  "handover_to_person",
+  "handover_remark",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "gate_entry_date",
+   "fieldtype": "Date",
+   "label": "Gate Entry Date"
+  },
+  {
+   "fetch_from": "purchase_no.supplier_name",
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name"
+  },
+  {
+   "fieldname": "material_short_description",
+   "fieldtype": "Small Text",
+   "label": "Material Short Description"
+  },
+  {
+   "fieldname": "vehicle_no",
+   "fieldtype": "Int",
+   "label": "Vehicle No"
+  },
+  {
+   "fieldname": "bill_date",
+   "fieldtype": "Date",
+   "label": "Bill Date"
+  },
+  {
+   "fieldname": "driver_name",
+   "fieldtype": "Data",
+   "label": "Driver Name"
+  },
+  {
+   "fieldname": "driver_mobile_no",
+   "fieldtype": "Int",
+   "label": "Driver Mobile No"
+  },
+  {
+   "fieldname": "purchase_no",
+   "fieldtype": "Link",
+   "label": "Purchase No",
+   "options": "Purchase Order",
+   "reqd": 1
+  },
+  {
+   "fieldname": "challan_no",
+   "fieldtype": "Int",
+   "label": "Challan No"
+  },
+  {
+   "fieldname": "quantity_received",
+   "fieldtype": "Data",
+   "label": "Quantity Received"
+  },
+  {
+   "fieldname": "bill_number",
+   "fieldtype": "Int",
+   "label": "Bill Number"
+  },
+  {
+   "fieldname": "airway_bill_no",
+   "fieldtype": "Int",
+   "label": "Airway Bill No"
+  },
+  {
+   "fieldname": "service_name",
+   "fieldtype": "Data",
+   "label": "Service Name"
+  },
+  {
+   "fieldname": "section_break_e3zl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gate_entry_no",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Gate Entry No",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Gate Entry",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "received_remark",
+   "fieldtype": "Small Text",
+   "label": "Received Remark"
+  },
+  {
+   "fieldname": "section_break_yjdd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "handover_to_person",
+   "fieldtype": "Link",
+   "label": "Handover to Person",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "handover_remark",
+   "fieldtype": "Small Text",
+   "label": "Handover Remark"
+  },
+  {
+   "fieldname": "column_break_ughx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "purchase_no.supplier",
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "section_break_xlfw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_bhln",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_khbh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ggqh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_crir",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-23 11:45:57.611832",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Gate Entry",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

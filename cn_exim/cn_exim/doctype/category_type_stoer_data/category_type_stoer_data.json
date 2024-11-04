@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-21 11:07:25.729621",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "charges_type",
+  "amount",
+  "column_break_xrdn",
+  "percentage",
+  "po_update_details_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "charges_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Charges Type"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "fieldname": "column_break_xrdn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "percentage",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Percentage"
+  },
+  {
+   "fieldname": "po_update_details_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "po update details name"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-21 11:11:00.968509",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Category Type Stoer Data",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

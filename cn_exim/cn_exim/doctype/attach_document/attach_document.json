@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-15 15:20:33.563417",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "description",
+  "attach_xswj",
+  "column_break_mfps",
+  "check_mybq"
+ ],
+ "fields": [
+  {
+   "fieldname": "attach_xswj",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Attach File"
+  },
+  {
+   "fieldname": "column_break_mfps",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "check_mybq",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Checked"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-18 17:36:41.402593",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Attach Document",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

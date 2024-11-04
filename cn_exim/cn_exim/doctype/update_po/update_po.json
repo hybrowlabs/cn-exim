@@ -1,0 +1,305 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-10-19 14:02:38.846733",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "naming_series",
+  "pre_alert_request",
+  "pickup_request",
+  "rfq_no",
+  "vendor",
+  "currency",
+  "exchange_rate",
+  "column_break_lpdz",
+  "bcd_amount",
+  "hcs_amount",
+  "sws_amount",
+  "igst_amount",
+  "total_duty",
+  "column_break_qnke",
+  "freight_amount",
+  "ex_works",
+  "other_charges",
+  "insurance_amount",
+  "insurance_",
+  "section_break_ylvd",
+  "house_number",
+  "total_inr_value",
+  "column_break_jmna",
+  "master_number",
+  "accessible_value",
+  "cha_charges_section",
+  "cha_agenncy_charges",
+  "local_freight_vendor_charges",
+  "column_break_hwfx",
+  "cha_clearing_charges",
+  "freight_and_forwarding_vendor_charges",
+  "column_break_iazj",
+  "local_transporter_charges",
+  "section_break_ybba",
+  "update_po_details",
+  "section_break_kxuf",
+  "total_category_charges",
+  "category_type_stoer_data",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_kxuf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Update Po",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "pre_alert_request",
+   "fieldtype": "Link",
+   "label": "Pre Alert Request",
+   "options": "Pre Alert"
+  },
+  {
+   "fetch_from": "pre_alert_request.pickup_request",
+   "fieldname": "pickup_request",
+   "fieldtype": "Link",
+   "label": "Pickup Request",
+   "options": "Pickup Request"
+  },
+  {
+   "fetch_from": "pre_alert_request.rfq_number",
+   "fieldname": "rfq_no",
+   "fieldtype": "Link",
+   "label": "RFQ No",
+   "options": "Request for Quotation"
+  },
+  {
+   "fetch_from": "pre_alert_request.vendor",
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Supplier"
+  },
+  {
+   "fetch_from": "pre_alert_request.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fetch_from": "pre_alert_request.exch_rate",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Currency",
+   "label": "Exchange Rate",
+   "options": "currency"
+  },
+  {
+   "fieldname": "column_break_lpdz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "pre_alert_request.bcd_amount",
+   "fieldname": "bcd_amount",
+   "fieldtype": "Currency",
+   "label": "BCD Amount"
+  },
+  {
+   "fetch_from": "pre_alert_request.h_cess_amount",
+   "fieldname": "hcs_amount",
+   "fieldtype": "Currency",
+   "label": "HCS Amount"
+  },
+  {
+   "fetch_from": "pre_alert_request.sws_amount",
+   "fieldname": "sws_amount",
+   "fieldtype": "Currency",
+   "label": "SWS Amount"
+  },
+  {
+   "fetch_from": "pre_alert_request.igst_amount",
+   "fieldname": "igst_amount",
+   "fieldtype": "Currency",
+   "label": "IGST Amount"
+  },
+  {
+   "fetch_from": "pre_alert_request.total_duty",
+   "fieldname": "total_duty",
+   "fieldtype": "Currency",
+   "label": "Total Duty"
+  },
+  {
+   "fieldname": "column_break_qnke",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "pre_alert_request.freight_amt",
+   "fieldname": "freight_amount",
+   "fieldtype": "Currency",
+   "label": "Freight Amount"
+  },
+  {
+   "fetch_from": "pre_alert_request.ex_works",
+   "fieldname": "ex_works",
+   "fieldtype": "Currency",
+   "label": "Ex-Works"
+  },
+  {
+   "fetch_from": "pre_alert_request.other_charges",
+   "fieldname": "other_charges",
+   "fieldtype": "Currency",
+   "label": "Other Charges"
+  },
+  {
+   "fetch_from": "pre_alert_request.insurance_amount",
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount"
+  },
+  {
+   "fetch_from": "pre_alert_request.insurance",
+   "fieldname": "insurance_",
+   "fieldtype": "Percent",
+   "label": "Insurance %"
+  },
+  {
+   "fieldname": "section_break_ylvd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "pre_alert_request.house_number",
+   "fieldname": "house_number",
+   "fieldtype": "Data",
+   "label": "House Number"
+  },
+  {
+   "fetch_from": "pre_alert_request.total_inr_val",
+   "fieldname": "total_inr_value",
+   "fieldtype": "Currency",
+   "label": "Total Inr Value"
+  },
+  {
+   "fieldname": "column_break_jmna",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "pre_alert_request.master_number",
+   "fieldname": "master_number",
+   "fieldtype": "Data",
+   "label": "Master Number"
+  },
+  {
+   "fetch_from": "pre_alert_request.accessible_val",
+   "fieldname": "accessible_value",
+   "fieldtype": "Currency",
+   "label": "Accessible Value"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "cha_charges_section",
+   "fieldtype": "Section Break",
+   "label": "CHA Charges"
+  },
+  {
+   "fieldname": "cha_agenncy_charges",
+   "fieldtype": "Currency",
+   "label": "CHA Agenncy Charges"
+  },
+  {
+   "fieldname": "local_freight_vendor_charges",
+   "fieldtype": "Currency",
+   "label": "Local Freight Vendor Charges"
+  },
+  {
+   "fieldname": "column_break_hwfx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cha_clearing_charges",
+   "fieldtype": "Currency",
+   "label": "CHA Clearing Charges"
+  },
+  {
+   "fieldname": "freight_and_forwarding_vendor_charges",
+   "fieldtype": "Currency",
+   "label": "freight and forwarding vendor charges"
+  },
+  {
+   "fieldname": "column_break_iazj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "local_transporter_charges",
+   "fieldtype": "Currency",
+   "label": "Local Transporter Charges"
+  },
+  {
+   "fieldname": "section_break_ybba",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "update_po_details",
+   "fieldtype": "Table",
+   "label": "Update Po Details",
+   "options": "Update Po Details"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "UPO-.###"
+  },
+  {
+   "fieldname": "category_type_stoer_data",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Category Type Stoer Data",
+   "options": "Category Type Stoer Data"
+  },
+  {
+   "fieldname": "total_category_charges",
+   "fieldtype": "Currency",
+   "label": "Total Category Charges"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-10-22 10:16:41.005486",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Update Po",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
