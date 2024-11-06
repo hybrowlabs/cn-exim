@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-06 17:42:06.765377",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "account_refrence",
+  "column_break_jmkz",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "account_refrence",
+   "fieldtype": "Data",
+   "label": "Account Refrence"
+  },
+  {
+   "fieldname": "column_break_jmkz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-11-06 17:42:48.400606",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Account Category Refrence",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

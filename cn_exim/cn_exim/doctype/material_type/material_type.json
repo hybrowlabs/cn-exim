@@ -8,20 +8,24 @@
   "material_tyep",
   "valuation_class",
   "value__updating",
+  "account_refrence",
+  "account_refrence_description",
   "column_break_lhvg",
   "counter",
-  "qty_updating"
+  "qty_updating",
+  "materil_type_description"
  ],
  "fields": [
   {
    "fieldname": "material_tyep",
    "fieldtype": "Data",
-   "label": "Material Tyep"
+   "label": "Material Type"
   },
   {
    "fieldname": "valuation_class",
-   "fieldtype": "Data",
-   "label": "Valuation class"
+   "fieldtype": "Link",
+   "label": "Valuation class",
+   "options": "Valuation Classes"
   },
   {
    "fieldname": "value__updating",
@@ -41,11 +45,28 @@
    "fieldname": "qty_updating",
    "fieldtype": "Data",
    "label": "Qty updating"
+  },
+  {
+   "fieldname": "account_refrence",
+   "fieldtype": "Link",
+   "label": "Account Refrence",
+   "options": "Account Category Refrence"
+  },
+  {
+   "fetch_from": "account_refrence.description",
+   "fieldname": "account_refrence_description",
+   "fieldtype": "Data",
+   "label": "Account Refrence Description"
+  },
+  {
+   "fieldname": "materil_type_description",
+   "fieldtype": "Small Text",
+   "label": "Materil Type Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-11 16:20:54.107573",
+ "modified": "2024-11-06 17:47:32.054326",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Type",
