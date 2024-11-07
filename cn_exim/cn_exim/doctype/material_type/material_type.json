@@ -1,13 +1,12 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{material_tyep}",
  "creation": "2024-10-11 16:18:36.300925",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "material_tyep",
-  "valuation_class",
-  "value__updating",
   "account_refrence",
   "account_refrence_description",
   "column_break_lhvg",
@@ -20,17 +19,6 @@
    "fieldname": "material_tyep",
    "fieldtype": "Data",
    "label": "Material Type"
-  },
-  {
-   "fieldname": "valuation_class",
-   "fieldtype": "Link",
-   "label": "Valuation class",
-   "options": "Valuation Classes"
-  },
-  {
-   "fieldname": "value__updating",
-   "fieldtype": "Data",
-   "label": "Value  updating"
   },
   {
    "fieldname": "column_break_lhvg",
@@ -66,10 +54,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 17:47:32.054326",
+ "modified": "2024-11-07 11:34:48.828633",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Type",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
