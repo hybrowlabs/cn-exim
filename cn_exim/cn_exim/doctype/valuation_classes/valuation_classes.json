@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{valustion_class}",
  "creation": "2024-11-06 17:39:43.726264",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -41,10 +42,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 17:48:53.053135",
+ "modified": "2024-11-07 11:06:27.014523",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Valuation Classes",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

@@ -217,6 +217,20 @@
     "type": "smoothstep"
    },
    {
+    "data": "{\"selectDoctype\":\"Pre-Alert Check List\",\"change_submit_button_label\":false,\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Trigger",
+    "id": "lNis6cPfLnUX8q1g34Q5K",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1815,\"y\":210}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "on_submit_assistant_trigger"
+   },
+   {
     "data": "{\"selectDoctype\":\"Supplier Quotation\",\"change_submit_button_label\":false,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Trigger",
     "id": "htszi11kIJer91OQ-cZKL",
@@ -301,6 +315,20 @@
     "type": "chatnext_assistant_message"
    },
    {
+    "data": "{\"message\":\"Approve Request Sent.\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "B_zq7F2B6oSUI0I7-Gp5Z",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1815,\"y\":285}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_message"
+   },
+   {
     "data": "{\"doctype\":\"Request for Quotation\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"buttons\":[{\"option\":\"Approve\"},{\"option\":\"Reject\"}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "q_MHuNnaeboyoRL2gy-3F",
@@ -321,7 +349,21 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":2010,\"y\":-210}",
+    "position": "{\"x\":2010,\"y\":-195}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_multi_actions"
+   },
+   {
+    "data": "{\"doctype\":\"Pre-Alert Check List\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"buttons\":[{\"option\":\"Approve\"},{\"option\":\"Reject\"}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "OrLBQZf5KhdDNN-4FWcWN",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1815,\"y\":345}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -371,6 +413,20 @@
     "type": "exec_python"
    },
    {
+    "data": "{\"node_label\":\"Submit Pre Alert\",\"python_code\":\"pre_check_doc = frappe.get_doc(\\\"Pre-Alert Check List\\\", variables[\\\"doc\\\"][\\\"name\\\"])\\npre_check_doc.submit()\",\"skip_queue_and_execute_immediately\":false,\"execute_current_node_as_user\":\"\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "LXne9wzElwivN2hrrFguk",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":2175,\"y\":525}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "exec_python"
+   },
+   {
     "data": "{\"node_label\":\"Submit Purchase Order\",\"python_code\":\"sq_doc = frappe.get_doc(\\\"Supplier Quotation\\\", variables[\\\"doc\\\"][\\\"name\\\"])\\nsq_doc.submit()\",\"skip_queue_and_execute_immediately\":false,\"execute_current_node_as_user\":\"\",\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "513mfALrWikJ2JdHtICHo",
@@ -401,6 +457,20 @@
    {
     "data": "{\"message\":\"Approve By HOD\",\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
+    "id": "bVrR07cDEcvaSQoRoojYY",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":2175,\"y\":420}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_message"
+   },
+   {
+    "data": "{\"message\":\"Approve By HOD\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
     "id": "uGD07fqVIPyvALY_1olqF",
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
@@ -411,6 +481,20 @@
     "target": null,
     "targethandle": null,
     "type": "chatnext_assistant_message"
+   },
+   {
+    "data": "{\"email_account\":\"\",\"select_template\":false,\"email_subject\":\"Test\",\"send_to_assigned_users\":false,\"recepients\":[{\"recepientField\":\"\",\"recipient\":\"\",\"cc\":\"\"}],\"link_doctype\":true,\"attach_prints\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"recipients\":\"hardik@mail.hybrowlabs.com\",\"cc\":\"\",\"bcc\":\"\",\"email_content\":\"<p>Hello, Sir This approve Flow Test So Please Approve That</p>\",\"doctype\":\"Request for Quotation\",\"docname\":\"{{doc.name}}\",\"attachments\":[{\"doctype\":\"Request for Quotation\",\"docname\":\"{{doc.name}}\",\"print_format\":\"\"}]}",
+    "element_type": "Action",
+    "id": "fYR_s362ykDTNuCny6Dla",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1575,\"y\":-195}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "send_mail"
    },
    {
     "data": "{\"message\":\"Approve By HOD\",\"submit\":true,\"variable_path_for_output\":\"\"}",
@@ -448,6 +532,20 @@
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
     "position": "{\"x\":1515,\"y\":-30}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_message"
+   },
+   {
+    "data": "{\"message\":\"Reject By HOD\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "7vrlxq4UkkE_erqz3O2MA",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1980,\"y\":465}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -681,20 +779,6 @@
    {
     "data": null,
     "element_type": "edge",
-    "id": "reactflow__edge-lyr3OzEyaJT7eHwA57UqZoutput-K6Fy1piYzcrkDmpostN3Iinput",
-    "parent": "Exim Flow",
-    "parentfield": "funnel_definition",
-    "parenttype": "Funnel",
-    "position": null,
-    "source": "lyr3OzEyaJT7eHwA57UqZ",
-    "sourcehandle": "output",
-    "target": "K6Fy1piYzcrkDmpostN3I",
-    "targethandle": "input",
-    "type": "smoothstep"
-   },
-   {
-    "data": null,
-    "element_type": "edge",
     "id": "reactflow__edge-K6Fy1piYzcrkDmpostN3IApprove-RaUIsl-rwZji6J-_tNKRDinput",
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
@@ -737,6 +821,20 @@
    {
     "data": null,
     "element_type": "edge",
+    "id": "NDM2t4FUqc2nVQ4UcbbuD",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "lNis6cPfLnUX8q1g34Q5K",
+    "sourcehandle": "output",
+    "target": "B_zq7F2B6oSUI0I7-Gp5Z",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
     "id": "fPqX0dymJB6q6jImHoQP6",
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
@@ -745,6 +843,20 @@
     "source": "htszi11kIJer91OQ-cZKL",
     "sourcehandle": "output",
     "target": "9ok7aj3OnuUq8igQpSZHW",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "KBHtm3CONI2Y0-t0A0PCi",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "B_zq7F2B6oSUI0I7-Gp5Z",
+    "sourcehandle": "output",
+    "target": "OrLBQZf5KhdDNN-4FWcWN",
     "targethandle": "input",
     "type": "smoothstep"
    },
@@ -765,6 +877,20 @@
    {
     "data": null,
     "element_type": "edge",
+    "id": "36wrAQkgIOnstxzbvnZap",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "OrLBQZf5KhdDNN-4FWcWN",
+    "sourcehandle": "Approve",
+    "target": "bVrR07cDEcvaSQoRoojYY",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
     "id": "IhJshSOacEYCgWIMrUT3K",
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
@@ -773,6 +899,20 @@
     "source": "CYVquLKOrmspVmFLpaFTQ",
     "sourcehandle": "Approve",
     "target": "uGD07fqVIPyvALY_1olqF",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "t-5WgDAl70iNMQjNjyMfm",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "OrLBQZf5KhdDNN-4FWcWN",
+    "sourcehandle": "Reject",
+    "target": "7vrlxq4UkkE_erqz3O2MA",
     "targethandle": "input",
     "type": "smoothstep"
    },
@@ -793,6 +933,20 @@
    {
     "data": null,
     "element_type": "edge",
+    "id": "VnAqzQ2ILI933Dwrk87Ou",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "bVrR07cDEcvaSQoRoojYY",
+    "sourcehandle": "output",
+    "target": "LXne9wzElwivN2hrrFguk",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
     "id": "F5--gNCD7uV632iNPs_f2",
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
@@ -803,14 +957,28 @@
     "target": "513mfALrWikJ2JdHtICHo",
     "targethandle": "input",
     "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-lyr3OzEyaJT7eHwA57UqZoutput-K6Fy1piYzcrkDmpostN3Iinput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "lyr3OzEyaJT7eHwA57UqZ",
+    "sourcehandle": "output",
+    "target": "K6Fy1piYzcrkDmpostN3I",
+    "targethandle": "input",
+    "type": "smoothstep"
    }
   ],
   "funnel_name": "Exim Flow",
   "funnel_type": "Private",
-  "modified": "2024-10-12 00:37:34.652685",
+  "modified": "2024-10-17 14:35:18.810816",
   "name": "Exim Flow",
   "status": "published",
   "variable_list": "[]",
-  "viewport": "{\"x\":-1070.5742224821872,\"y\":297.3049439671448,\"zoom\":0.6198538499694931}"
+  "viewport": "{\"x\":-1573.480327522686,\"y\":-267.4968164342293,\"zoom\":1}"
  }
 ]

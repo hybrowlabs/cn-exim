@@ -6,11 +6,14 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "transport_group",
+  "plant",
+  "valuation_classes",
   "excise_type",
-  "issue_unit",
   "column_break_skvh",
+  "transport_group",
   "loading_group",
+  "column_break_pzsm",
+  "issue_unit",
   "profit_center",
   "production_section",
   "production_supervisor",
@@ -75,12 +78,30 @@
    "in_list_view": 1,
    "label": "Production Schedular profile",
    "options": "Employee"
+  },
+  {
+   "fieldname": "plant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant",
+   "options": "Plant"
+  },
+  {
+   "fieldname": "valuation_classes",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Valuation Classes",
+   "options": "Valuation Classes"
+  },
+  {
+   "fieldname": "column_break_pzsm",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-29 14:38:06.262650",
+ "modified": "2024-11-07 11:31:24.037436",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Plant View",
