@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class MaterialType(Document):
+class MaterialTypes(Document):
 	pass
