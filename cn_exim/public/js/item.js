@@ -4,7 +4,7 @@ frappe.ui.form.on("Item", {
             frappe.call({
                 method:"frappe.client.get_list",
                 args:{
-                    "doctype":"Material Type",
+                    "doctype":"Material Types",
                     filters:{
                         'name':frm.doc.custom_material_type
                     },
