@@ -30,6 +30,12 @@ frappe.ui.form.on("Pickup Request", {
                     frappe.set_route('Form', 'Pre Alert', doc.name)
                 })
             }, ("Create"))
+
+            // frm.add_custom_button("Stock Entry", function (){
+            //     frappe.new_doc("Stock Entry", {
+
+            //     })
+            // }, ("Create"))
         }
 
         frm.set_query('supplier_address', function (doc) {

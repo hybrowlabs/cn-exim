@@ -131,29 +131,27 @@ override_doctype_class = {
 doc_events = {
     "Supplier Quotation": {
         "validate": "cn_exim.cn_exim.api.validate_date",
-    }
+    },
+    "Journal Entry":
+	{
+		"on_cancel": "cn_exim.cn_exim.doc_events.journal_entry.on_cancel"
+	},
+	"EMD":
+	{
+		"validate":"cn_exim.cn_exim.doctype.emd.emd.validate"
+	}
 }
 
 # Scheduled Tasks
 # ---------------
-
-# scheduler_events = {
-# 	"all": [
-# 		"cn_exim.tasks.all"
-# 	],
-# 	"daily": [
-# 		"cn_exim.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"cn_exim.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"cn_exim.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"cn_exim.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"weekly": [
+		"cn_exim.cn_exim.doctype.emd.emd.send_emails"
+	],
+	"daily": [
+		"cn_exim.cn_exim.doctype.emd.emd.change_status_on_due"
+	]
+}
 
 # Testing
 # -------
@@ -230,3 +228,4 @@ doc_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+
