@@ -375,8 +375,17 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-10-17 16:59:30.338953",
+ "links": [
+  {
+   "link_doctype": "Pre-Alert Check List",
+   "link_fieldname": "pre_alert"
+  },
+  {
+   "link_doctype": "Update Po",
+   "link_fieldname": "pre_alert_request"
+  }
+ ],
+ "modified": "2024-11-22 11:41:45.409163",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre Alert",

@@ -441,8 +441,13 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-10-17 17:00:40.616036",
+ "links": [
+  {
+   "link_doctype": "Bill of Entry",
+   "link_fieldname": "custom_prealert_check_list"
+  }
+ ],
+ "modified": "2024-11-22 11:38:41.526124",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",

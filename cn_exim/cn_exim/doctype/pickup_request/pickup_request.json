@@ -23,6 +23,8 @@
   "column_break_hymj",
   "mode_of_shipment",
   "origin_country",
+  "section_break_jlju",
+  "transport_locations",
   "dimension_calculation_section",
   "dimension_calculation",
   "header_details_section",
@@ -254,6 +256,16 @@
    "fieldname": "type_wise_value",
    "fieldtype": "Float",
    "label": "Mode of Shipment Value"
+  },
+  {
+   "fieldname": "section_break_jlju",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "transport_locations",
+   "fieldtype": "Table",
+   "label": "Transport Locations",
+   "options": "Transport Stops"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -262,9 +274,19 @@
   {
    "link_doctype": "Request for Quotation",
    "link_fieldname": "custom_pickup_request"
+  },
+  {
+   "link_doctype": "Pre Alert",
+   "link_fieldname": "po_no",
+   "table_fieldname": "item_details"
+  },
+  {
+   "link_doctype": "Pre-Alert Check List",
+   "link_fieldname": "po_no",
+   "table_fieldname": "item_details"
   }
  ],
- "modified": "2024-10-23 12:02:53.880290",
+ "modified": "2024-11-22 14:41:43.365473",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
