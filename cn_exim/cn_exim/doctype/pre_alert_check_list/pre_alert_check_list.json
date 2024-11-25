@@ -447,7 +447,7 @@
    "link_fieldname": "custom_prealert_check_list"
   }
  ],
- "modified": "2024-11-25 10:24:30.157820",
+ "modified": "2024-11-25 11:27:43.784946",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",
