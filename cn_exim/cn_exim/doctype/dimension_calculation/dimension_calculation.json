@@ -10,6 +10,7 @@
   "widht_uom",
   "height_uom",
   "box",
+  "gross_weight",
   "column_break_uyke",
   "length",
   "width",
@@ -72,12 +73,17 @@
    "in_list_view": 1,
    "label": "Weight",
    "read_only": 1
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-19 11:51:02.151491",
+ "modified": "2024-12-04 14:24:17.868507",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Dimension Calculation",

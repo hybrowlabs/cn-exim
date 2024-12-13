@@ -45,7 +45,8 @@
   "section_break_kxuf",
   "total_category_charges",
   "category_type_stoer_data",
-  "amended_from"
+  "amended_from",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -273,6 +274,12 @@
    "fieldname": "total_category_charges",
    "fieldtype": "Currency",
    "label": "Total Category Charges"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -283,7 +290,7 @@
    "link_fieldname": "custom_update_po_number"
   }
  ],
- "modified": "2024-11-22 11:54:03.696221",
+ "modified": "2024-12-11 15:34:16.068851",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Update Po",

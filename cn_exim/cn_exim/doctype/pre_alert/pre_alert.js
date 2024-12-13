@@ -44,6 +44,31 @@ frappe.ui.form.on("Pre Alert", {
                 frm.refresh_field("item_details")
             }
         })
+
+        frappe.call({
+            method: "cn_exim.cn_exim.doctype.pre_alert.pre_alert.get_attachments",
+            args: {
+                name: frm.doc.pickup_request
+            },
+            callback: function (r) {
+                let data = r.message
+                data.forEach(function (obj) {
+                    var row = frm.add_child("attach_document")
+                    row.description = obj['description']
+                    row.attach_xswj = obj['attach_xswj']
+                })
+                frm.refresh_field("attach_document")
+            }
+        })
+    },
+    before_save: function (frm) {
+        freight_amt_calculation(frm)
+        insurance_calculation(frm)
+        other_charges_calculation(frm)
+        calculation_tax(frm)
+        total_calculations(frm)
+        calculation_of_rodtep(frm)
+        calculation_used_rodtep(frm)
     },
     refresh: function (frm) {
         frm.add_custom_button("Calculate", function (obj) {
@@ -52,97 +77,112 @@ frappe.ui.form.on("Pre Alert", {
             other_charges_calculation(frm)
             calculation_tax(frm)
             total_calculations(frm)
+            calculation_of_rodtep(frm)
         })
-        frm.add_custom_button("Pre-Check List", function () {
-            let items = [];
+        if (frm.doc.docstatus == 1) {
+            frm.add_custom_button("Pre-Check List", function () {
+                let items = [];
 
-            // Loop through item_details and push data
-            frm.doc.item_details.forEach(item => {
-                items.push({
-                    'po_no': item.po_no,
-                    'item_code': item.item_code,
-                    'quantity': item.quantity,
-                    'amount': item.amount,
-                    'insurance_amount': item.insurance_amount,
-                    'hsn_code': item.hsn_code,
-                    'category': item.category,
-                    'material_name': item.material_name,
-                    'description': item.description,
-                    'item_price': item.item_price,
-                    'total_inr_value': item.total_inr_value,
-                    'freight_amount': item.freight_amount,
-                    'misc_charge_amt': item.misc_charge_amt,
-                    'total_amount': item.total_amount,
-                    'bcd_': item.bcd_,
-                    'hcs_': item.hcs_,
-                    'swl_': item.swl_,
-                    'igst_': item.igst_,
-                    'bcd_amount': item.bcd_amount,
-                    'hcs_amount': item.hcs_amount,
-                    'swl_amount': item.swl_amount,
-                    'igst_amount': item.igst_amount
+                // Loop through item_details and push data
+                frm.doc.item_details.forEach(item => {
+                    items.push({
+                        'po_no': item.po_no,
+                        'item_code': item.item_code,
+                        'quantity': item.quantity,
+                        'amount': item.amount,
+                        'insurance_amount': item.insurance_amount,
+                        'hsn_code': item.hsn_code,
+                        'category': item.category,
+                        'material_name': item.material_name,
+                        'description': item.description,
+                        'item_price': item.item_price,
+                        'total_inr_value': item.total_inr_value,
+                        'freight_amount': item.freight_amount,
+                        'misc_charge_amt': item.misc_charge_amt,
+                        'total_amount': item.total_amount,
+                        'bcd_': item.bcd_,
+                        'hcs_': item.hcs_,
+                        'swl_': item.swl_,
+                        'igst_': item.igst_,
+                        'bcd_amount': item.bcd_amount,
+                        'hcs_amount': item.hcs_amount,
+                        'swl_amount': item.swl_amount,
+                        'igst_amount': item.igst_amount
+                    });
                 });
-            });
 
-            // Instead of new_doc, use frappe.call to avoid redirection
-            frappe.call({
-                method: "frappe.client.insert",
-                args: {
-                    doc: {
-                        'doctype': 'Pre-Alert Check List',
-                        'pre_alert': frm.doc.name,
-                        'pickup_request': frm.doc.pickup_request,
-                        'rfq_number': frm.doc.rfq_number,
-                        'vendor': frm.doc.vendor,
-                        'currency': frm.doc.currency,
-                        'total_doc_val': frm.doc.total_doc_val,
-                        'total_inr_val': frm.doc.total_inr_val,
-                        'exch_rate': frm.doc.exch_rate,
-                        'freight_amt': frm.doc.freight_amt,
-                        'ex_works': frm.doc.ex_works,
-                        'other_charges': frm.doc.other_charges,
-                        'insurance_amount': frm.doc.insurance_amount,
-                        'insurance': frm.doc.insurance,
-                        'accessible_val': frm.doc.accessible_val,
-                        'house_number': frm.doc.house_number,
-                        'master_number': frm.doc.master_number,
-                        'invoice_no': frm.doc.invoice_no,
-                        'invoice_dt': frm.doc.invoice_dt,
-                        'eta': frm.doc.eta,
-                        'etd': frm.doc.etd,
-                        'invoice_details': frm.doc.invoice_details,
-                        'cha': frm.doc.cha,
-                        'courier': frm.doc.courier,
-                        'payment_type': frm.doc.payment_type,
-                        'iin_number': frm.doc.iin_number,
-                        'rem_rodtep': frm.doc.rem_rodtep,
-                        'tot_rodt_ut': frm.doc.tot_rodt_ut,
-                        'rodtep_utilization': frm.doc.rodtep_utilization,
-                        'file_attachments': frm.doc.file_attachments,
-                        'igcr': frm.doc.igcr,
-                        'bcd_amount': frm.doc.bcd_amount,
-                        'h_cess_amount': frm.doc.h_cess_amount,
-                        'sws_amount': frm.doc.sws_amount,
-                        'igst_amount': frm.doc.igst_amount,
-                        'total_freight': frm.doc.total_freight,
-                        'total_duty': frm.doc.total_duty,
-                        'remarks': frm.doc.remarks,
-                        'item_details': items
+                let rodteps = []
+                frm.doc.rodtep_details.forEach(item => {
+                    rodteps.push({
+                        'script_no': item.script_no,
+                        'amount': item.amount,
+                        'script_date': item.script_date,
+                        'used_rodtep': item.used_rodtep
+                    })
+                })
+
+                // Instead of new_doc, use frappe.call to avoid redirection
+                frappe.call({
+                    method: "frappe.client.insert",
+                    args: {
+                        doc: {
+                            'doctype': 'Pre-Alert Check List',
+                            'pre_alert': frm.doc.name,
+                            'pickup_request': frm.doc.pickup_request,
+                            'rfq_number': frm.doc.rfq_number,
+                            'vendor': frm.doc.vendor,
+                            'currency': frm.doc.currency,
+                            'total_doc_val': frm.doc.total_doc_val,
+                            'total_inr_val': frm.doc.total_inr_val,
+                            'exch_rate': frm.doc.exch_rate,
+                            'freight_amt': frm.doc.freight_amt,
+                            'ex_works': frm.doc.ex_works,
+                            'other_charges': frm.doc.other_charges,
+                            'insurance_amount': frm.doc.insurance_amount,
+                            'insurance': frm.doc.insurance,
+                            'accessible_val': frm.doc.accessible_val,
+                            'house_number': frm.doc.house_number,
+                            'master_number': frm.doc.master_number,
+                            'invoice_no': frm.doc.invoice_no,
+                            'invoice_dt': frm.doc.invoice_dt,
+                            'eta': frm.doc.eta,
+                            'etd': frm.doc.etd,
+                            'invoice_details': frm.doc.invoice_details,
+                            'cha': frm.doc.cha,
+                            'courier': frm.doc.courier,
+                            'payment_type': frm.doc.payment_type,
+                            'iin_number': frm.doc.iin_number,
+                            'rem_rodtep': frm.doc.rem_rodtep,
+                            'tot_rodt_ut': frm.doc.tot_rodt_ut,
+                            'rodtep_utilization': frm.doc.rodtep_utilization,
+                            'file_attachments': frm.doc.file_attachments,
+                            'igcr': frm.doc.igcr,
+                            'bcd_amount': frm.doc.bcd_amount,
+                            'h_cess_amount': frm.doc.h_cess_amount,
+                            'sws_amount': frm.doc.sws_amount,
+                            'igst_amount': frm.doc.igst_amount,
+                            'total_freight': frm.doc.total_freight,
+                            'total_duty': frm.doc.total_duty,
+                            'remarks': frm.doc.remarks,
+                            'item_details': items,
+                            'rodtape_details': rodteps
+                        }
+                    },
+                    callback: function (r) {                        
+                        if (!r.exc) {
+                            frappe.set_route("Form","Pre-Alert Check List", r.message['name'])
+                            frappe.show_alert({
+                                message: __('Pre Alert Check List created successfully!'),
+                                indicator: 'green'
+                            }, 5);
+                        } else {
+                            frappe.msgprint('There was an error saving the Pre Alert Check List');
+                            console.error('Error Saving Document:', r.exc);
+                        }
                     }
-                },
-                callback: function (r) {
-                    if (!r.exc) {
-                        frappe.show_alert({
-                            message: __('Pre Alert Check List created successfully!'),
-                            indicator: 'green'
-                        }, 5);
-                    } else {
-                        frappe.msgprint('There was an error saving the Pre Alert Check List');
-                        console.error('Error Saving Document:', r.exc);
-                    }
-                }
-            });
-        }, __('Create'));
+                });
+            }, __('Create'));
+        }
 
         frm.set_query('cha', function () {
             return {
@@ -151,39 +191,118 @@ frappe.ui.form.on("Pre Alert", {
                 }
             }
         })
+
+        frm.add_custom_button("Rodtep", function () {
+            let d = new frappe.ui.form.MultiSelectDialog({
+                doctype: "Rodtep Utilization",
+                target: this.cur_frm,
+                setters: {
+                    script_date: null,
+                    remaining_amount: null,
+                },
+                add_filters_group: 1,
+                date_field: "script_date",
+                columns: ["name", "script_date", "remaining_amount"],
+                get_query() {
+                    return {
+                        filters: {
+                            docstatus: ['!=', 2],
+                            status: ['=', "Unuse"]
+                        }
+                    }
+                },
+                action: async function (selections) {
+                    d.dialog.hide();
+                    const promises = [];
+
+                    selections.forEach(function (obj) {
+                        let is_duplicate = false;
+
+                        $.each(frm.doc.rodtep_details || [], function (i, d) {
+                            if (obj === d.script_no) {
+                                is_duplicate = true;
+                                return false;
+                            }
+                        });
+
+                        if (!is_duplicate) {
+                            promises.push(
+                                frappe.call({
+                                    method: "frappe.client.get_list",
+                                    args: {
+                                        doctype: "Rodtep Utilization",
+                                        filters: {
+                                            name: obj,
+                                        },
+                                        fields: ["name", "amount", "remaining_amount", "script_date"],
+                                    },
+                                    callback: function (r) {
+                                        if (r.message && r.message.length > 0) {
+                                            let row = frm.add_child("rodtep_details");
+                                            row.script_no = obj;
+                                            row.amount = r.message[0]["remaining_amount"];
+                                            row.script_date = r.message[0]["script_date"];
+                                            frm.refresh_field("rodtep_details");
+                                        }
+                                    }
+                                })
+                            );
+                        }
+                    });
+
+                    await Promise.all(promises);
+                    calculation_of_rodtep(frm)
+                }
+            })
+            d.dialog.show()
+
+        }, __("Get Details"));
     },
     total_doc_val: function (frm) {
         var total_inr = frm.doc.exch_rate * frm.doc.total_doc_val
         frm.set_value("total_inr_val", total_inr)
     },
+    igcr: function (frm) {
+        if (frm.doc.igcr == 1) {
+            $.each(frm.doc.item_details || [], function (i, d) {
+                d.igcr = 1
+                d.category = 9
+                let hsn_code = d.hsn_code
+                let category = d.category
+                get_percentage_of_hsn_and_category_base(frm, d, hsn_code, category)
+            })
+            frm.refresh_field("item_details")
+        }
+    },
+    on_submit: function (frm) {
+        update_rodtep_base_on_used(frm)
+    }
 });
 
 frappe.ui.form.on("Pre-Alert Item Details", {
-    item_code: function (frm, cdt, cdn) {
-        var row = locals[cdt][cdn]
-        get_percentage_of_hsn_and_category_base(frm, row)
-    },
     category: function (frm, cdt, cdn) {
         var row = locals[cdt][cdn]
-        get_percentage_of_hsn_and_category_base(frm, row)
+        let hsn_code = row.hsn_code
+        let category = row.category
+        get_percentage_of_hsn_and_category_base(frm, row, hsn_code, category)
     }
 })
 
-function get_percentage_of_hsn_and_category_base(frm, row) {
-    if (row.hsn_code != undefined && row.category != undefined) {
+function get_percentage_of_hsn_and_category_base(frm, row_or_d, hsn_code, category) {
+    if (hsn_code != undefined && category != undefined) {
         frappe.call({
             method: "cn_exim.cn_exim.doctype.pre_alert.pre_alert.get_percentage_of_hsn_and_category_base",
             args: {
-                name: row.item_code,
-                category: row.category
+                name: hsn_code,
+                category: category
             },
             callback: function (response) {
                 var data = response.message
                 data.forEach(function (obj) {
-                    row.bcd_ = obj['bcd']
-                    row.hcs_ = obj['hcs']
-                    row.swl_ = obj['swl']
-                    row.igst_ = obj['igst']
+                    row_or_d.bcd_ = obj['bcd']
+                    row_or_d.hcs_ = obj['hcs']
+                    row_or_d.swl_ = obj['swl']
+                    row_or_d.igst_ = obj['igst']
                 })
                 frm.refresh_field("item_details")
             }
@@ -281,9 +400,15 @@ function calculation_tax(frm) {
         var swl_amount = (item.swl_ * swl_total) / 100
         frappe.model.set_value(item.doctype, item.name, 'swl_amount', swl_amount)
 
-        var total_igst = bcd_amount + hcs_amount + swl_amount + item.total_amount
-        var igst_amount = (item.igst_ * total_igst) / 100
+        var total_duty = bcd_amount + hcs_amount + swl_amount + item.total_amount
+        frappe.model.set_value(item.doctype, item.name, 'total_duty', total_duty)
+
+        var igst_amount = (item.igst_ * total_duty) / 100
         frappe.model.set_value(item.doctype, item.name, 'igst_amount', igst_amount)
+
+        let final_duty = item.total_duty_forgone + item.hcs_amount + item.swl_amount + item.igst_amount
+
+        frappe.model.set_value(item.doctype, item.name, "final_total_duty", final_duty)
 
         var total = item.freight_amount + item.insurance_amount + item.bcd_amount + item.hcs_amount + item.swl_amount + item.igst_amount
         frappe.model.set_value(item.doctype, item.name, 'total', total)
@@ -300,6 +425,7 @@ function total_calculations(frm) {
     let total_sws_amount = 0
     let total_igst_amount = 0
     let total_freight_amount = 0
+    let total_duty = 0
 
     frm.doc.item_details.forEach(item => {
         total_bcd_amount += item.bcd_amount
@@ -307,9 +433,9 @@ function total_calculations(frm) {
         total_sws_amount += item.swl_amount
         total_igst_amount += item.igst_amount
         total_freight_amount += item.freight_amount
+        total_duty += item.final_total_duty
     })
 
-    let total_duty = total_bcd_amount + total_h_cess_amount + total_igst_amount + total_sws_amount + total_freight_amount
     frm.set_value("bcd_amount", total_bcd_amount)
     frm.set_value("h_cess_amount", total_h_cess_amount)
     frm.set_value("sws_amount", total_sws_amount)
@@ -322,4 +448,69 @@ function total_calculations(frm) {
         indicator: 'green'
     }, 5);
 
+}
+
+
+
+function calculation_of_rodtep(frm) {
+    let rodtep_total = 0;
+    $.each(frm.doc.rodtep_details || [], function (i, d) {
+        rodtep_total += d.amount;
+    });
+
+    frm.set_value("rem_rodtep", rodtep_total);
+
+    let total_rodtep_utilization = 0
+    $.each(frm.doc.item_details || [], function (i, d) {
+        if (rodtep_total > 0) {
+            d.rodtep_utilization = rodtep_total;
+
+            let remaining = rodtep_total - d.bcd_amount;
+
+            if (remaining < 0) {
+                d.total_duty_forgone = Math.abs(remaining);
+                rodtep_total = 0;
+            } else {
+                d.total_duty_forgone = 0;
+                rodtep_total = remaining;
+            }
+        } else {
+            d.rodtep_utilization = 0;
+            d.total_duty_forgone = d.bcd_amount || 0;
+        }
+        if (d.bcd_amount != d.total_duty_forgone) {
+            total_rodtep_utilization += d.bcd_amount
+            total_rodtep_utilization -= d.total_duty_forgone
+        }
+    });
+    frm.set_value("tot_rodt_ut", total_rodtep_utilization)
+    frm.refresh_field("item_details");
+}
+
+function calculation_used_rodtep(frm) {
+    var total_rodtep_used = frm.doc.tot_rodt_ut;
+
+    $.each(frm.doc.rodtep_details || [], function (i, d) {
+        if (total_rodtep_used >= d.amount) {
+            d.used_rodtep = d.amount;
+            total_rodtep_used -= d.amount;
+        } else {
+            d.used_rodtep = total_rodtep_used;
+            total_rodtep_used = 0;
+        }
+    });
+    frm.refresh_field("rodtep_details");
+
+}
+
+function update_rodtep_base_on_used(frm) {
+    $.each(frm.doc.rodtep_details || [], function (i, d) {
+        frappe.call({
+            method: "cn_exim.cn_exim.doctype.pre_alert.pre_alert.update_rodtep",
+            args: {
+                name: d.script_no,
+                use_rodtep: d.used_rodtep
+            }
+        })
+    })
 }

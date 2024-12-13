@@ -7,23 +7,29 @@
  "engine": "InnoDB",
  "field_order": [
   "po_no",
-  "item_code",
-  "quantity",
+  "description",
   "amount",
   "insurance_amount",
-  "hsn_code",
   "category",
+  "rodtep_utilization",
   "column_break_7soa",
-  "material_name",
-  "description",
-  "item_price",
+  "item_code",
+  "quantity",
   "total_inr_value",
   "freight_amount",
-  "misc_charge_amt",
   "total_amount",
+  "total_duty_forgone",
+  "column_break_keps",
+  "material_name",
+  "item_price",
+  "hsn_code",
+  "misc_charge_amt",
+  "total_duty",
+  "igcr",
   "section_break_btbk",
   "bcd_",
   "bcd_amount",
+  "final_total_duty",
   "column_break_bknr",
   "hcs_",
   "hcs_amount",
@@ -32,9 +38,7 @@
   "swl_amount",
   "column_break_iepn",
   "igst_",
-  "igst_amount",
-  "section_break_fyss",
-  "total"
+  "igst_amount"
  ],
  "fields": [
   {
@@ -183,19 +187,40 @@
    "options": "currency"
   },
   {
-   "fieldname": "section_break_fyss",
-   "fieldtype": "Section Break"
+   "fieldname": "column_break_keps",
+   "fieldtype": "Column Break"
   },
   {
-   "fieldname": "total",
+   "default": "0",
+   "fieldname": "igcr",
+   "fieldtype": "Check",
+   "label": "IGCR"
+  },
+  {
+   "fieldname": "total_duty",
    "fieldtype": "Currency",
-   "label": "Total"
+   "label": "Total Duty"
+  },
+  {
+   "fieldname": "final_total_duty",
+   "fieldtype": "Currency",
+   "label": "Final Total Duty"
+  },
+  {
+   "fieldname": "rodtep_utilization",
+   "fieldtype": "Currency",
+   "label": "Rodtep Utilization"
+  },
+  {
+   "fieldname": "total_duty_forgone",
+   "fieldtype": "Currency",
+   "label": "Total Duty Forgone"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-19 11:54:56.717966",
+ "modified": "2024-11-29 16:27:29.670518",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Item Details",

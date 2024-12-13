@@ -11,7 +11,7 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/cn_exim/css/cn_exim.css"
-# app_include_js = "/assets/cn_exim/js/cn_exim.js"
+# app_include_js = "/assets/cn_exim/js/purchase_order.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/cn_exim/css/cn_exim.css"
@@ -32,6 +32,10 @@ doctype_js = {
     "Request for Quotation": "public/js/rfq.js",
     "Purchase Receipt": "public/js/purchase_receipt.js",
     "Item": "public/js/item.js",
+    "Purchase Order": "public/js/purchase_order.js",
+    "Purchase Invoice": "public/js/purchase_invoice.js",
+    "Landed Cost Voucher": "public/js/landed_cost_voucher.js",
+    "Bill of Entry": "public/js/bill_of_entry.js"
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

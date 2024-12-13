@@ -20,19 +20,9 @@
   "total_doc_val",
   "column_break_qfjw",
   "total_inr_val",
-  "section_break_emlr",
-  "freight_amt",
-  "insurance_amount",
-  "column_break_kwgh",
-  "ex_works",
-  "insurance",
-  "column_break_zyyj",
-  "other_charges",
-  "accessible_val",
   "section_break_bccj",
   "house_number",
   "invoice_dt",
-  "invoice_details",
   "column_break_lsky",
   "master_number",
   "eta",
@@ -44,13 +34,21 @@
   "tot_rodt_ut",
   "column_break_6qpd",
   "courier",
-  "igcr",
+  "rem_rodtep",
   "column_break_cbel",
   "payment_type",
+  "igcr",
   "column_break_2omd",
   "iin_number",
-  "column_break_o1im",
-  "rem_rodtep",
+  "section_break_emlr",
+  "freight_amt",
+  "insurance",
+  "column_break_kwgh",
+  "ex_works",
+  "insurance_amount",
+  "column_break_zyyj",
+  "other_charges",
+  "accessible_val",
   "section_break_oobu",
   "item_details",
   "amended_from",
@@ -65,14 +63,16 @@
   "total_duty",
   "section_break_feze",
   "remarks",
+  "rodtep_tab",
+  "rodtep_details",
   "attach_document_tab",
-  "attach_document"
+  "attach_document",
+  "connections_tab"
  ],
  "fields": [
   {
    "fieldname": "pre_alert_header_details_section",
-   "fieldtype": "Section Break",
-   "label": "Pre Alert Header Details"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "pickup_request",
@@ -110,15 +110,6 @@
    "label": "Freight Amount"
   },
   {
-   "fieldname": "column_break_o1im",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "invoice_details",
-   "fieldtype": "Attach",
-   "label": "Invoice Details"
-  },
-  {
    "fieldname": "rfq_number",
    "fieldtype": "Link",
    "label": "RFQ Number",
@@ -149,32 +140,38 @@
   {
    "fieldname": "accessible_val",
    "fieldtype": "Currency",
-   "label": "Accessible Val"
+   "label": "Accessible Val",
+   "read_only": 1
   },
   {
    "fieldname": "bcd_amount",
    "fieldtype": "Currency",
-   "label": "Total BCD Amount"
+   "label": "Total BCD Amount",
+   "read_only": 1
   },
   {
    "fieldname": "h_cess_amount",
    "fieldtype": "Currency",
-   "label": "Total HCS Amount"
+   "label": "Total HCS Amount",
+   "read_only": 1
   },
   {
    "fieldname": "sws_amount",
    "fieldtype": "Currency",
-   "label": "Total SWS Amount"
+   "label": "Total SWS Amount",
+   "read_only": 1
   },
   {
    "fieldname": "igst_amount",
    "fieldtype": "Currency",
-   "label": "Total IGST Amount"
+   "label": "Total IGST Amount",
+   "read_only": 1
   },
   {
    "fieldname": "total_duty",
    "fieldtype": "Currency",
-   "label": "Total Duty"
+   "label": "Total Duty",
+   "read_only": 1
   },
   {
    "fieldname": "house_number",
@@ -248,7 +245,8 @@
   {
    "fieldname": "total_freight",
    "fieldtype": "Currency",
-   "label": "Total Freight"
+   "label": "Total Freight",
+   "read_only": 1
   },
   {
    "fieldname": "rem_rodtep",
@@ -371,6 +369,23 @@
    "fieldtype": "Table",
    "label": "Attach Document",
    "options": "Attach Document"
+  },
+  {
+   "fieldname": "rodtep_tab",
+   "fieldtype": "Tab Break",
+   "label": "Rodtep"
+  },
+  {
+   "fieldname": "rodtep_details",
+   "fieldtype": "Table",
+   "label": "Rodtep Details",
+   "options": "Rodtape Details"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -385,7 +400,7 @@
    "link_fieldname": "pre_alert_request"
   }
  ],
- "modified": "2024-11-22 11:41:45.409163",
+ "modified": "2024-12-11 15:30:32.473653",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre Alert",

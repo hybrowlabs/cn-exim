@@ -38,6 +38,7 @@
   "pod",
   "section_break_wmor",
   "purchase_order_list",
+  "get_pos",
   "section_break_4pdi",
   "purchase_order_details",
   "section_break_nzcy",
@@ -46,7 +47,8 @@
   "section_break_kjsg",
   "remarks",
   "document_attech_tab",
-  "attach_document"
+  "attach_document",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -140,13 +142,16 @@
    "columns": 2,
    "fieldname": "remarks",
    "fieldtype": "Small Text",
-   "label": "Remarks"
+   "in_list_view": 1,
+   "label": "Remarks",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_wmor",
    "fieldtype": "Section Break"
   },
   {
+   "allow_bulk_edit": 1,
    "fieldname": "purchase_order_list",
    "fieldtype": "Table",
    "label": "Purchase Order List",
@@ -266,6 +271,17 @@
    "fieldtype": "Table",
    "label": "Transport Locations",
    "options": "Transport Stops"
+  },
+  {
+   "fieldname": "get_pos",
+   "fieldtype": "Button",
+   "label": "Get Po's"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -286,7 +302,7 @@
    "table_fieldname": "item_details"
   }
  ],
- "modified": "2024-11-22 14:41:43.365473",
+ "modified": "2024-12-11 15:28:55.138802",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
