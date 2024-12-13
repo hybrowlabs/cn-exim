@@ -10,7 +10,7 @@ frappe.ui.form.on('Rodtep Claim', {
             }
         }
 		frappe.call({
-			method : "rodtep_claim_management.rodtep_claim_management.doctype.rodtep_claim.rodtep_claim.journal_entry_list",
+			method : "cn_exim.cn_exim.doctype.rodtep_claim.rodtep_claim.journal_entry_list",
 			args:{
 				"start_date":frm.doc.start_date,
 				"end_date":frm.doc.end_date,

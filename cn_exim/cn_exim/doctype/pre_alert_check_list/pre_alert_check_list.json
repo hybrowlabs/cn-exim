@@ -74,9 +74,12 @@
   "charge_type",
   "column_break_lbdw",
   "account_head",
+  "section_break_yjnb",
+  "rodtape_details",
   "tab_3_tab",
   "table_qjql",
-  "amended_from"
+  "amended_from",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -437,6 +440,22 @@
    "fieldname": "table_qjql",
    "fieldtype": "Table",
    "options": "Attach Document"
+  },
+  {
+   "fieldname": "section_break_yjnb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rodtape_details",
+   "fieldtype": "Table",
+   "label": "Rodtape Details",
+   "options": "Rodtape Details"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -447,7 +466,7 @@
    "link_fieldname": "custom_prealert_check_list"
   }
  ],
- "modified": "2024-11-25 11:27:43.784946",
+ "modified": "2024-12-11 15:33:58.077118",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",

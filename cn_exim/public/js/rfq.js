@@ -55,74 +55,74 @@ frappe.ui.form.on("Request for Quotation", {
             }
         })
     },
-    refresh: function (frm) {
+    // refresh: function (frm) {
+        // if you create all supplier quotation in one click then used this code
+        // function remove_custom_button(label, group) {
+        //     if (group) {
+        //         frm.page.remove_inner_button(label, group);
+        //     } else {
+        //         frm.page.remove_inner_button(label);
+        //     }
+        // }
 
-        function remove_custom_button(label, group) {
-            if (group) {
-                frm.page.remove_inner_button(label, group);
-            } else {
-                frm.page.remove_inner_button(label);
-            }
-        }
+        // remove_custom_button('Supplier Quotation', 'Create');
 
-        remove_custom_button('Supplier Quotation', 'Create');
+        // frm.add_custom_button("Supplier Quotations", function () {
+        //     let items_details = []
+        //     frm.doc.items.forEach(item => {
+        //         items_details.push({
+        //             'item_code': item.item_code,
+        //             'item_name': item.item_name,
+        //             'description': item.description,
+        //             'qty': item.qty,
+        //             'uom': item.uom,
+        //             'expected_delivery_date': item.schedule_date,
+        //             'request_for_quotation': frm.doc.name,
 
-        frm.add_custom_button("Supplier Quotations", function () {
-            let items_details = []
-            frm.doc.items.forEach(item => {
-                items_details.push({
-                    'item_code': item.item_code,
-                    'item_name': item.item_name,
-                    'description': item.description,
-                    'qty': item.qty,
-                    'uom': item.uom,
-                    'expected_delivery_date': item.schedule_date,
-                    'request_for_quotation': frm.doc.name,
+        //         })
+        //     })
 
-                })
-            })
-
-            frm.doc.suppliers.forEach(item => {
-                frappe.call({
-                    method: 'frappe.client.insert',
-                    args: {
-                        doc: {
-                            'doctype': "Supplier Quotation",
-                            'supplier': item.supplier,
-                            'custom_type': frm.doc.custom_type,
-                            'custom_pickup_request': frm.doc.custom_pickup_request,
-                            'valid_till': frm.doc.schedule_date,
-                            'custom_shipment_mode': frm.doc.custom_mode_of_shipment,
-                            'custom_shipment_type': frm.doc.custom_shipment_type,
-                            'custom_port_of_loading': frm.doc.custom_port_of_loading,
-                            'custom_country': frm.doc.custom_country,
-                            'custom_port_code': frm.doc.custom_port_code,
-                            'custom_package_type': frm.doc.custom_package_type,
-                            'custom_eda': frm.doc.custom_eda,
-                            'custom_no_of_pkg_unit': frm.doc.custom_no_of_pkg_units,
-                            'custom_shipment_date': frm.doc.custom_shipment_date,
-                            'custom_port_of_destination': frm.doc.custom_port_of_destination,
-                            'custom_actual_weight': frm.doc.custom_actual_weights,
-                            'custom_product_category': frm.doc.custom_product_category,
-                            'custom_vol_weightkg': frm.doc.custom_vol_weight,
-                            'custom_remarks': frm.doc.custom_remarks,
-                            'items': items_details,
-                            'incoterm': frm.doc.custom_inco_terms,
-                        },
-                    },
-                    callback: function (r) {
-                        if (!r.exc) {
-                            frappe.show_alert({
-                                message: __('Pre Supplier Quotation created successfully!'),
-                                indicator: 'green'
-                            }, 5);
-                        } else {
-                            frappe.msgprint('There was an error saving the Pre Alert Check List');
-                            console.error('Error Saving Document:', r.exc);
-                        }
-                    }
-                })
-            })
-        }, ("Create"))
-    }
+        //     frm.doc.suppliers.forEach(item => {
+        //         frappe.call({
+        //             method: 'frappe.client.insert',
+        //             args: {
+        //                 doc: {
+        //                     'doctype': "Supplier Quotation",
+        //                     'supplier': item.supplier,
+        //                     'custom_type': frm.doc.custom_type,
+        //                     'custom_pickup_request': frm.doc.custom_pickup_request,
+        //                     'valid_till': frm.doc.schedule_date,
+        //                     'custom_shipment_mode': frm.doc.custom_mode_of_shipment,
+        //                     'custom_shipment_type': frm.doc.custom_shipment_type,
+        //                     'custom_port_of_loading': frm.doc.custom_port_of_loading,
+        //                     'custom_country': frm.doc.custom_country,
+        //                     'custom_port_code': frm.doc.custom_port_code,
+        //                     'custom_package_type': frm.doc.custom_package_type,
+        //                     'custom_eda': frm.doc.custom_eda,
+        //                     'custom_no_of_pkg_unit': frm.doc.custom_no_of_pkg_units,
+        //                     'custom_shipment_date': frm.doc.custom_shipment_date,
+        //                     'custom_port_of_destination': frm.doc.custom_port_of_destination,
+        //                     'custom_actual_weight': frm.doc.custom_actual_weights,
+        //                     'custom_product_category': frm.doc.custom_product_category,
+        //                     'custom_vol_weightkg': frm.doc.custom_vol_weight,
+        //                     'custom_remarks': frm.doc.custom_remarks,
+        //                     'items': items_details,
+        //                     'incoterm': frm.doc.custom_inco_terms,
+        //                 },
+        //             },
+        //             callback: function (r) {
+        //                 if (!r.exc) {
+        //                     frappe.show_alert({
+        //                         message: __('Pre Supplier Quotation created successfully!'),
+        //                         indicator: 'green'
+        //                     }, 5);
+        //                 } else {
+        //                     frappe.msgprint('There was an error saving the Pre Alert Check List');
+        //                     console.error('Error Saving Document:', r.exc);
+        //                 }
+        //             }
+        //         })
+        //     })
+        // }, ("Create"))
+    // }
 })

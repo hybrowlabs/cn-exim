@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-27 14:22:41.837678",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "script_no",
+  "amount",
+  "column_break_kidk",
+  "script_date",
+  "used_rodtep"
+ ],
+ "fields": [
+  {
+   "fieldname": "script_no",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Script no",
+   "options": "Rodtep Utilization"
+  },
+  {
+   "fetch_from": "script_no.amount",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "fieldname": "column_break_kidk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "script_no.script_date",
+   "fieldname": "script_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Script Date"
+  },
+  {
+   "fieldname": "used_rodtep",
+   "fieldtype": "Currency",
+   "label": "Used Rodtep",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-12-02 10:35:13.083808",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Rodtape Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

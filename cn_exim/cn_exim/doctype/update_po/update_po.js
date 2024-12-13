@@ -103,6 +103,7 @@ frappe.ui.form.on("Update Po", {
                         },
                         callback: function (r) {
                             if (!r.exc) {
+                                frappe.set_route("Form", "PUrchase Receipt", r.message['name'])
                                 frappe.show_alert({
                                     message: __('Purchase Receipt created successfully!'),
                                     indicator: 'green'

@@ -32,7 +32,8 @@
   "section_break_yjdd",
   "handover_to_person",
   "handover_remark",
-  "amended_from"
+  "amended_from",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -176,12 +177,18 @@
   {
    "fieldname": "column_break_crir",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-23 11:45:57.611832",
+ "modified": "2024-12-11 15:34:55.490234",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
