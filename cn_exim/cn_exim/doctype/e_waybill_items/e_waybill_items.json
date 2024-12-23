@@ -7,15 +7,18 @@
  "engine": "InnoDB",
  "field_order": [
   "purchase_order",
-  "order_quantity",
+  "qty",
   "total_inr_value",
+  "gst_treatment",
   "column_break_swsj",
   "item_code",
   "plant",
-  "total_charges_of_types",
+  "gst_hsn_code",
+  "taxable_value",
   "column_break_nmhl",
   "item_name",
-  "currency"
+  "currency",
+  "uom"
  ],
  "fields": [
   {
@@ -24,12 +27,6 @@
    "in_list_view": 1,
    "label": "Purchase Order",
    "options": "Purchase Order"
-  },
-  {
-   "fieldname": "order_quantity",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Order Quantity"
   },
   {
    "fieldname": "total_inr_value",
@@ -56,12 +53,6 @@
    "options": "Plant"
   },
   {
-   "fieldname": "total_charges_of_types",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Total charges of types"
-  },
-  {
    "fieldname": "column_break_nmhl",
    "fieldtype": "Column Break"
   },
@@ -77,12 +68,43 @@
    "in_list_view": 1,
    "label": "Currency",
    "options": "Currency"
+  },
+  {
+   "fetch_from": "item_code.stock_uom",
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "Uom",
+   "options": "UOM"
+  },
+  {
+   "fetch_from": "item_code.gst_hsn_code",
+   "fieldname": "gst_hsn_code",
+   "fieldtype": "Link",
+   "label": "HSN Code",
+   "options": "GST HSN Code"
+  },
+  {
+   "fieldname": "gst_treatment",
+   "fieldtype": "Autocomplete",
+   "label": "GST Treatment",
+   "options": "Taxable\nZero-Rated\nNil-Rated\nExempted\nNon-GST"
+  },
+  {
+   "fieldname": "taxable_value",
+   "fieldtype": "Currency",
+   "label": "Taxable Value"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-12 14:18:15.331234",
+ "modified": "2024-12-18 14:21:08.915705",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "E Waybill Items",

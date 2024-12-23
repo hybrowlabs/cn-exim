@@ -1,9 +1,9 @@
 frappe.ui.form.on("Update Po", {
-    pre_alert_request(frm, cdt, cdn) {
+    pre_alert_check_list(frm, cdt, cdn) {
         frappe.call({
             method: "cn_exim.cn_exim.doctype.update_po.update_po.get_items_details_form_pre_alert",
             args: {
-                name: frm.doc.pre_alert_request
+                name: frm.doc.pre_alert_check_list
             },
             callback: function (response) {
                 var items_data = response.message

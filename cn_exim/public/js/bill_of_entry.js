@@ -10,17 +10,16 @@ frappe.ui.form.on("Bill of Entry", {
                         pre_alert_check_list: frm.doc.custom_prealert_check_list
                     },
                     callback: function (r) {
-                        let data = r.message
+                        let data = r.message[0]
+                        let parent_date = r.message[1]
                         let total_amount = 0
                         data.forEach(item => {
-                            let total_charge = item.bcd_amount + item.hcs_amount + item.swl_amount + item.igst_amount
                             items.push({
                                 purchase_order: item.po_no,
                                 item_code: item.item_code,
                                 item_name: item.material_name,
-                                order_quantity: item.quantity,
+                                qty: item.quantity,
                                 total_inr_value: item.total_amount,
-                                total_charges_of_types: total_charge,
                             })
                             total_amount += item.total_amount
                         })
@@ -29,10 +28,12 @@ frappe.ui.form.on("Bill of Entry", {
                             args: {
                                 doc: {
                                     doctype: "E-way Bill",
-                                    bill_of_entry: frm.doc.name,
+                                    select_doctype:frm.doctype,
+                                    doctype_id: frm.doc.name,
                                     pre_alert_check_list: frm.doc.custom_prealert_check_list,
                                     total_amount: total_amount,
-                                    e_waybill_items: items
+                                    supplier:parent_date[0]['vendor'],
+                                    items: items
                                 }
                             },
                             callback: function (r) {
