@@ -8,7 +8,7 @@
  "field_order": [
   "details_section",
   "naming_series",
-  "pre_alert_request",
+  "pre_alert_check_list",
   "pickup_request",
   "rfq_no",
   "vendor",
@@ -20,6 +20,7 @@
   "sws_amount",
   "igst_amount",
   "total_duty",
+  "e_way_bill",
   "column_break_qnke",
   "freight_amount",
   "ex_works",
@@ -64,41 +65,35 @@
    "search_index": 1
   },
   {
-   "fieldname": "pre_alert_request",
-   "fieldtype": "Link",
-   "label": "Pre Alert Request",
-   "options": "Pre Alert"
-  },
-  {
-   "fetch_from": "pre_alert_request.pickup_request",
+   "fetch_from": "pre_alert_check_list.pickup_request",
    "fieldname": "pickup_request",
    "fieldtype": "Link",
    "label": "Pickup Request",
    "options": "Pickup Request"
   },
   {
-   "fetch_from": "pre_alert_request.rfq_number",
+   "fetch_from": "pre_alert_check_list.rfq_number",
    "fieldname": "rfq_no",
    "fieldtype": "Link",
    "label": "RFQ No",
    "options": "Request for Quotation"
   },
   {
-   "fetch_from": "pre_alert_request.vendor",
+   "fetch_from": "pickup_request.name_of_supplier",
    "fieldname": "vendor",
    "fieldtype": "Link",
    "label": "Vendor",
    "options": "Supplier"
   },
   {
-   "fetch_from": "pre_alert_request.currency",
+   "fetch_from": "pre_alert_check_list.currency",
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency"
   },
   {
-   "fetch_from": "pre_alert_request.exch_rate",
+   "fetch_from": "pre_alert_check_list.exch_rate",
    "fieldname": "exchange_rate",
    "fieldtype": "Currency",
    "label": "Exchange Rate",
@@ -109,31 +104,31 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "pre_alert_request.bcd_amount",
+   "fetch_from": "pre_alert_check_list.bcd_amount",
    "fieldname": "bcd_amount",
    "fieldtype": "Currency",
    "label": "BCD Amount"
   },
   {
-   "fetch_from": "pre_alert_request.h_cess_amount",
+   "fetch_from": "pre_alert_check_list.h_cess_amount",
    "fieldname": "hcs_amount",
    "fieldtype": "Currency",
    "label": "HCS Amount"
   },
   {
-   "fetch_from": "pre_alert_request.sws_amount",
+   "fetch_from": "pre_alert_check_list.sws_amount",
    "fieldname": "sws_amount",
    "fieldtype": "Currency",
    "label": "SWS Amount"
   },
   {
-   "fetch_from": "pre_alert_request.igst_amount",
+   "fetch_from": "pre_alert_check_list.igst_amount",
    "fieldname": "igst_amount",
    "fieldtype": "Currency",
    "label": "IGST Amount"
   },
   {
-   "fetch_from": "pre_alert_request.total_duty",
+   "fetch_from": "pre_alert_check_list.total_duty",
    "fieldname": "total_duty",
    "fieldtype": "Currency",
    "label": "Total Duty"
@@ -143,31 +138,31 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "pre_alert_request.freight_amt",
+   "fetch_from": "pre_alert_check_list.freight_amt",
    "fieldname": "freight_amount",
    "fieldtype": "Currency",
    "label": "Freight Amount"
   },
   {
-   "fetch_from": "pre_alert_request.ex_works",
+   "fetch_from": "pre_alert_check_list.ex_works",
    "fieldname": "ex_works",
    "fieldtype": "Currency",
    "label": "Ex-Works"
   },
   {
-   "fetch_from": "pre_alert_request.other_charges",
+   "fetch_from": "pre_alert_check_list.other_charges",
    "fieldname": "other_charges",
    "fieldtype": "Currency",
    "label": "Other Charges"
   },
   {
-   "fetch_from": "pre_alert_request.insurance_amount",
+   "fetch_from": "pre_alert_check_list.insurance_amount",
    "fieldname": "insurance_amount",
    "fieldtype": "Currency",
    "label": "Insurance Amount"
   },
   {
-   "fetch_from": "pre_alert_request.insurance",
+   "fetch_from": "pre_alert_check_list.insurance",
    "fieldname": "insurance_",
    "fieldtype": "Percent",
    "label": "Insurance %"
@@ -177,13 +172,13 @@
    "fieldtype": "Section Break"
   },
   {
-   "fetch_from": "pre_alert_request.house_number",
+   "fetch_from": "pre_alert_check_list.house_number",
    "fieldname": "house_number",
    "fieldtype": "Data",
    "label": "House Number"
   },
   {
-   "fetch_from": "pre_alert_request.total_inr_val",
+   "fetch_from": "pre_alert_check_list.total_inr_val",
    "fieldname": "total_inr_value",
    "fieldtype": "Currency",
    "label": "Total Inr Value"
@@ -193,13 +188,13 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "pre_alert_request.master_number",
+   "fetch_from": "pre_alert_check_list.master_number",
    "fieldname": "master_number",
    "fieldtype": "Data",
    "label": "Master Number"
   },
   {
-   "fetch_from": "pre_alert_request.accessible_val",
+   "fetch_from": "pre_alert_check_list.accessible_val",
    "fieldname": "accessible_value",
    "fieldtype": "Currency",
    "label": "Accessible Value"
@@ -280,6 +275,18 @@
    "fieldtype": "Tab Break",
    "label": "Connections",
    "show_dashboard": 1
+  },
+  {
+   "fieldname": "pre_alert_check_list",
+   "fieldtype": "Link",
+   "label": "Pre Alert Check list",
+   "options": "Pre-Alert Check List"
+  },
+  {
+   "fieldname": "e_way_bill",
+   "fieldtype": "Link",
+   "label": "E-way Bill",
+   "options": "E-way Bill"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -290,7 +297,7 @@
    "link_fieldname": "custom_update_po_number"
   }
  ],
- "modified": "2024-12-11 15:34:16.068851",
+ "modified": "2024-12-23 16:39:33.607258",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Update Po",

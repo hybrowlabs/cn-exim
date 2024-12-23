@@ -1,3 +1,4 @@
+
 app_name = "cn_exim"
 app_title = "Cn Exim"
 app_publisher = "Prathamesh Jadhav"
@@ -8,6 +9,10 @@ app_license = "mit"
 
 # Includes in <head>
 # ------------------
+
+
+# Import the override file to apply monkey patch
+# after_migrate = ["cn_exim.overrides.e_waybill_override"]
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/cn_exim/css/cn_exim.css"
@@ -35,7 +40,7 @@ doctype_js = {
     "Purchase Order": "public/js/purchase_order.js",
     "Purchase Invoice": "public/js/purchase_invoice.js",
     "Landed Cost Voucher": "public/js/landed_cost_voucher.js",
-    "Bill of Entry": "public/js/bill_of_entry.js"
+    "Bill of Entry": "public/js/bill_of_entry.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -136,25 +141,17 @@ doc_events = {
     "Supplier Quotation": {
         "validate": "cn_exim.cn_exim.api.validate_date",
     },
-    "Journal Entry":
-	{
-		"on_cancel": "cn_exim.cn_exim.doc_events.journal_entry.on_cancel"
-	},
-	"EMD":
-	{
-		"validate":"cn_exim.cn_exim.doctype.emd.emd.validate"
-	}
+    "Journal Entry": {
+        "on_cancel": "cn_exim.cn_exim.doc_events.journal_entry.on_cancel"
+    },
+    "EMD": {"validate": "cn_exim.cn_exim.doctype.emd.emd.validate"},
 }
 
 # Scheduled Tasks
 # ---------------
 scheduler_events = {
-	"weekly": [
-		"cn_exim.cn_exim.doctype.emd.emd.send_emails"
-	],
-	"daily": [
-		"cn_exim.cn_exim.doctype.emd.emd.change_status_on_due"
-	]
+    "weekly": ["cn_exim.cn_exim.doctype.emd.emd.send_emails"],
+    "daily": ["cn_exim.cn_exim.doctype.emd.emd.change_status_on_due"],
 }
 
 # Testing
@@ -166,7 +163,7 @@ scheduler_events = {
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "cn_exim.event.get_events"
+	# "frappe.desk.doctype.event.event.get_events": "cn_exim.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
@@ -232,4 +229,5 @@ scheduler_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+
 

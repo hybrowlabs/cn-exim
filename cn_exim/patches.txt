@@ -5,3 +5,4 @@
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrate00d
 # cn_exim.cn_exim.patches.create_email_template_for_emd #27-11-2024
+cn_exim.overrides.e_waybill_override.edit_eway_bill_constants

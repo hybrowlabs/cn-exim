@@ -7,28 +7,40 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "bill_of_entry",
+  "select_doctype",
+  "doctype_id",
   "pre_alert_check_list",
   "supplier",
   "supplier_name",
+  "posting_date",
+  "company",
+  "is_return",
   "column_break_lfew",
-  "e_way_bill_no",
+  "ewaybill",
   "supplier_address",
   "address",
+  "company_gstin",
+  "place_of_supply",
   "section_break_3dfc",
-  "e_waybill_items",
+  "items",
   "section_break_bfav",
   "total_amount",
   "column_break_zdvk",
+  "base_grand_total",
   "amended_from",
+  "section_break_wyci",
+  "taxes_and_charges",
+  "taxes",
   "e_waybill_info_tab",
   "e_waybill_address",
   "bill_from",
   "bill_from_address",
-  "bill_from_gst_category",
+  "from_gstin",
+  "gst_category",
   "column_break_wujy",
   "bill_to",
   "bill_to_address",
+  "to_gstin",
   "bill_to_gst_category",
   "destination_of_supply",
   "section_break_zheb",
@@ -43,13 +55,20 @@
   "driver",
   "transport_receipt_no",
   "vehicle_no",
-  "distance_in_km",
+  "distance",
+  "lr_date",
   "column_break_hnez",
   "transporter_name",
   "mode_of_transport",
   "driver_name",
   "ransport_receipt_date",
-  "gst_vehicle_type"
+  "gst_vehicle_type",
+  "lr_no",
+  "section_break_jloi",
+  "supply_type",
+  "column_break_nwsz",
+  "sub_supply_type",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -81,12 +100,6 @@
   {
    "fieldname": "column_break_lfew",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "e_way_bill_no",
-   "fieldtype": "Data",
-   "label": "E-Way Bill No",
-   "read_only": 1
   },
   {
    "fetch_from": "supplier.supplier_primary_address",
@@ -155,11 +168,6 @@
    "options": "Regular\nOver Dimensional Cargo (ODC)"
   },
   {
-   "fieldname": "distance_in_km",
-   "fieldtype": "Float",
-   "label": "Distance (in km)"
-  },
-  {
    "fetch_from": "transporter.supplier_name",
    "fieldname": "transporter_name",
    "fieldtype": "Data",
@@ -189,21 +197,18 @@
    "label": "e-Waybill Address"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "bill_from",
    "fieldtype": "Link",
    "label": "Bill From",
    "options": "Address"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "bill_from_address",
    "fieldtype": "Text Editor",
    "label": "Bill From Address",
    "read_only": 1
-  },
-  {
-   "fieldname": "bill_from_gst_category",
-   "fieldtype": "Data",
-   "label": "Bill From GST Category"
   },
   {
    "fieldname": "column_break_wujy",
@@ -222,6 +227,7 @@
    "read_only": 1
   },
   {
+   "fetch_from": "bill_to.gst_category",
    "fieldname": "bill_to_gst_category",
    "fieldtype": "Data",
    "label": "Bill To GST Category"
@@ -237,12 +243,14 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "ship_from",
    "fieldtype": "Link",
    "label": "Ship From",
    "options": "Address"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "ship_from_address",
    "fieldtype": "Text Editor",
    "label": "Ship From Address",
@@ -265,20 +273,8 @@
    "read_only": 1
   },
   {
-   "fieldname": "e_waybill_items",
-   "fieldtype": "Table",
-   "label": "E Waybill Items",
-   "options": "E Waybill Items"
-  },
-  {
    "fieldname": "section_break_bfav",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "bill_of_entry",
-   "fieldtype": "Link",
-   "label": "Bill Of Entry",
-   "options": "Bill of Entry"
   },
   {
    "fetch_from": "bill_of_entry.custom_prealert_check_list",
@@ -295,12 +291,155 @@
   {
    "fieldname": "column_break_zdvk",
    "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fetch_from": "bill_from.gstin",
+   "fieldname": "from_gstin",
+   "fieldtype": "Data",
+   "label": "From GSTIN"
+  },
+  {
+   "fetch_from": "bill_to.gstin",
+   "fieldname": "to_gstin",
+   "fieldtype": "Data",
+   "label": "To GSTIN"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "distance",
+   "fieldtype": "Float",
+   "label": "Distance (in km)"
+  },
+  {
+   "fieldname": "lr_no",
+   "fieldtype": "Data",
+   "label": "Lr No"
+  },
+  {
+   "fieldname": "lr_date",
+   "fieldtype": "Date",
+   "label": "Lr Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "ewaybill",
+   "fieldtype": "Data",
+   "label": "E-Way Bill No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "E Waybill Items",
+   "options": "E Waybill Items"
+  },
+  {
+   "fetch_from": "company.gstin",
+   "fetch_if_empty": 1,
+   "fieldname": "company_gstin",
+   "fieldtype": "Data",
+   "label": "Company GSTIN",
+   "read_only": 1
+  },
+  {
+   "fieldname": "base_grand_total",
+   "fieldtype": "Currency",
+   "label": "Base Grand Total"
+  },
+  {
+   "fetch_from": "bill_from.gst_category",
+   "fieldname": "gst_category",
+   "fieldtype": "Data",
+   "label": "Bill From GST Category"
+  },
+  {
+   "fieldname": "place_of_supply",
+   "fieldtype": "Autocomplete",
+   "label": "Place of Supply",
+   "options": "01-Jammu and Kashmir\n02-Himachal Pradesh\n03-Punjab\n04-Chandigarh\n05-Uttarakhand\n06-Haryana\n07-Delhi\n08-Rajasthan\n09-Uttar Pradesh\n10-Bihar\n11-Sikkim\n12-Arunachal Pradesh\n13-Nagaland\n14-Manipur\n15-Mizoram\n16-Tripura\n17-Meghalaya\n18-Assam\n19-West Bengal\n20-Jharkhand\n21-Odisha\n22-Chhattisgarh\n23-Madhya Pradesh\n24-Gujarat\n26-Dadra and Nagar Haveli and Daman and Diu\n27-Maharashtra\n29-Karnataka\n30-Goa\n31-Lakshadweep Islands\n32-Kerala\n33-Tamil Nadu\n34-Puducherry\n35-Andaman and Nicobar Islands\n36-Telangana\n37-Andhra Pradesh\n38-Ladakh\n96-Other Countries\n97-Other Territory"
+  },
+  {
+   "fieldname": "section_break_wyci",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "taxes",
+   "fieldtype": "Table",
+   "label": "Estimated Taxes",
+   "options": "India Compliance Taxes and Charges"
+  },
+  {
+   "fieldname": "taxes_and_charges",
+   "fieldtype": "Link",
+   "label": "Taxes and Charges Template",
+   "options": "Sales Taxes and Charges Template"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_return",
+   "fieldtype": "Check",
+   "label": "Is Return"
+  },
+  {
+   "fieldname": "section_break_jloi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "supply_type",
+   "fieldtype": "Select",
+   "label": "Supply Type",
+   "options": "Inward\nOutward"
+  },
+  {
+   "fieldname": "column_break_nwsz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sub_supply_type",
+   "fieldtype": "Select",
+   "label": "Sub Supply Type",
+   "options": "Import\nExport\nJob Work\nOthers"
+  },
+  {
+   "fieldname": "select_doctype",
+   "fieldtype": "Link",
+   "label": "DocType",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "doctype_id",
+   "fieldtype": "Dynamic Link",
+   "label": "Doctype Id",
+   "options": "select_doctype"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-12-12 16:55:36.815342",
+ "links": [
+  {
+   "link_doctype": "Update Po",
+   "link_fieldname": "e_way_bill"
+  }
+ ],
+ "modified": "2024-12-23 16:53:57.668915",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "E-way Bill",
