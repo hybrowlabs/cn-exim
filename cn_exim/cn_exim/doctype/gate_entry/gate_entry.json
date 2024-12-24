@@ -1,18 +1,18 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:gate_entry_no",
+ "autoname": "naming_series:",
  "creation": "2024-09-30 12:22:04.410771",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "gate_entry_no",
-  "purchase_no",
   "column_break_ughx",
-  "gate_entry_date",
   "supplier",
-  "column_break_bhln",
   "supplier_name",
+  "column_break_bhln",
+  "gate_entry_date",
   "section_break_khbh",
   "vehicle_no",
   "column_break_ggqh",
@@ -29,6 +29,8 @@
   "service_name",
   "quantity_received",
   "received_remark",
+  "section_break_cpls",
+  "gate_entry_details",
   "section_break_yjdd",
   "handover_to_person",
   "handover_remark",
@@ -43,7 +45,7 @@
    "label": "Gate Entry Date"
   },
   {
-   "fetch_from": "purchase_no.supplier_name",
+   "fetch_from": "supplier.supplier_name",
    "fieldname": "supplier_name",
    "fieldtype": "Data",
    "label": "Supplier Name"
@@ -72,13 +74,6 @@
    "fieldname": "driver_mobile_no",
    "fieldtype": "Int",
    "label": "Driver Mobile No"
-  },
-  {
-   "fieldname": "purchase_no",
-   "fieldtype": "Link",
-   "label": "Purchase No",
-   "options": "Purchase Order",
-   "reqd": 1
   },
   {
    "fieldname": "challan_no",
@@ -111,10 +106,8 @@
   },
   {
    "fieldname": "gate_entry_no",
-   "fieldtype": "Int",
-   "in_list_view": 1,
+   "fieldtype": "Data",
    "label": "Gate Entry No",
-   "reqd": 1,
    "unique": 1
   },
   {
@@ -183,16 +176,34 @@
    "fieldtype": "Tab Break",
    "label": "Connections",
    "show_dashboard": 1
+  },
+  {
+   "fieldname": "section_break_cpls",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "gate_entry_details",
+   "fieldtype": "Table",
+   "label": "Gate Entry Details",
+   "options": "Gate Entry Details"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Gate Entry series",
+   "options": "GEN-.###",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-11 15:34:55.490234",
+ "modified": "2024-12-24 10:39:49.228418",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
- "naming_rule": "By fieldname",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
