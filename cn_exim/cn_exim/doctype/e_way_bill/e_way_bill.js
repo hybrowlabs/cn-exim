@@ -87,6 +87,49 @@ frappe.ui.form.on("E-way Bill", {
                     }
                 })
             }, __("Create"))
+
+            frm.add_custom_button("Gate Entry", function () {
+                let item_list = []
+                let po_no = ''
+                $.each(frm.doc.items || [], function (i, d) {
+                    item_list.push({
+                        purchase_order: d.purchase_order,
+                        item: d.item_code,
+                        item_name: d.item_name,
+                        uom: d.uom,
+                        // rate
+                        amount: d.total_inr_value,
+                        qty: d.qty,
+                    })
+                    po_no = d.purchase_order
+                })
+                frappe.call({
+                    method: "frappe.client.get_list",
+                    args: {
+                        doctype: "Purchase Order",
+                        filters: {
+                            name: po_no
+                        },
+                        fields: ['supplier', 'supplier_name']
+                    },
+                    callback: function (r) {
+                        frappe.call({
+                            method: "frappe.client.insert",
+                            args: {
+                                doc: {
+                                    doctype: "Gate Entry",
+                                    supplier: r.message[0]['supplier'],
+                                    supplier_name: r.message[0]['supplier_name'],
+                                    gate_entry_details: item_list,
+                                }
+                            },
+                            callback: function (r) {
+                                frappe.set_route("Form", "Gate Entry", r.message['name'])
+                            }
+                        })
+                    }
+                })
+            }, __("Create"))
         }
 
         frappe.call({
@@ -103,22 +146,20 @@ frappe.ui.form.on("E-way Bill", {
 
                     $(document)
                         .find(".form-sidebar .sidebar-image-section")
-                        .after(                            `
+                        .after(`
                             <div class="sidebar-menu ic-sandbox-mode">
                                 <p><label class="indicator-pill no-indicator-dot yellow" title="${__(
-                                                "Your site has enabled Sandbox Mode in GST Settings."
-                                            )}">${__("Sandbox Mode")}</label></p>
+                            "Your site has enabled Sandbox Mode in GST Settings."
+                        )}">${__("Sandbox Mode")}</label></p>
                                 <p><a class="small text-muted" href="/app/gst-settings" target="_blank">${__(
-                                                "Sandbox Mode is enabled for GST APIs."
-                                            )}</a></p>
+                            "Sandbox Mode is enabled for GST APIs."
+                        )}</a></p>
                             </div>
                             `
                         );
                 }
             }
         });
-
-
     },
     doctype_id: function (frm) {
         frappe.call({
@@ -160,8 +201,8 @@ frappe.ui.form.on("E-way Bill", {
     ship_to: function (frm) {
         erpnext.utils.get_address_display(frm, "ship_to", "ship_to_address", false)
     },
-    onload:function(frm){
-        if(frm.doc.address == undefined){
+    onload: function (frm) {
+        if (frm.doc.address == undefined) {
             erpnext.utils.get_address_display(frm, "supplier_address", "address", false);
         }
     }
@@ -311,3 +352,4 @@ function show_generate_custom_e_waybill_dialog(frm) {
     auto_fill_dialog();
 
 }
+
