@@ -394,13 +394,9 @@
   {
    "link_doctype": "Pre-Alert Check List",
    "link_fieldname": "pre_alert"
-  },
-  {
-   "link_doctype": "Update Po",
-   "link_fieldname": "pre_alert_request"
   }
  ],
- "modified": "2024-12-11 15:30:32.473653",
+ "modified": "2025-01-29 14:05:48.522811",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre Alert",

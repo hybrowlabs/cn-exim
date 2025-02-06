@@ -1,0 +1,377 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-01-27 14:55:30.128466",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "boe_no",
+  "boe_date",
+  "column_break_ikqy",
+  "naming_series",
+  "per_alert_check",
+  "column_break_dlrx",
+  "pickup_request",
+  "vendor",
+  "column_break_ckhw",
+  "request_for_quotation",
+  "cha",
+  "section_break_xbml",
+  "exchange_rate",
+  "h_cess_amount",
+  "total_rode_tape",
+  "column_break_qvtx",
+  "total_inr_value",
+  "sws_amount",
+  "column_break_sfbh",
+  "accessible_value",
+  "igst_amount",
+  "column_break_rpvd",
+  "bcd_amount",
+  "total_duty",
+  "section_break_zn6g",
+  "check_list_date",
+  "job_number",
+  "column_break_smmc",
+  "ad_code",
+  "approve_remark",
+  "column_break_qgre",
+  "iin_number",
+  "remarks",
+  "column_break_oped",
+  "id",
+  "payment_type",
+  "section_break_keju",
+  "interest",
+  "penalty",
+  "other_charges",
+  "column_break_avzu",
+  "interest_vendor",
+  "penalty_vendor",
+  "other_vendor",
+  "column_break_lssv",
+  "reason",
+  "penalty_reason",
+  "other_reason",
+  "section_break_mbqx",
+  "boe_entries",
+  "amended_from",
+  "attach_document_tab",
+  "attach_document",
+  "connections_tab"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_zn6g",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "BOE Entry",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "per_alert_check",
+   "fieldtype": "Link",
+   "label": "Per Alert Check",
+   "options": "Pre-Alert Check List"
+  },
+  {
+   "fetch_from": "per_alert_check.pickup_request",
+   "fieldname": "pickup_request",
+   "fieldtype": "Link",
+   "label": "Pickup Request",
+   "options": "Pickup Request"
+  },
+  {
+   "fetch_from": "per_alert_check.rfq_number",
+   "fieldname": "request_for_quotation",
+   "fieldtype": "Link",
+   "label": "Request for Quotation",
+   "options": "Request for Quotation"
+  },
+  {
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "ad_code",
+   "fieldtype": "Data",
+   "label": "Ad Code"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Link",
+   "label": "CHA",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "approve_remark",
+   "fieldtype": "Data",
+   "label": "Approve Remark"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "column_break_smmc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "per_alert_check.exch_rate",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Currency",
+   "label": "Exchange Rate"
+  },
+  {
+   "fetch_from": "per_alert_check.total_inr_val",
+   "fieldname": "total_inr_value",
+   "fieldtype": "Currency",
+   "label": "Total Inr Value"
+  },
+  {
+   "fetch_from": "per_alert_check.accessible_val",
+   "fieldname": "accessible_value",
+   "fieldtype": "Currency",
+   "label": "Accessible Value"
+  },
+  {
+   "fetch_from": "per_alert_check.bcd_amount",
+   "fieldname": "bcd_amount",
+   "fieldtype": "Currency",
+   "label": "BCD Amount"
+  },
+  {
+   "fetch_from": "per_alert_check.h_cess_amount",
+   "fieldname": "h_cess_amount",
+   "fieldtype": "Currency",
+   "label": "H. Cess Amount"
+  },
+  {
+   "fetch_from": "per_alert_check.sws_amount",
+   "fieldname": "sws_amount",
+   "fieldtype": "Currency",
+   "label": "SWS Amount"
+  },
+  {
+   "fetch_from": "per_alert_check.igst_amount",
+   "fieldname": "igst_amount",
+   "fieldtype": "Currency",
+   "label": "IGST Amount"
+  },
+  {
+   "fetch_from": "per_alert_check.total_duty",
+   "fieldname": "total_duty",
+   "fieldtype": "Currency",
+   "label": "Total Duty"
+  },
+  {
+   "fetch_from": "per_alert_check.tot_rodt_ut",
+   "fieldname": "total_rode_tape",
+   "fieldtype": "Currency",
+   "label": "Total Rode tape"
+  },
+  {
+   "fieldname": "column_break_qgre",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "iin_number",
+   "fieldtype": "Data",
+   "label": "IIN Number"
+  },
+  {
+   "fieldname": "job_number",
+   "fieldtype": "Data",
+   "label": "Job Number"
+  },
+  {
+   "fieldname": "check_list_date",
+   "fieldtype": "Date",
+   "label": "Check List Date"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Select",
+   "label": "Payment Type",
+   "options": "Deferred Payment"
+  },
+  {
+   "fieldname": "boe_no",
+   "fieldtype": "Data",
+   "label": "BoE No"
+  },
+  {
+   "fieldname": "boe_date",
+   "fieldtype": "Date",
+   "label": "Boe Date"
+  },
+  {
+   "fieldname": "section_break_mbqx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
+  },
+  {
+   "fieldname": "attach_document_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attach Document"
+  },
+  {
+   "fieldname": "attach_document",
+   "fieldtype": "Table",
+   "label": "Attach Document",
+   "options": "Attach Document"
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "label": "ID"
+  },
+  {
+   "fieldname": "column_break_oped",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "interest",
+   "fieldtype": "Data",
+   "label": "Interest"
+  },
+  {
+   "fieldname": "interest_vendor",
+   "fieldtype": "Link",
+   "label": "Interest Vendor",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Data",
+   "label": "Reason"
+  },
+  {
+   "fieldname": "penalty",
+   "fieldtype": "Float",
+   "label": "Penalty"
+  },
+  {
+   "fieldname": "penalty_vendor",
+   "fieldtype": "Link",
+   "label": "Penalty Vendor",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "penalty_reason",
+   "fieldtype": "Data",
+   "label": "Penalty Reason"
+  },
+  {
+   "fieldname": "other_charges",
+   "fieldtype": "Float",
+   "label": "Other Charges"
+  },
+  {
+   "fieldname": "other_vendor",
+   "fieldtype": "Link",
+   "label": "Other Vendor",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "other_reason",
+   "fieldtype": "Data",
+   "label": "Other Reason"
+  },
+  {
+   "fieldname": "boe_entries",
+   "fieldtype": "Table",
+   "label": "BOE Entries",
+   "options": "BOE Entries"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "BOE-.###"
+  },
+  {
+   "fieldname": "column_break_ikqy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_dlrx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ckhw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xbml",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_qvtx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_sfbh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rpvd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_keju",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_avzu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_lssv",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-01-29 11:07:48.629349",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "BOE Entry",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

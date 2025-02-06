@@ -277,7 +277,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fetch_from": "bill_of_entry.custom_prealert_check_list",
    "fieldname": "pre_alert_check_list",
    "fieldtype": "Link",
    "label": "Pre Alert Check List",
@@ -439,7 +438,7 @@
    "link_fieldname": "e_way_bill"
   }
  ],
- "modified": "2024-12-23 16:53:57.668915",
+ "modified": "2025-01-29 11:25:20.487853",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "E-way Bill",

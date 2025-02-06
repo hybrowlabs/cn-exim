@@ -12,55 +12,120 @@ frappe.ui.form.on("Pre-Alert Check List", {
         })
         if (frm.doc.docstatus == 1) {
 
-            frm.add_custom_button("Bill of Entry", function () {
-                let items = []
-                let taxes = []
-                let tax_rate = 0
-                frm.doc.item_details.forEach(item => {
-                    let customs_duty = parseFloat(item.bcd_amount || 0) + parseFloat(item.hcs_amount || 0) + parseFloat(item.swl_amount || 0);
-                    items.push({
-                        'item_code': item.item_code,
-                        'item_name': item.material_name,
-                        'assessable_value': parseFloat(item.total_amount || 0),
-                        'gst_hsn_code': item.hsn_code,
-                        'customs_duty': customs_duty,
-                    })
-                    tax_rate = item.igst_
-                })
-                taxes.push({
-                    'charge_type': frm.doc.charge_type,
-                    'account_head': frm.doc.account_head,
-                    'rate': tax_rate,
-                    'tax_amount': frm.doc.igst_amount
-                })
+            // frm.add_custom_button("Bill of Entry", function () {
+            //     let items = []
+            //     let taxes = []
+            //     let tax_rate = 0
+            //     frm.doc.item_details.forEach(item => {
+            //         let customs_duty = parseFloat(item.bcd_amount || 0) + parseFloat(item.hcs_amount || 0) + parseFloat(item.swl_amount || 0);
+            //         items.push({
+            //             'item_code': item.item_code,
+            //             'item_name': item.material_name,
+            //             'assessable_value': parseFloat(item.total_amount || 0),
+            //             'gst_hsn_code': item.hsn_code,
+            //             'customs_duty': customs_duty,
+            //         })
+            //         tax_rate = item.igst_
+            //     })
+            //     taxes.push({
+            //         'charge_type': frm.doc.charge_type,
+            //         'account_head': frm.doc.account_head,
+            //         'rate': tax_rate,
+            //         'tax_amount': frm.doc.igst_amount
+            //     })
 
 
+            //     frappe.call({
+            //         method: "frappe.client.insert",
+            //         args: {
+            //             doc: {
+            //                 'doctype': 'Bill of Entry',
+            //                 'custom_prealert_check_list': frm.doc.name,
+            //                 'bill_of_entry_no': frm.doc.bill_of_entry_no,
+            //                 'bill_of_entry_date': frm.doc.bill_of_entry_date,
+            //                 'items': items,
+            //                 'taxes': taxes
+            //             }
+            //         },
+            //         callback: function (r) {
+            //             if (!r.exc) {
+            //                 frappe.set_route("Form","Bill of Entry", r.message['name'])
+            //                 frappe.show_alert({
+            //                     message: __('Bill of Entry created successfully!'),
+            //                     indicator: 'green'
+            //                 }, 5);
+            //             } else {
+            //                 frappe.msgprint('There was an error saving the Bill of Entry');
+            //                 console.error('Error Saving Document:', r.exc);
+            //             }
+            //         }
+            //     })
+            // }, __("Create"))
+            let items_map = {};
+
+            $.each(frm.doc.item_details || [], function(i, d) {
+                if (!items_map[d.po_no]) {
+                    items_map[d.po_no] = {
+                        'po_number': d.po_no,
+                        'total_inr_value': d.total_inr_value || 0,
+                        'total_rodtep': d.rodtep_utilization || 0,
+                        'total_duty': d.total_duty || 0,
+                        'total_qty': d.quantity || 0,
+                        'total_bcd': d.bcd_amount || 0,
+                        'total_gst': d.igst_amount || 0
+                    };
+                } else {
+                    items_map[d.po_no].total_inr_value += d.total_inr_value || 0;
+                    items_map[d.po_no].total_rodtep += d.rodtep_utilization || 0;
+                    items_map[d.po_no].total_duty += d.total_duty || 0;
+                    items_map[d.po_no].total_qty += d.quantity || 0;
+                    items_map[d.po_no].total_bcd += d.bcd_amount || 0;
+                    items_map[d.po_no].total_gst += d.igst_amount || 0;
+                }
+            });
+
+            let items = Object.values(items_map);
+
+            // let items = []
+            // $.each(frm.doc.item_details || [], function(i,d){
+            //     items.push({
+            //         'po_number': d.po_no,
+            //         'total_inr_value':d.total_inr_value,
+            //         'total_rodtep':d.rodtep_utilization,
+            //         'total_duty':d.total_duty,
+            //         'total_qty':d.quantity,
+            //         'total_bcd':d.bcd_amount,
+            //         'total_gst':d.igst_amount
+            //     })
+            // })
+            frm.add_custom_button("Bill of Entry", function(){
                 frappe.call({
-                    method: "frappe.client.insert",
-                    args: {
-                        doc: {
-                            'doctype': 'Bill of Entry',
-                            'custom_prealert_check_list': frm.doc.name,
-                            'bill_of_entry_no': frm.doc.bill_of_entry_no,
-                            'bill_of_entry_date': frm.doc.bill_of_entry_date,
-                            'items': items,
-                            'taxes': taxes
+                    method:"frappe.client.insert",
+                    args:{
+                        doc:{
+                            'doctype':"BOE Entry",
+                            'per_alert_check': frm.doc.name,
+                            'pickup_request':frm.doc.pickup_request,
+                            'request_for_quotation':frm.doc.rfq_number,
+                            'vendor':frm.doc.vendor,
+                            'cha':frm.doc.cha,
+                            'exchange_rate':frm.doc.exch_rate,
+                            'total_inr_value':frm.doc.total_inr_val,
+                            'accessible_value':frm.doc.accessible_val,
+                            'bcd_amount': frm.doc.bcd_amount,
+                            'h_cess_amount':frm.doc.h_cess_amount,
+                            'sws_amount':frm.doc.sws_amount,
+                            'igst_amount':frm.doc.igst_amount,
+                            'total_duty':frm.doc.total_duty,
+                            'total_rode_tape':frm.doc.tot_rodt_ut,
+                            'boe_entries':items
                         }
                     },
-                    callback: function (r) {
-                        if (!r.exc) {
-                            frappe.set_route("Form","Bill of Entry", r.message['name'])
-                            frappe.show_alert({
-                                message: __('Bill of Entry created successfully!'),
-                                indicator: 'green'
-                            }, 5);
-                        } else {
-                            frappe.msgprint('There was an error saving the Bill of Entry');
-                            console.error('Error Saving Document:', r.exc);
-                        }
+                    callback:function(r){
+                        frappe.set_route("Form", "BOE Entry", r.message['name'])
                     }
                 })
-            }, __("Create"))
+            },__("Create"))
         }
 
         frm.set_query('cha', function () {

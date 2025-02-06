@@ -163,26 +163,42 @@ frappe.ui.form.on("E-way Bill", {
     },
     doctype_id: function (frm) {
         frappe.call({
-            method: "cn_exim.cn_exim.doctype.e_way_bill.e_way_bill.get_items_details",
+            method: "frappe.client.get_list",
             args: {
-                name: frm.doc.doctype_id,
-                pre_alert_name: frm.doc.pre_alert_check_list
+                doctype: "BOE Entry",
+                filters: {
+                    name: frm.doc.doctype_id
+                },
+                fields: ["per_alert_check", "vendor"]
             },
             callback: function (r) {
+                let data = r.message[0];  // Get the first object from the list
+                frm.set_value("pre_alert_check_list", data.per_alert_check);
+                frm.set_value("supplier", data.vendor);
 
-                let items_data = r.message[2]
-                let total_amount = 0
-                items_data.forEach(item => {
-                    let row = frm.add_child("items")
-                    row.purchase_order = item.po_no
-                    row.item_code = item.item_code
-                    row.item_name = item.material_name
-                    row.qty = item.quantity
-                    row.total_inr_value = item.total_amount
-                    total_amount += item.total_amount
+                frappe.call({
+                    method: "cn_exim.cn_exim.doctype.e_way_bill.e_way_bill.get_items_details",
+                    args: {
+                        name: frm.doc.doctype_id,
+                        pre_alert_name: frm.doc.pre_alert_check_list
+                    },
+                    callback: function (r) {
+
+                        let items_data = r.message[2]
+                        let total_amount = 0
+                        items_data.forEach(item => {
+                            let row = frm.add_child("items")
+                            row.purchase_order = item.po_no
+                            row.item_code = item.item_code
+                            row.item_name = item.material_name
+                            row.qty = item.quantity
+                            row.total_inr_value = item.total_amount
+                            total_amount += item.total_amount
+                        })
+                        frm.refresh_field("items")
+                        frm.set_value("total_amount", total_amount)
+                    }
                 })
-                frm.refresh_field("items")
-                frm.set_value("total_amount", total_amount)
             }
         })
     },
@@ -205,6 +221,13 @@ frappe.ui.form.on("E-way Bill", {
         if (frm.doc.address == undefined) {
             erpnext.utils.get_address_display(frm, "supplier_address", "address", false);
         }
+        frm.set_query("select_doctype", function () {
+            return {
+                filters: {
+                    'istable': 0
+                }
+            }
+        })
     }
 });
 

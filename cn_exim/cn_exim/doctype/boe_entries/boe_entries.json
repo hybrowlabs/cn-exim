@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-27 15:31:12.431500",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "po_number",
+  "total_inr_value",
+  "total_rodtep",
+  "total_duty",
+  "column_break_oric",
+  "total_qty",
+  "total_bcd",
+  "total_gst"
+ ],
+ "fields": [
+  {
+   "fieldname": "po_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Po Number",
+   "options": "Purchase Order"
+  },
+  {
+   "fieldname": "total_inr_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total INR Value"
+  },
+  {
+   "fieldname": "total_rodtep",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Rodtep"
+  },
+  {
+   "fieldname": "total_duty",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Duty"
+  },
+  {
+   "fieldname": "column_break_oric",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total Qty"
+  },
+  {
+   "fieldname": "total_bcd",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total BCD"
+  },
+  {
+   "fieldname": "total_gst",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total GST"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-27 15:37:41.948668",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "BOE Entries",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

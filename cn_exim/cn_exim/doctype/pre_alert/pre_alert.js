@@ -70,6 +70,15 @@ frappe.ui.form.on("Pre Alert", {
         calculation_of_rodtep(frm)
         calculation_used_rodtep(frm)
     },
+    insurance:function(frm){
+        insurance_calculation(frm)
+    },
+    freight_amt:function(frm){
+        freight_amt_calculation(frm)
+    },
+    other_charges:function(){
+        other_charges_calculation(frm)
+    },
     refresh: function (frm) {
         frm.add_custom_button("Calculate", function (obj) {
             freight_amt_calculation(frm)
@@ -276,7 +285,8 @@ frappe.ui.form.on("Pre Alert", {
     },
     on_submit: function (frm) {
         update_rodtep_base_on_used(frm)
-    }
+        send_email_to_cha(frm)
+    },
 });
 
 frappe.ui.form.on("Pre-Alert Item Details", {
@@ -463,10 +473,10 @@ function calculation_of_rodtep(frm) {
     let total_rodtep_utilization = 0
     $.each(frm.doc.item_details || [], function (i, d) {
         if (rodtep_total > 0) {
-            d.rodtep_utilization = rodtep_total;
-
+            
             let remaining = rodtep_total - d.bcd_amount;
-
+            
+            d.rodtep_utilization = d.bcd_amount;
             if (remaining < 0) {
                 d.total_duty_forgone = Math.abs(remaining);
                 rodtep_total = 0;
@@ -512,5 +522,22 @@ function update_rodtep_base_on_used(frm) {
                 use_rodtep: d.used_rodtep
             }
         })
+    })
+}
+
+function send_email_to_cha(frm){
+    frappe.call({
+        method:"cn_exim.cn_exim.doctype.pre_alert.pre_alert.send_mail_to_cha",
+        args:{
+            sender:frappe.session.user,
+            cha_name: frm.doc.cha,
+            doc_name:frm.doc.name
+        },
+        callback:function(r){
+            frappe.show_alert({
+                message: __('Email Is Sent For Cha'),
+                indicator: 'green'
+            }, 5)
+        }
     })
 }

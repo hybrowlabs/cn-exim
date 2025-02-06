@@ -15,10 +15,10 @@ class EwayBill(Document):
 def get_items_details(name, pre_alert_name):
 
     item_data = frappe.db.sql(
-        " select * from `tabBill of Entry Item` where parent=%s ", (name), as_dict=True
+        " select * from `tabBOE Entries` where parent=%s ", (name), as_dict=True
     )
     data = frappe.db.sql(
-        " select * from `tabBill of Entry` where name=%s ", (name), as_dict=True
+        " select * from `tabBOE Entry` where name=%s ", (name), as_dict=True
     )
     pre_alert_check_list_data = frappe.db.sql(
         "select * from `tabPre-Alert Item Details` where parent=%s ",
