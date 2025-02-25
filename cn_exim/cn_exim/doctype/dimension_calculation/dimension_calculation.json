@@ -6,36 +6,33 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "length_uom",
-  "widht_uom",
-  "height_uom",
+  "width",
+  "length",
+  "height",
   "box",
   "gross_weight",
   "column_break_uyke",
-  "length",
-  "width",
-  "height",
+  "widht_uom",
+  "length_uom",
+  "height_uom",
   "weight"
  ],
  "fields": [
   {
    "fieldname": "length_uom",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Length Uom",
    "options": "UOM"
   },
   {
    "fieldname": "widht_uom",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Widht Uom",
    "options": "UOM"
   },
   {
    "fieldname": "height_uom",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Height Uom",
    "options": "UOM"
   },
@@ -77,13 +74,14 @@
   {
    "fieldname": "gross_weight",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Gross Weight"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-04 14:24:17.868507",
+ "modified": "2025-02-19 09:51:56.972936",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Dimension Calculation",

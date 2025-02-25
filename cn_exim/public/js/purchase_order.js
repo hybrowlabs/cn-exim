@@ -55,6 +55,41 @@ frappe.ui.form.on("Purchase Order", {
                 }
             }
         });
+
+        frm.add_custom_button("Gate Entry", function(){
+
+            let get_entry_details = []
+
+            frm.doc.items.forEach(element => {
+                get_entry_details.push({
+                    "purchase_order":frm.doc.name,
+                    "item":element.item_code,
+                    "item_name":element.item_name,
+                    "uom":element.uom,
+                    "rate":element.rate,
+                    "amount":element.base_rate,
+                    "qty":element.qty,
+                    "rate_inr":element.amount,
+                    "amount_inr":element.base_amount
+                })
+            })
+            frappe.call({
+                method:"frappe.client.insert",
+                args:{
+                    doc:{
+                        "doctype":"Gate Entry",
+                        "supplier":frm.doc.supplier,
+                        "supplier_name":frm.doc.supplier_name,
+                        "gate_entry_details":get_entry_details
+                    }
+                },
+                callback:function(r){
+                    if(!r.exc){
+                        frappe.set_route("Form", "Gate Entry", r.message.name)
+                    }
+                }
+            })
+        },__("Create"))
     }
 })
 

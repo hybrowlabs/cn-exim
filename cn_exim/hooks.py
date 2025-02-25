@@ -130,7 +130,7 @@ fixtures = [{"dt": "Funnel"}]
 # Override standard doctype classes
 
 override_doctype_class = {
-    "Bill of Entry": "cn_exim.config.py.bill_of_entry_override.BillofEntry"
+    "Bill of Entry": "cn_exim.config.py.bill_of_entry_override.BillofEntry",
 }
 
 # Document Events
@@ -162,9 +162,10 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
+
 # override_whitelisted_methods = {
-	# "frappe.desk.doctype.event.event.get_events": "cn_exim.event.get_events"
 # }
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

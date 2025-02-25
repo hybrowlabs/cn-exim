@@ -10,10 +10,10 @@
  "event": "Save",
  "idx": 0,
  "is_standard": 1,
- "message": "<h3>Hello,</h3>\n\n<p>This is a system-generated request for your review and approval.</p>\n\n<h4>Document Details:</h4>\n<ul>\n    <li>Doc Name: {{ doc.name }}</li>\n    <li>Doc Date: {{ doc.creation }}</li>\n    <li>Submitted By: {{ doc.owner }}</li>\n</ul>\n<p>Document Type: Pre-Alert</p>\n<p>Please review the document thoroughly. If all details are correct, kindly approve it from your side.</p>\n\n<p>Document Link: [Click here to review](http://localhost:8000/app/pre-alert/{{ doc.name }})</p>\n\n<p>Your prompt attention and approval will be greatly appreciated.</p>\n\n<h4>Thank you,</h4>\n<h4>{{ frappe.session.user }}</h4>\n",
+ "message": "<h3>Hello,</h3>\n\n<p>This is a system-generated request for your review and approval.</p>\n\n<h4>Document Details:</h4>\n\n<ul>\n    <li>Doc Name: {{ doc.name }}</li>\n    <li>Doc Date: {{ doc.creation }}</li>\n    <li>Submitted By: {{ doc.owner }}</li>\n</ul>\n\n<p>Document Type: Pre-Alert</p>\n\n<p>Please review the document thoroughly. If all details are correct, kindly approve it from your side.</p>\n\n<p><a href=\"http://localhost:8000/app/pre-alert/{{ doc.name }}\">Click here to approve</a></p>\n\n<p>Your prompt attention and approval will be greatly appreciated.</p>\n\n<h4>Thank you,</h4>\n\n<h4>{{ frappe.session.user }}</h4>\n",
  "message_type": "Markdown",
  "method": "after_update",
- "modified": "2025-02-04 14:21:33.524496",
+ "modified": "2025-02-10 11:05:45.757697",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Per Alert",
@@ -24,13 +24,13 @@
    "receiver_by_role": "Purchase Hod"
   },
   {
-   "condition": "doc.workflow_state == \"Approved By Hod\"",
-   "receiver_by_role": "Purchase Accounting Team"
+   "condition": "doc.workflow_state == \"Approve By Hod\"",
+   "receiver_by_role": "Purchase Account Manager"
   }
  ],
  "send_system_notification": 0,
  "send_to_all_assignees": 0,
- "sender": "Hspithiya9818",
+ "sender": "Defoult Sending Account",
  "sender_email": "hspithiya9818@gmail.com",
  "subject": "Approval Required for Document: {{ doc.name }}"
 }

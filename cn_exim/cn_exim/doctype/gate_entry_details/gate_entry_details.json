@@ -13,7 +13,11 @@
   "column_break_orny",
   "item",
   "uom",
-  "amount"
+  "amount",
+  "section_break_rjqn",
+  "rate_inr",
+  "column_break_kjbr",
+  "amount_inr"
  ],
  "fields": [
   {
@@ -66,12 +70,30 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount"
+  },
+  {
+   "fieldname": "section_break_rjqn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rate_inr",
+   "fieldtype": "Currency",
+   "label": "Rate (INR)"
+  },
+  {
+   "fieldname": "column_break_kjbr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount_inr",
+   "fieldtype": "Currency",
+   "label": "Amount (INR)"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-24 10:28:38.902910",
+ "modified": "2025-02-24 10:40:32.291943",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry Details",

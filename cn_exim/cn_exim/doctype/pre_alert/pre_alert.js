@@ -71,12 +71,30 @@ frappe.ui.form.on("Pre Alert", {
         calculation_used_rodtep(frm)
     },
     insurance:function(frm){
-        insurance_calculation(frm)
+        // insurance_calculation(frm)
+        if (frm.doc.insurance > 0) {
+            // Calculate insurance amount from entered percentage
+            let insurance_value = (frm.doc.total_inr_val * frm.doc.insurance) / 100;
+            frm.set_value("insurance_amount", insurance_value);
+            insurance_calculation(frm, insurance_value);
+        }
+    },
+    insurance_amount:function(frm){
+        // insurance_calculation(frm)
+        if (frm.doc.insurance_amount > 0) {
+            // Calculate percentage from entered amount
+            let insurance_percentage = (frm.doc.insurance_amount / frm.doc.total_inr_val) * 100;
+            frm.set_value("insurance", insurance_percentage);
+            insurance_calculation(frm, frm.doc.insurance_amount);
+        }
     },
     freight_amt:function(frm){
         freight_amt_calculation(frm)
     },
-    other_charges:function(){
+    ex_works:function(frm){
+        freight_amt_calculation(frm)
+    },
+    other_charges:function(frm){
         other_charges_calculation(frm)
     },
     refresh: function (frm) {
@@ -314,6 +332,8 @@ function get_percentage_of_hsn_and_category_base(frm, row_or_d, hsn_code, catego
                     row_or_d.swl_ = obj['swl']
                     row_or_d.igst_ = obj['igst']
                 })
+                calculation_tax(frm)
+                total_calculations(frm)
                 frm.refresh_field("item_details")
             }
         })
@@ -323,7 +343,9 @@ function get_percentage_of_hsn_and_category_base(frm, row_or_d, hsn_code, catego
 
 function freight_amt_calculation(frm) {
     let total_value = 0;
-    let total_charge = frm.doc.freight_amt + frm.doc.ex_works
+    let freight_amt = isNaN(frm.doc.freight_amt) || frm.doc.freight_amt == null ? 0 : frm.doc.freight_amt;
+    let ex_work = isNaN(frm.doc.ex_works) || frm.doc.ex_works == null ? 0 : frm.doc.ex_works;
+    let total_charge = freight_amt + ex_work
 
     frm.doc.item_details.forEach(item => {
         total_value += item.total_inr_value;
@@ -346,14 +368,7 @@ function freight_amt_calculation(frm) {
     frm.refresh_field('item_details');
 }
 
-function insurance_calculation(frm) {
-    let insurance_value = 0
-    if (frm.doc.insurance_amount > 0) {
-        insurance_value = frm.doc.insurance_amount;
-    } else {
-        insurance_value = (frm.doc.total_inr_val * frm.doc.insurance) / 100;
-        frm.set_value("insurance_amount", insurance_value);
-    }
+function insurance_calculation(frm, insurance_value) {
     let total_value = 0;
 
     frm.doc.item_details.forEach(item => {
@@ -541,3 +556,82 @@ function send_email_to_cha(frm){
         }
     })
 }
+
+// comment table in comments tab section
+frappe.ui.form.on('Pre Alert', {
+    refresh: function (frm) {
+        let crm_notes = `
+            <div class="notes-section col-xs-12">
+                <div class="all-notes" id="all_notes_section">
+                    <!-- Existing notes will be displayed here -->
+                </div>
+            </div>
+            <style>
+                .comment-content {
+                    border: 1px solid var(--border-color);
+                    border-radius: 5px;
+                    padding: 8px;
+                    background: #f8f9fa;
+                    margin-bottom: 8px;
+                }
+                .comment-content table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .comment-content td {
+                    padding: 8px;
+                }
+                .comment-content th {
+                    font-weight: bold;
+                    text-align: left;
+                    padding: 8px;
+                }
+                .no-activity {
+                    text-align: center;
+                    color: #888;
+                    padding: 10px;
+                }
+            </style>`;
+
+        frm.get_field("custom_notes_html").wrapper.innerHTML = crm_notes;
+
+        let allNotesSection = document.getElementById("all_notes_section");
+
+        if (!allNotesSection) {
+            console.error("all_notes_section not found!");
+            return;
+        }
+
+        if (frm.doc.custom_crm_note && frm.doc.custom_crm_note.length > 0) {
+            let tableHTML = `
+                <div class="comment-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Added By</th>
+                                <th style="width:40%">Reason</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>`;
+
+            frm.doc.custom_crm_note.forEach((note) => {
+                tableHTML += `
+                <div class="comment-content">
+                    <table>
+                        <tr>
+                            <td style="width:30%">${note.added_by}</td>
+                            <td style="width:40%">${note.note}</td>
+                            <td>${frappe.datetime.global_date_format(note.added_on)}</td>
+                        </tr>
+                    </table>
+                </div>`;
+            });
+
+            allNotesSection.innerHTML = tableHTML;
+        } else {
+            allNotesSection.innerHTML = `<p class="no-activity">No Notes Available</p>`;
+        }
+    }
+});

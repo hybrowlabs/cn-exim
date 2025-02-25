@@ -67,7 +67,11 @@
   "rodtep_details",
   "attach_document_tab",
   "attach_document",
-  "connections_tab"
+  "connections_tab",
+  "comments_tab",
+  "status",
+  "custom_notes_html",
+  "custom_crm_note"
  ],
  "fields": [
   {
@@ -238,6 +242,7 @@
    "options": "IIN"
   },
   {
+   "fetch_from": "rfq_number.custom_invoice_date",
    "fieldname": "invoice_dt",
    "fieldtype": "Date",
    "label": "Purchase Order Invoice Date"
@@ -251,12 +256,14 @@
   {
    "fieldname": "rem_rodtep",
    "fieldtype": "Float",
-   "label": "Rem. Rodtep"
+   "label": "Rem. Rodtep",
+   "read_only": 1
   },
   {
    "fieldname": "tot_rodt_ut",
    "fieldtype": "Int",
-   "label": "Tot. Rodt. Ut"
+   "label": "Tot. Rodt. Ut",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_oobu",
@@ -285,6 +292,7 @@
    "search_index": 1
   },
   {
+   "fetch_from": "rfq_number.custom_supplier_purchase_invoice_no",
    "fieldname": "invoice_no",
    "fieldtype": "Data",
    "label": "Purchase Order Invoice No"
@@ -386,6 +394,31 @@
    "fieldtype": "Tab Break",
    "label": "Connections",
    "show_dashboard": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nPurchase HOD Approval Pending\nRejected by Purchase HOD\nPurchase Account Manager Approval Pending\nRejected by Purchase Account Manager\nApproved\nRejected"
+  },
+  {
+   "fieldname": "comments_tab",
+   "fieldtype": "Tab Break",
+   "label": "Comments",
+   "show_dashboard": 1
+  },
+  {
+   "fieldname": "custom_notes_html",
+   "fieldtype": "HTML",
+   "label": "Notes HTML"
+  },
+  {
+   "fieldname": "custom_crm_note",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "CRM Note",
+   "options": "CRM Note"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -396,7 +429,7 @@
    "link_fieldname": "pre_alert"
   }
  ],
- "modified": "2025-01-29 14:05:48.522811",
+ "modified": "2025-02-21 10:09:15.043029",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre Alert",

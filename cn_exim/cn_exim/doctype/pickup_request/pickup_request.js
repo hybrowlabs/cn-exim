@@ -21,13 +21,23 @@ frappe.ui.form.on("Pickup Request", {
                                 doctype: "Supplier Quotation",
                                 filters: {
                                     custom_pickup_request: frm.doc.name,
-                                    docstatus:1
+                                    docstatus: 1
                                 },
                                 fields: ['supplier']
                             },
                             callback: function (response) {
                                 frm.add_custom_button("Pre Alert", function () {
-                                    console.log(r.message[0]['name'])
+                                    // Check if supplier data is missing or empty
+                                    if (!response.message || response.message.length === 0 || !response.message[0]['supplier']) {
+                                        frappe.msgprint({
+                                            title: __('Error'),
+                                            indicator: 'red',
+                                            message: __('No Supplier Quotation found for this RFQ and Pickup Request. Please create a Supplier Quotation first.')
+                                        });
+                                        return;
+                                    }
+
+                                    // Proceed to create "Pre Alert" if supplier data is available
                                     frappe.new_doc("Pre Alert", {
                                         'pickup_request': frm.doc.name,
                                         'rfq_number': r.message[0]['name'],
@@ -308,24 +318,21 @@ frappe.ui.form.on("Dimension Calculation", {
     length: function (frm, cdt, cdn) {
         var row = locals[cdt][cdn]
         dimension_calculation(frm, row)
+        calculation_box_and_gross_weight(frm, cdt, cdn)
     },
     width: function (frm, cdt, cdn) {
         var row = locals[cdt][cdn]
         dimension_calculation(frm, row)
+        calculation_box_and_gross_weight(frm, row)
     },
     height: function (frm, cdt, cdn) {
         var row = locals[cdt][cdn]
         dimension_calculation(frm, row)
+        calculation_box_and_gross_weight(frm, row)
     },
     box: function (frm, cdt, cdn) {
-        let row = locals[cdt][cdn]
-        row.gross_weight = row.box * row.weight
-        frm.refresh_field("dimension_calculation")
-        let total_gross_weight = 0
-        $.each(frm.doc.dimension_calculation || [], function (i, d) {
-            total_gross_weight += d.gross_weight
-        })
-        frm.set_value("gross_weight", total_gross_weight)
+        var row = locals[cdt][cdn]
+        calculation_box_and_gross_weight(frm, row)
     }
 })
 
@@ -348,6 +355,7 @@ function dimension_calculation(frm, row) {
         total_weight += item.weight
     })
     frm.set_value("chargeable_weight", total_weight)
+    frm.set_value("gross_weight", total_weight)
 }
 
 function calculation_of_amount_and_inr_amount(frm) {
@@ -371,4 +379,17 @@ function calculation_of_amount_and_inr_amount(frm) {
         total_amount += item.amount
     })
     frm.set_value("total_amount", total_amount)
+}
+
+function calculation_box_and_gross_weight(frm, row) {
+    row.gross_weight = row.box * row.weight
+    frm.refresh_field("dimension_calculation")
+    let total_gross_weight = 0
+    $.each(frm.doc.dimension_calculation || [], function (i, d) {
+        total_gross_weight += d.gross_weight
+    })
+    if (!isNaN(total_gross_weight)) {
+        frm.set_value("gross_weight", total_gross_weight)
+        frm.set_value("chargeable_weight", total_gross_weight)
+    }
 }

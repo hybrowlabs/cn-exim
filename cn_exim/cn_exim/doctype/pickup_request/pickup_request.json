@@ -302,7 +302,7 @@
    "table_fieldname": "item_details"
   }
  ],
- "modified": "2024-12-11 15:28:55.138802",
+ "modified": "2025-02-07 12:52:13.313139",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
@@ -319,6 +319,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

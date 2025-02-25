@@ -228,6 +228,34 @@ frappe.ui.form.on("E-way Bill", {
                 }
             }
         })
+
+        frm.set_query('bill_from', function () {
+            return {
+                query: "frappe.contacts.doctype.address.address.address_query",
+                filters: {
+                    link_doctype: 'Company',
+                    link_name: frm.doc.company
+                }
+            };
+        });
+
+        frm.set_query("bill_to", function(){
+            return{
+                query: "frappe.contacts.doctype.address.address.address_query",
+                filters:{
+                    link_doctype: "Supplier"
+                }
+            }
+        })
+
+        frm.set_query("ship_to", function(){
+            return{
+                query: "frappe.contacts.doctype.address.address.address_query",
+                filters:{
+                    link_doctype: "Supplier"
+                }
+            }
+        })
     }
 });
 
@@ -246,7 +274,6 @@ function show_generate_custom_e_waybill_dialog(frm) {
             },
             callback: function (response) {
                 data = response.message
-                console.log(data)
                 frappe.set_value("ewaybill", data.ewaybill)
             }
         });

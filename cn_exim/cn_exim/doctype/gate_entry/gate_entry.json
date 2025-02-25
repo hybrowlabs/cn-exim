@@ -7,12 +7,13 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "gate_entry_no",
+  "scan_barcode",
   "column_break_ughx",
+  "gate_entry_no",
+  "gate_entry_date",
+  "column_break_bhln",
   "supplier",
   "supplier_name",
-  "column_break_bhln",
-  "gate_entry_date",
   "section_break_khbh",
   "vehicle_no",
   "column_break_ggqh",
@@ -194,12 +195,18 @@
    "label": "Gate Entry series",
    "options": "GEN-.###",
    "reqd": 1
+  },
+  {
+   "fieldname": "scan_barcode",
+   "fieldtype": "Data",
+   "label": "Scan Barcode",
+   "options": "Barcode"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-24 10:39:49.228418",
+ "modified": "2025-02-19 17:20:34.961832",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
