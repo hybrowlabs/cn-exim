@@ -70,7 +70,7 @@ frappe.ui.form.on("Pre Alert", {
         calculation_of_rodtep(frm)
         calculation_used_rodtep(frm)
     },
-    insurance:function(frm){
+    insurance: function (frm) {
         // insurance_calculation(frm)
         if (frm.doc.insurance > 0) {
             // Calculate insurance amount from entered percentage
@@ -79,7 +79,7 @@ frappe.ui.form.on("Pre Alert", {
             insurance_calculation(frm, insurance_value);
         }
     },
-    insurance_amount:function(frm){
+    insurance_amount: function (frm) {
         // insurance_calculation(frm)
         if (frm.doc.insurance_amount > 0) {
             // Calculate percentage from entered amount
@@ -88,13 +88,13 @@ frappe.ui.form.on("Pre Alert", {
             insurance_calculation(frm, frm.doc.insurance_amount);
         }
     },
-    freight_amt:function(frm){
+    freight_amt: function (frm) {
         freight_amt_calculation(frm)
     },
-    ex_works:function(frm){
+    ex_works: function (frm) {
         freight_amt_calculation(frm)
     },
-    other_charges:function(frm){
+    other_charges: function (frm) {
         other_charges_calculation(frm)
     },
     refresh: function (frm) {
@@ -195,9 +195,9 @@ frappe.ui.form.on("Pre Alert", {
                             'rodtape_details': rodteps
                         }
                     },
-                    callback: function (r) {                        
+                    callback: function (r) {
                         if (!r.exc) {
-                            frappe.set_route("Form","Pre-Alert Check List", r.message['name'])
+                            frappe.set_route("Form", "Pre-Alert Check List", r.message['name'])
                             frappe.show_alert({
                                 message: __('Pre Alert Check List created successfully!'),
                                 indicator: 'green'
@@ -284,6 +284,85 @@ frappe.ui.form.on("Pre Alert", {
             d.dialog.show()
 
         }, __("Get Details"));
+
+
+
+
+
+        //  this code to add the comment in the pre alert form on reject any hod throw.
+        let crm_notes = `
+                <div class="notes-section col-xs-12">
+                    <div class="all-notes" id="all_notes_section">
+                        <!-- Existing notes will be displayed here -->
+                    </div>
+                </div>
+                <style>
+                    .comment-content {
+                        border: 1px solid var(--border-color);
+                        border-radius: 5px;
+                        padding: 8px;
+                        background: #f8f9fa;
+                        margin-bottom: 8px;
+                    }
+                    .comment-content table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    .comment-content td {
+                        padding: 8px;
+                    }
+                    .comment-content th {
+                        font-weight: bold;
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    .no-activity {
+                        text-align: center;
+                        color: #888;
+                        padding: 10px;
+                    }
+                </style>`;
+
+        frm.get_field("custom_notes_html").wrapper.innerHTML = crm_notes;
+
+        let allNotesSection = document.getElementById("all_notes_section");
+
+        if (!allNotesSection) {
+            console.error("all_notes_section not found!");
+            return;
+        }
+
+        if (frm.doc.custom_crm_note && frm.doc.custom_crm_note.length > 0) {
+            let tableHTML = `
+                    <div class="comment-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width:30%">Added By</th>
+                                    <th style="width:40%">Note</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>`;
+
+            frm.doc.custom_crm_note.forEach((note) => {
+                tableHTML += `
+                    <div class="comment-content">
+                        <table>
+                            <tr>
+                                <td style="width:30%">${note.added_by}</td>
+                                <td style="width:40%">${note.note}</td>
+                                <td>${frappe.datetime.global_date_format(note.added_on)}</td>
+                            </tr>
+                        </table>
+                    </div>`;
+            });
+
+            allNotesSection.innerHTML = tableHTML;
+        } else {
+            allNotesSection.innerHTML = `<p class="no-activity">No Notes Available</p>`;
+        }
     },
     total_doc_val: function (frm) {
         var total_inr = frm.doc.exch_rate * frm.doc.total_doc_val
@@ -488,9 +567,9 @@ function calculation_of_rodtep(frm) {
     let total_rodtep_utilization = 0
     $.each(frm.doc.item_details || [], function (i, d) {
         if (rodtep_total > 0) {
-            
+
             let remaining = rodtep_total - d.bcd_amount;
-            
+
             d.rodtep_utilization = d.bcd_amount;
             if (remaining < 0) {
                 d.total_duty_forgone = Math.abs(remaining);
@@ -540,15 +619,15 @@ function update_rodtep_base_on_used(frm) {
     })
 }
 
-function send_email_to_cha(frm){
+function send_email_to_cha(frm) {
     frappe.call({
-        method:"cn_exim.cn_exim.doctype.pre_alert.pre_alert.send_mail_to_cha",
-        args:{
-            sender:frappe.session.user,
+        method: "cn_exim.cn_exim.doctype.pre_alert.pre_alert.send_mail_to_cha",
+        args: {
+            sender: frappe.session.user,
             cha_name: frm.doc.cha,
-            doc_name:frm.doc.name
+            doc_name: frm.doc.name
         },
-        callback:function(r){
+        callback: function (r) {
             frappe.show_alert({
                 message: __('Email Is Sent For Cha'),
                 indicator: 'green'
