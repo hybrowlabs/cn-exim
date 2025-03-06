@@ -26,10 +26,15 @@ frappe.ui.form.on("E-way Bill", {
             };
         });
 
-        if(frm.doc.ewaybill == undefined){
+        if (frm.doc.ewaybill == undefined) {
             frm.add_custom_button("e-waybill", function () {
                 show_generate_custom_e_waybill_dialog(frm)
-            },__("Create"))
+            }, __("Create"))
+        }
+        if (frm.doc.ewaybill != undefined) {
+            frm.add_custom_button("Attach", function () {
+                attach_pdf_ewaybill(frm)
+            }, __("Create"))
         }
 
         if (frm.doc.docstatus == 1) {
@@ -241,19 +246,19 @@ frappe.ui.form.on("E-way Bill", {
             };
         });
 
-        frm.set_query("bill_to", function(){
-            return{
+        frm.set_query("bill_to", function () {
+            return {
                 query: "frappe.contacts.doctype.address.address.address_query",
-                filters:{
+                filters: {
                     link_doctype: "Supplier"
                 }
             }
         })
 
-        frm.set_query("ship_to", function(){
-            return{
+        frm.set_query("ship_to", function () {
+            return {
                 query: "frappe.contacts.doctype.address.address.address_query",
-                filters:{
+                filters: {
                     link_doctype: "Supplier"
                 }
             }
@@ -403,4 +408,19 @@ function show_generate_custom_e_waybill_dialog(frm) {
     dialog.show();
     auto_fill_dialog();
 
+}
+
+
+function attach_pdf_ewaybill(frm) {
+    frappe.call({
+        method: "india_compliance.gst_india.utils.e_waybill.fetch_e_waybill_data",
+        args: {
+            doctype: frm.doctype,
+            docname: frm.doc.name,
+            attach: true
+        },
+        callback: function (r) {
+            frm.refresh();
+        }
+    })
 }
