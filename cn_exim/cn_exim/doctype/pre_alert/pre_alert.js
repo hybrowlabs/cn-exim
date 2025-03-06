@@ -382,7 +382,7 @@ frappe.ui.form.on("Pre Alert", {
     },
     on_submit: function (frm) {
         update_rodtep_base_on_used(frm)
-        send_email_to_cha(frm)
+        // send_email_to_cha(frm)
     },
 });
 

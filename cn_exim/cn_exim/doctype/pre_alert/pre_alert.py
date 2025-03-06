@@ -5,6 +5,8 @@ import frappe
 from frappe.model.document import Document
 from frappe import msgprint, sendmail
 from frappe.email.queue import flush
+import pandas as pd
+import os
 
 class PreAlert(Document):
     pass
@@ -61,7 +63,7 @@ def update_rodtep(name, use_rodtep):
 
 
 @frappe.whitelist()
-def send_mail_to_cha(sender, cha_name, doc_name):
+def send_mail_to_cha(cha_name, doc_name):
     # Fetch recipient emails
     recever = frappe.db.sql(
         """
@@ -86,55 +88,82 @@ def send_mail_to_cha(sender, cha_name, doc_name):
     if not doc.item_details:
         frappe.throw("No item details found in the document.")
 
-    # Helper function to format numbers
-    def format_currency(value):
-        return f"{value:.2f}" if isinstance(value, (int, float)) else value
-
-    # Prepare context dictionary with `exch_rate` moved outside `item_details`
-    context = {
-        "doc": {
-            "cha": doc.cha if hasattr(doc, "cha") else cha_name,
-            "exch_rate": format_currency(doc.exch_rate),  # Ensure exchange rate is part of the parent context
-            "item_details": [
-                {
-                    "po_no": row.po_no,
-                    "item_code": row.item_code,
-                    "description": row.description,
-                    "quantity": row.quantity,
-                    "item_price": format_currency(row.item_price),
-                    "amount": format_currency(row.amount),
-                    "total_inr_value": format_currency(row.total_inr_value),
-                    "freight_amount": format_currency(row.freight_amount),
-                    "insurance_amount": format_currency(row.insurance_amount),
-                    "misc_charge_amt": format_currency(row.misc_charge_amt),
-                    "total_amount": format_currency(row.total_amount),
-                    "bcd_": format_currency(row.bcd_),
-                    "bcd_amount": format_currency(row.bcd_amount),
-                    "hcs_": format_currency(row.hcs_),
-                    "hcs_amount": format_currency(row.hcs_amount),
-                    "swl_": format_currency(row.swl_),
-                    "swl_amount": format_currency(row.swl_amount),
-                    "total_duty": format_currency(row.total_duty),
-                    "igst_": format_currency(row.igst_),
-                    "igst_amount": format_currency(row.igst_amount),
-                    "final_total_duty": format_currency(row.final_total_duty),
-                }
-                for row in doc.item_details
-            ]
+    # Prepare data for Excel
+    data = [
+        {
+            "PO No": row.po_no,
+            "Item Code": row.item_code,
+            "Description": row.description,
+            "Quantity": row.quantity,
+            "Item Price": row.item_price,
+            "Amount": row.amount,
+            "Total INR Value": row.total_inr_value,
+            "Freight Amount": row.freight_amount,
+            "Insurance Amount": row.insurance_amount,
+            "Misc Charge Amount": row.misc_charge_amt,
+            "Total Amount": row.total_amount,
+            "BCD (%)": row.bcd_,
+            "BCD Amount": row.bcd_amount,
+            "HCS (%)": row.hcs_,
+            "HCS Amount": row.hcs_amount,
+            "SWL (%)": row.swl_,
+            "SWL Amount": row.swl_amount,
+            "Total Duty": row.total_duty,
+            "IGST (%)": row.igst_,
+            "IGST Amount": row.igst_amount,
+            "Final Total Duty": row.final_total_duty,
+            "exch_rate": doc.exch_rate,
         }
-    }
+        for row in doc.item_details
+    ]
+
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+
+    # Define file path
+    file_name = f"Pre_Alert_{doc_name}.xlsx"
+    file_path = os.path.join(frappe.get_site_path("private", "files"), file_name)
+
+    # Save Excel file
+    df.to_excel(file_path, index=False)
+
+    # Attach file to email
+    with open(file_path, "rb") as f:
+        file_data = f.read()
+
+    file_doc = frappe.get_doc(
+        {
+            "doctype": "File",
+            "file_name": file_name,
+            "is_private": 1,
+            "content": file_data,
+        }
+    )
+    file_doc.save(ignore_permissions=True)
 
     # Fetch email template
     email_template = frappe.get_doc("Email Template", "CHA Notification Template")
 
-    # Render subject and message with context
+    # Prepare context for email rendering
+    context = {
+        "doc": {
+            "cha": doc.cha if hasattr(doc, "cha") else cha_name,
+        }
+    }
+
+    # Render email
     subject = frappe.render_template(email_template.subject, context)
     message = frappe.render_template(email_template.response_html, context)
 
-    # Debugging: Print/log the rendered message
-    frappe.log_error(message, "Rendered Email Content")
+    # Send email with attachment
+    frappe.sendmail(
+        recipients=recipient,
+        subject=subject,
+        message=message,
+        attachments=[{"fname": file_name, "fcontent": file_data}],
+        now=True,
+    )
 
-    # Send email immediately
-    frappe.sendmail(recipients=recipient, subject=subject, message=message, now=True)
+    return "Email sent successfully with Excel attachment."
 
-    return "Email sent successfully."
+
