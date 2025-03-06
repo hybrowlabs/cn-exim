@@ -7,7 +7,6 @@ from frappe.utils import (
 )
 import frappe
 def custom_get_transaction_data(self):
-        print(self.transaction_details)
         if self.sandbox_mode:
             REGISTERED_GSTIN = "05AAACG2115R1ZN"
             OTHER_GSTIN = "05AAACG2140A1ZL"

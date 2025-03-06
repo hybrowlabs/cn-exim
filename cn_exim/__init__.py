@@ -3,10 +3,12 @@ __version__ = "0.0.1"
 from cn_exim.overrides import e_waybill_override
 from cn_exim.overrides import e_waybill_class_override
 from india_compliance.gst_india.utils.e_waybill import EWaybillData
+import india_compliance.gst_india.utils.e_waybill as e_waybill
 
 
 EWaybillData.get_transaction_data = e_waybill_class_override.custom_get_transaction_data
 EWaybillData.update_transaction_details = e_waybill_class_override.custom_update_transaction_details
 EWaybillData.validate_doctype_for_e_waybill=e_waybill_override.custom_validate_doctype_for_e_waybill
 EWaybillData.validate_applicability=e_waybill_override.custom_validate_applicability
+e_waybill.get_address_map = e_waybill_override.custom_get_address_map
 

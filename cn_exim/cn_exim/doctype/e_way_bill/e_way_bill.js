@@ -26,9 +26,11 @@ frappe.ui.form.on("E-way Bill", {
             };
         });
 
-        frm.add_custom_button("e-waybill", function () {
-            show_generate_custom_e_waybill_dialog(frm)
-        })
+        if(frm.doc.ewaybill == undefined){
+            frm.add_custom_button("e-waybill", function () {
+                show_generate_custom_e_waybill_dialog(frm)
+            },__("Create"))
+        }
 
         if (frm.doc.docstatus == 1) {
             frm.add_custom_button("Update Po", function () {
@@ -402,4 +404,3 @@ function show_generate_custom_e_waybill_dialog(frm) {
     auto_fill_dialog();
 
 }
-
