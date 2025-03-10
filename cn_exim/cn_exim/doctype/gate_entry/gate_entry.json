@@ -8,6 +8,7 @@
  "field_order": [
   "naming_series",
   "scan_barcode",
+  "company",
   "column_break_ughx",
   "gate_entry_no",
   "gate_entry_date",
@@ -36,7 +37,8 @@
   "handover_to_person",
   "handover_remark",
   "amended_from",
-  "connections_tab"
+  "connections_tab",
+  "e_waybill_no"
  ],
  "fields": [
   {
@@ -58,7 +60,7 @@
   },
   {
    "fieldname": "vehicle_no",
-   "fieldtype": "Int",
+   "fieldtype": "Data",
    "label": "Vehicle No"
   },
   {
@@ -201,12 +203,24 @@
    "fieldtype": "Data",
    "label": "Scan Barcode",
    "options": "Barcode"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "e_waybill_no",
+   "fieldtype": "Link",
+   "label": "E-Waybill No",
+   "options": "E-way Bill"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-19 17:20:34.961832",
+ "modified": "2025-03-07 12:22:13.236323",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

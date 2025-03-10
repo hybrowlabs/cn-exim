@@ -34,7 +34,7 @@
   "master_number",
   "accessible_value",
   "cha_charges_section",
-  "cha_agenncy_charges",
+  "cha_agency_charges",
   "local_freight_vendor_charges",
   "column_break_hwfx",
   "cha_clearing_charges",
@@ -210,11 +210,6 @@
    "label": "CHA Charges"
   },
   {
-   "fieldname": "cha_agenncy_charges",
-   "fieldtype": "Currency",
-   "label": "CHA Agenncy Charges"
-  },
-  {
    "fieldname": "local_freight_vendor_charges",
    "fieldtype": "Currency",
    "label": "Local Freight Vendor Charges"
@@ -287,6 +282,11 @@
    "fieldtype": "Link",
    "label": "E-way Bill",
    "options": "E-way Bill"
+  },
+  {
+   "fieldname": "cha_agency_charges",
+   "fieldtype": "Currency",
+   "label": "CHA Agency Charges"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -297,7 +297,7 @@
    "link_fieldname": "custom_update_po_number"
   }
  ],
- "modified": "2024-12-23 16:39:33.607258",
+ "modified": "2025-03-07 15:40:36.169474",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Update Po",

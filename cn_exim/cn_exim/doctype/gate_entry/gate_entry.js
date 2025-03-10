@@ -71,6 +71,7 @@ frappe.ui.form.on("Gate Entry", {
                                     "amount": d.amount,
                                     "base_rate": d.rate_inr,
                                     "base_amount": d.amount_inr,
+                                    "qty":d.qty,
                                     "purchase_order_item": response.message[0]['name']
                                 });
                                 resolve();
@@ -94,19 +95,57 @@ frappe.ui.form.on("Gate Entry", {
                     }
 
                     frappe.call({
-                        method: "frappe.client.insert",
+                        method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_update_po_details",
                         args: {
-                            doc: {
+                            e_waybill: frm.doc.e_waybill_no || ""
+                        },
+                        callback: function (response) {
+                            let data = response.message?.[0] || {};
+                            let purchase_receipt_data = {
                                 "doctype": "Purchase Receipt",
                                 "supplier": frm.doc.supplier,
                                 "supplier_name": frm.doc.supplier_name,
-                                "items": purchase_item_list
+                                "custom_gate_entry_no": frm.doc.name,
+                                "items": purchase_item_list,
+                                "custom_bcd_amount": data['bcd_amount'] || 0,
+                                "custom_pickup_request": data['pickup_request'] || "",
+                                "custom_freight_amount": data['freight_amount'] || 0,
+                                "custom_hcs_amount": data['hcs_amount'] || 0,
+                                "custom_exworks": data['ex_works'] || 0,
+                                "custom_other_charges": data['other_charges'] || 0,
+                                "custom_rfq_no": data['rfq_no'] || "",
+                                "custom_sws_amount": data['sws_amount'] || 0,
+                                "custom_insurance_amount": data['insurance_amount'] || 0,
+                                "custom_master_number": data['master_number'] || "",
+                                "custom_igst_amount": data['igst_amount'] || 0,
+                                "custom_total_duty": data['total_duty'] || 0,
+                                "custom_insurance_": data['insurance_'] || 0,
+                                "CHA Agenncy Charges": data['cha_agenncy_charges'] || 0,
+                                "custom_cha_clearing_charges": data['cha_clearing_charges'] || 0,
+                                "custom_local_transporter_charges": data['local_transporter_charges'] || 0,
+                                "custom_local_freight_vendor_charges": data['local_freight_vendor_charges'] || 0,
+                                "custom_freight_and_forwarding_vendor_charges": data['freight_and_forwarding_vendor_charges'] || 0,
+                                "custom_update_po_number": data['name'] || "",
+                                "custom_total_category_charges": data['total_category_charges'] || 0,
+                                "custom_house_number": data['house_number'] || ""
+                            };
+
+                            // Add e_waybill-specific field only if e_waybill_no exists
+                            if (frm.doc.e_waybill_no) {
+                                purchase_receipt_data["custom_pre_alert_request"] = data['pre_alert_check_list'] || "";
                             }
-                        },
-                        callback: function (r) {
-                            if (!r.exc) {
-                                frappe.set_route("Form", "Purchase Receipt", r.message.name);
-                            }
+
+                            frappe.call({
+                                method: "frappe.client.insert",
+                                args: {
+                                    doc: purchase_receipt_data
+                                },
+                                callback: function (r) {
+                                    if (!r.exc) {
+                                        frappe.set_route("Form", "Purchase Receipt", r.message.name);
+                                    }
+                                }
+                            });
                         }
                     });
                 })
@@ -114,7 +153,40 @@ frappe.ui.form.on("Gate Entry", {
                     console.error("Error processing PO items:", error);
                 });
 
-        }, __("Create"));
 
-    }
+        }, __("Create"));
+    },
+
+    on_submit: function (frm) {
+        frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+                doctype: "Company",
+                filters: {
+                    name: frm.doc.company
+                },
+                fieldname: "custom_default_temporary_warehouse"
+            },
+            callback: function (r) {
+                if (r.message && r.message.custom_default_temporary_warehouse) {
+                    frappe.call({
+                        method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.create_stock_entry_for_stock_received",
+                        args: {
+                            doc: frm.doc,
+                            warehouse: r.message.custom_default_temporary_warehouse
+                        },
+                        callback: function (response) {
+                            // if (!response.exc) {
+                            //     frappe.msgprint("Stock Entry Created Successfully!");
+                            // } else {
+                            //     frappe.msgprint("Error creating Stock Entry!");
+                            // }
+                        }
+                    });
+                } else {
+                    frappe.msgprint("Temporary Warehouse not found for this Company!");
+                }
+            }
+        });
+    },
 });

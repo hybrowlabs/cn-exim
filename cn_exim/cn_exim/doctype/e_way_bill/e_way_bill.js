@@ -32,9 +32,9 @@ frappe.ui.form.on("E-way Bill", {
             }, __("Create"))
         }
         if (frm.doc.ewaybill != undefined) {
-            frm.add_custom_button("Attach", function () {
+            frm.add_custom_button("Get E-waybill Pdf ", function () {
                 attach_pdf_ewaybill(frm)
-            }, __("Create"))
+            })
         }
 
         if (frm.doc.docstatus == 1) {
@@ -104,7 +104,6 @@ frappe.ui.form.on("E-way Bill", {
                         item: d.item_code,
                         item_name: d.item_name,
                         uom: d.uom,
-                        // rate
                         amount: d.total_inr_value,
                         qty: d.qty,
                     })
@@ -127,6 +126,7 @@ frappe.ui.form.on("E-way Bill", {
                                     doctype: "Gate Entry",
                                     supplier: r.message[0]['supplier'],
                                     supplier_name: r.message[0]['supplier_name'],
+                                    e_waybill_no: frm.doc.name,
                                     gate_entry_details: item_list,
                                 }
                             },

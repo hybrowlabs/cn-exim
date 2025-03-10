@@ -275,7 +275,7 @@
   {
    "fieldname": "get_pos",
    "fieldtype": "Button",
-   "label": "Get Po's"
+   "label": "Get Purchase Order"
   },
   {
    "fieldname": "connections_tab",
@@ -302,7 +302,7 @@
    "table_fieldname": "item_details"
   }
  ],
- "modified": "2025-02-07 12:52:13.313139",
+ "modified": "2025-03-07 13:27:41.242843",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
