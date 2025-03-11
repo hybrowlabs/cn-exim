@@ -1,6 +1,6 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
-        if (frm.doc.custom_purchase_type == "Import" && frm.doc.docstatus == 1) {
+        if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{
                     po_number: frm.doc.name,

@@ -35,6 +35,6 @@ def create_stock_entry(doc, gate_entry, warehouse):
     
 @frappe.whitelist()
 def validate_tolerance(name):
-    data = frappe.db.sql(" select custom_under_tolerance, custom_over_tolerance,qty from `tabPurchase Order Item` where name=%s ", (name), as_dict=True)
+    data = frappe.db.sql(" select custom_under_tolerance, custom_over_tolerance,qty,received_qty from `tabPurchase Order Item` where name=%s ", (name), as_dict=True)
     
     return data

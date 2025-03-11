@@ -131,34 +131,40 @@ frappe.ui.form.on("Purchase Receipt", {
         let promises = [];
 
         frm.doc.items.forEach(d => {
-            let promise = new Promise((resolve, reject) => {
-                frappe.call({
-                    method: "cn_exim.config.py.purchase_receipt.validate_tolerance",
-                    args: {
-                        name: d.purchase_order_item
-                    },
-                    callback: function (response) {
-                        let tolerance = response.message[0];
-                        let under_tolerance = tolerance['qty'] - ((tolerance['qty'] * tolerance['custom_under_tolerance']) / 100);
-                        let over_tolerance = (tolerance['qty'] * tolerance['custom_over_tolerance']) / 100 + tolerance['qty'];
-
-                        if (d.qty < under_tolerance || d.qty > over_tolerance) {
-                            frappe.msgprint({
-                                title: __("Validation Error"),
-                                message: `Quantity <b>${d.qty}</b> for item <b>${d.item_code}</b> is out of tolerance range.<br>
+            if (d.purchase_order_item != undefined) {
+                let promise = new Promise((resolve, reject) => {
+                    frappe.call({
+                        method: "cn_exim.config.py.purchase_receipt.validate_tolerance",
+                        args: {
+                            name: d.purchase_order_item
+                        },
+                        callback: function (response) {
+                            let tolerance = response.message[0];
+                            let qty = tolerance['qty'] - tolerance['received_qty']
+                            let under_tolerance = tolerance['custom_under_tolerance'] 
+                                ? qty - ((qty * tolerance['custom_under_tolerance']) / 100) 
+                                : 0; // If undefined or 0, set to 0
+                            
+                            let over_tolerance = (qty * tolerance['custom_over_tolerance']) / 100 + qty;
+        
+                            if ((under_tolerance > 0 && d.qty < under_tolerance) || d.qty > over_tolerance) {
+                                frappe.msgprint({
+                                    title: __("Validation Error"),
+                                    message: `Quantity <b>${d.qty}</b> for item <b>${d.item_code}</b> is out of tolerance range.<br>
                                             Allowed range: <b>${under_tolerance.toFixed(2)}</b> to <b>${over_tolerance.toFixed(2)}</b>`,
-                                indicator: "red"
-                            });
-                            reject();
-                        } else {
-                            resolve();
+                                    indicator: "red"
+                                });
+                                reject();
+                            } else {
+                                resolve();
+                            }
                         }
-                    }
+                    });
                 });
-            });
-
-            promises.push(promise);
+                promises.push(promise);
+            }
         });
+        
 
         // Wait for all frappe.call() requests to complete before allowing submission
         Promise.allSettled(promises).then(results => {
