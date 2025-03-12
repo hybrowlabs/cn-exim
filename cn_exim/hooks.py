@@ -41,6 +41,8 @@ doctype_js = {
     "Purchase Invoice": "public/js/purchase_invoice.js",
     "Landed Cost Voucher": "public/js/landed_cost_voucher.js",
     "Bill of Entry": "public/js/bill_of_entry.js",
+    "Material Request": "public/js/material_request.js",
+    "Blanket Order": "public/js/blanket_order.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -144,7 +146,13 @@ doc_events = {
     "Journal Entry": {
         "on_cancel": "cn_exim.cn_exim.doc_events.journal_entry.on_cancel"
     },
-    "EMD": {"validate": "cn_exim.cn_exim.doctype.emd.emd.validate"},
+    "EMD":{
+        "validate": "cn_exim.cn_exim.doctype.emd.emd.validate"
+    },
+    "Purchase Receipt":{
+        "on_submit": "cn_exim.overrides.purchase_receipt.on_submit"
+
+    }
 }
 
 # Scheduled Tasks

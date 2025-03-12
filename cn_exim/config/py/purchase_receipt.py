@@ -38,3 +38,29 @@ def validate_tolerance(name):
     data = frappe.db.sql(" select custom_under_tolerance, custom_over_tolerance,qty,received_qty from `tabPurchase Order Item` where name=%s ", (name), as_dict=True)
     
     return data
+
+@frappe.whitelist()
+def get_account(item_code, company):
+    data = frappe.db.sql(" select custom_stock_received_but_not_billed, custom_default_inventory_account from `tabItem Default` where parent=%s and company=%s ",(item_code, company), as_dict=True)
+    
+    return data
+
+@frappe.whitelist()
+def validate_qty_for_blanket_order(item_code, name):
+    data = frappe.db.sql(" select qty, custom_received_qty from `tabBlanket Order Item` where parent=%s and item_code=%s",(name, item_code),as_dict=True)
+    
+    return data
+
+
+@frappe.whitelist()
+def update_blanket_order(name, item_code, qty):
+    data = frappe.db.sql(" select name, qty, custom_received_qty from `tabBlanket Order Item` where parent=%s and item_code=%s ",(name, item_code), as_dict=True)
+    
+    remaining_qty = 0
+    if data[0]['custom_received_qty'] == 0.0:
+        remaining_qty = float(data[0]['qty']) - float(qty)
+    else:
+        remaining_qty = float(data[0]['custom_received_qty']) - float(qty)
+        
+    frappe.db.set_value("Blanket Order Item", data[0]['name'], "custom_received_qty", remaining_qty)
+    

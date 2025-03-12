@@ -55,12 +55,12 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "po_number.custom_purchase_type",
+   "fetch_from": "po_number.custom_purchase_sub_type",
    "fieldname": "po_type",
-   "fieldtype": "Link",
+   "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Purchase Type",
-   "options": "Purchase Type",
+   "options": "Import\nDomestic",
    "read_only": 1
   },
   {
@@ -97,7 +97,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-14 16:30:34.171804",
+ "modified": "2025-03-11 10:07:43.589304",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Purchase Order List",

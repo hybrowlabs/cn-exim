@@ -21,7 +21,7 @@ frappe.ui.form.on("Purchase Order", {
                         'currency_rate': frm.doc.conversion_rate,
                         'rate': element.rate,
                         'amount': element.amount,
-                        'amount_in_inr': element.base_amount
+                        'amount_in_inr': element.base_amount,
                     })
                 });
 
@@ -35,6 +35,7 @@ frappe.ui.form.on("Purchase Order", {
                             "purchase_order_list": purchase_order_list,
                             "purchase_order_details": po_item_details,
                             "remarks": "test",
+                            "total_amount":frm.doc.total,
                         }
                     },
                     callback: function (r) {
@@ -95,8 +96,102 @@ frappe.ui.form.on("Purchase Order", {
         setTimeout(() => {
         frm.remove_custom_button('Update Items');
         }, 10)
+    },
+    on_submit:function(frm){
+        setTimeout(() => {
+            frm.remove_custom_button('Update Items');
+        }, 10)
     }
 })
+
+
+frappe.ui.form.on('Purchase Order Item', {
+    custom_create_delivery_schedule: function(frm, cdt, cdn) {
+        var data = locals[cdt][cdn];
+
+        let d = new frappe.ui.Dialog({
+            title: 'Create Delivery Schedule',
+            fields: [
+                {
+                    label: 'Delivery Schedule',
+                    fieldname: 'delivery_schedule',
+                    fieldtype: 'Table',
+                    fields: [
+                        {
+                            label: 'Item Code',
+                            fieldname: 'item_code',
+                            fieldtype: 'Link',
+                            options: 'Item',
+                            in_list_view: 1,
+                            reqd:1,
+                            get_query: () => {
+                                return {
+                                    filters: {
+                                        item_code: data.item_code
+                                    }
+                                };
+                            }
+                        },
+                        {
+                            label: 'Schedule Date',
+                            fieldname: 'date',
+                            fieldtype: 'Date',
+                            in_list_view: 1,
+                            reqd:1,
+                            
+                            
+                        },
+                        {
+                            label: 'Quantity',
+                            fieldname: 'qty',
+                            fieldtype: 'Float',
+                            in_list_view: 1,
+                            reqd:1,
+                        }
+                    ],
+                    data: [],
+                    get_data: () => {
+                        return d.get_values().delivery_schedule || [];
+                    }
+                }
+            ],
+            primary_action_label: 'Submit',
+            primary_action(values) {
+                console.log(values);
+                let total_qty = 0;
+
+                // Calculate total quantity
+                values.delivery_schedule.forEach(row => {
+                    total_qty += row.qty;
+                });
+
+                if (total_qty > data.qty) {
+                    frappe.msgprint(`The total quantity (${total_qty}) exceeds the entered quantity (${data.qty}).`);
+                } else {
+                    d.hide();
+
+                    values.delivery_schedule.forEach(row => {
+                        let add_child = frm.add_child("custom_delivery_schedule_details");
+                        add_child.item_code = row.item_code;
+                        add_child.schedule_date = row.date;
+                        add_child.qty = row.qty;
+                    });
+
+                    // Refresh the child table to show updates
+                    frm.refresh_field("custom_delivery_schedule_details");
+
+                    frappe.msgprint('Delivery schedule created successfully.');
+                }
+            }
+        });
+
+        d.show();
+    }
+});
+
+
+
+
 
 
 function update_progress_bar(frm, stage_status) {

@@ -24,7 +24,7 @@ frappe.ui.form.on("Item", {
         }
     },
     onload: function (frm) {
-        frm.fields_dict["item_defaults"].grid.get_field("custom_stock_received_but_not_billed").get_query = function (doc, cdt, cdn) {
+        frm.fields_dict["item_defaults"].grid.get_field("custom_default_inventory_account").get_query = function (doc, cdt, cdn) {
             let row = locals[cdt][cdn];
             return {
                 filters: {
@@ -35,7 +35,7 @@ frappe.ui.form.on("Item", {
             };
         };
 
-        frm.fields_dict["item_defaults"].grid.get_field("custom_default_inventory_account").get_query = function (doc, cdt, cdn) {
+        frm.fields_dict["item_defaults"].grid.get_field("custom_stock_received_but_not_billed").get_query = function (doc, cdt, cdn) {
             let row = locals[cdt][cdn];
             return {
                 filters: {
