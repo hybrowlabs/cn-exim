@@ -97,11 +97,11 @@ frappe.ui.form.on("Purchase Order", {
         frm.remove_custom_button('Update Items');
         }, 10)
     },
-    on_submit:function(frm){
-        setTimeout(() => {
-            frm.remove_custom_button('Update Items');
-        }, 10)
-    }
+    // on_submit:function(frm){
+    //     setTimeout(() => {
+    //         frm.remove_custom_button('Update Items');
+    //     }, 10)
+    // }
 })
 
 

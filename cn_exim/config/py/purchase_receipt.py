@@ -60,7 +60,7 @@ def update_blanket_order(name, item_code, qty):
     if data[0]['custom_received_qty'] == 0.0:
         remaining_qty = float(data[0]['qty']) - float(qty)
     else:
-        remaining_qty = float(data[0]['custom_received_qty']) - float(qty)
+        remaining_qty = float(data[0]['custom_received_qty']) + float(qty)
         
     frappe.db.set_value("Blanket Order Item", data[0]['name'], "custom_received_qty", remaining_qty)
     

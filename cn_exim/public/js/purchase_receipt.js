@@ -126,16 +126,17 @@ frappe.ui.form.on("Purchase Receipt", {
                 }
             })
         }
-        frm.doc.items.forEach(element =>{
-            if(element.custom_blanket_order != undefined){
+        frm.doc.items.forEach(element => {
+            console.log(element.custom_blanket_order)
+            if (element.custom_blanket_order != undefined) {
                 frappe.call({
-                    method:"cn_exim.config.py.purchase_receipt.update_blanket_order",
-                    args:{
-                        name:element.custom_blanket_order,
-                        item_code:element.item_code,
-                        qty:element.qty
+                    method: "cn_exim.config.py.purchase_receipt.update_blanket_order",
+                    args: {
+                        name: element.custom_blanket_order,
+                        item_code: element.item_code,
+                        qty: element.qty
                     },
-                    callback:function(r){
+                    callback: function (r) {
 
                     }
                 })
@@ -157,21 +158,21 @@ frappe.ui.form.on("Purchase Receipt", {
                         callback: function (response) {
                             let tolerance = response.message[0];
                             let qty = tolerance['qty'] - tolerance['received_qty'];
-                        
+
                             // Set under_tolerance if defined, else keep it 0 (no lower limit)
-                            let under_tolerance = tolerance['custom_under_tolerance'] 
-                                ? qty - ((qty * tolerance['custom_under_tolerance']) / 100) 
-                                : qty; 
-                        
+                            let under_tolerance = tolerance['custom_under_tolerance']
+                                ? qty - ((qty * tolerance['custom_under_tolerance']) / 100)
+                                : qty;
+
                             // Set over_tolerance if defined, else keep it as qty (no upper limit)
-                            let over_tolerance = tolerance['custom_over_tolerance'] 
+                            let over_tolerance = tolerance['custom_over_tolerance']
                                 ? (qty * tolerance['custom_over_tolerance']) / 100 + qty
                                 : qty;
-                        
+
                             // Validation check: Only apply limits if tolerance values are available
-                            if ((tolerance['custom_under_tolerance'] > 0 && d.qty < under_tolerance) || 
+                            if ((tolerance['custom_under_tolerance'] > 0 && d.qty < under_tolerance) ||
                                 (tolerance['custom_over_tolerance'] > 0 && d.qty > over_tolerance)) {
-                                
+
                                 frappe.msgprint({
                                     title: __("Validation Error"),
                                     message: `Quantity <b>${d.qty}</b> for item <b>${d.item_code}</b> is out of tolerance range.<br>
@@ -183,13 +184,13 @@ frappe.ui.form.on("Purchase Receipt", {
                                 resolve();
                             }
                         }
-                        
+
                     });
                 });
                 promises.push(promise);
             }
         });
-        
+
 
         // Wait for all frappe.call() requests to complete before allowing submission
         Promise.allSettled(promises).then(results => {
@@ -207,15 +208,15 @@ frappe.ui.form.on("Purchase Receipt", {
             frappe.validated = false;
         });
     },
-    before_save:function(frm){
-        frm.doc.items.forEach(element =>{
+    before_save: function (frm) {
+        frm.doc.items.forEach(element => {
             frappe.call({
-                method:"cn_exim.config.py.purchase_receipt.get_account",
-                args:{
-                    item_code:element.item_code,
-                    company:frm.doc.company
+                method: "cn_exim.config.py.purchase_receipt.get_account",
+                args: {
+                    item_code: element.item_code,
+                    company: frm.doc.company
                 },
-                callback:function(response){
+                callback: function (response) {
                     let data = response.message[0]
                     console.log("this call", data)
 
@@ -226,33 +227,34 @@ frappe.ui.form.on("Purchase Receipt", {
             })
         })
     },
-    onload:function(frm)
-    {
+    onload: function (frm) {
         get_qty(frm)
     },
-    validate:function(frm){
-        frm.doc.items.forEach(element =>{
-            frappe.call({
-                method:"cn_exim.config.py.purchase_receipt.validate_qty_for_blanket_order",
-                args:{
-                    item_code:element.item_code,
-                    name:element.custom_blanket_order
-                },
-                callback:function(response){
-                    let data = response.message[0]
+    validate: function (frm) {
+        frm.doc.items.forEach(element => {
+            if (element.custom_blanket_order != undefined) {
+                frappe.call({
+                    method: "cn_exim.config.py.purchase_receipt.validate_qty_for_blanket_order",
+                    args: {
+                        item_code: element.item_code,
+                        name: element.custom_blanket_order
+                    },
+                    callback: function (response) {
+                        let data = response.message[0]
 
-                    let qty = data['qty'] - data['custom_received_qty']
+                        let qty = data['qty'] - data['custom_received_qty']
 
-                    if(qty < element.qty){
-                        frappe.validated = false;
-                        frappe.msgprint({
-                            title: __("Error"),
-                            indicator: "red",
-                            message: `This Blanket Order <b>${element.custom_blanket_order}</b> is over. Not allowed more quantity! (Remaining Qty: <b>${qty}</b>)`
-                        });
+                        if (qty < element.qty) {
+                            frappe.validated = false;
+                            frappe.msgprint({
+                                title: __("Error"),
+                                indicator: "red",
+                                message: `This Blanket Order <b>${element.custom_blanket_order}</b> is over. Not allowed more quantity! (Remaining Qty: <b>${qty}</b>)`
+                            });
+                        }
                     }
-                }
-            })
+                })
+            }
         })
     }
 })
@@ -270,7 +272,7 @@ function get_qty(frm) {
             }
 
             // Collect unique purchase order IDs
-            $.each(frm.doc.items, function(i, v) {
+            $.each(frm.doc.items, function (i, v) {
                 if (v.purchase_order) {
                     po_id.add(v.purchase_order);
                 }
@@ -278,7 +280,7 @@ function get_qty(frm) {
 
             po_id = Array.from(po_id); // Convert Set to Array
 
-            $.each(po_id, function(i, purchase_order_id) {
+            $.each(po_id, function (i, purchase_order_id) {
                 frappe.call({
                     method: "frappe.client.get",
                     args: {
@@ -286,21 +288,21 @@ function get_qty(frm) {
                         name: purchase_order_id,
                         docstatus: 1
                     },
-                    callback: function(res) {
+                    callback: function (res) {
                         if (res.message && res.message.custom_delivery_schedule_details) {
                             let schedule_details = res.message.custom_delivery_schedule_details;
 
                             // Iterate over each item in the child table
-                            $.each(frm.doc.items, function(idx, item) {
+                            $.each(frm.doc.items, function (idx, item) {
                                 // Find the nearest date for the current item's item_code
                                 let nearest_schedule = schedule_details
                                     .filter(d => d.received_qty < d.qty && d.schedule_date >= transaction_date && d.item_code == item.item_code) // Match item_code
-                                    .sort((a, b) => new Date(a.schedule_date) - new Date(b.schedule_date))[0]; 
+                                    .sort((a, b) => new Date(a.schedule_date) - new Date(b.schedule_date))[0];
 
                                 if (nearest_schedule) {
                                     // Set values in the child table
-                                    frappe.model.set_value(item.doctype, item.name, "qty", (nearest_schedule.qty-nearest_schedule.received_qty));
-                                    frappe.model.set_value(item.doctype, item.name, "custom_row_id", nearest_schedule.name); 
+                                    frappe.model.set_value(item.doctype, item.name, "qty", (nearest_schedule.qty - nearest_schedule.received_qty));
+                                    frappe.model.set_value(item.doctype, item.name, "custom_row_id", nearest_schedule.name);
                                 } else {
                                     console.log(`No valid schedule found for item ${item.item_code}`);
                                 }
