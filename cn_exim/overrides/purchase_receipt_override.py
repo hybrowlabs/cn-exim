@@ -177,7 +177,9 @@ def custom_make_item_gl_entries(self, gl_entries, warehouse_account=None):
                         )
 
         def make_rate_difference_entry(item):
-            if item.rate_difference_with_purchase_invoice and stock_asset_rbnb:
+            rate_difference = getattr(item, "rate_difference_with_purchase_invoice", 0)
+
+            if rate_difference and stock_asset_rbnb:
                 account_currency = get_account_currency(stock_asset_rbnb)
                 self.add_gl_entry(
                     gl_entries=gl_entries,

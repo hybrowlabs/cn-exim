@@ -1069,7 +1069,7 @@
    "name": "Purchase Order-custom_purchase_sub_type1",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "With Company\nWithout Company",
+   "options": "In State\nOut State",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,
