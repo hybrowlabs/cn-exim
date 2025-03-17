@@ -1312,6 +1312,20 @@
     "type": "chatnext_assistant_message"
    },
    {
+    "data": "{\"name_of_action\":\"Close Purchase Order Manually\",\"page_type\":\"doctype\",\"node_label\":\"Close Purchase Order Manually\",\"submit\":true,\"variable_path_for_output\":\"\",\"doctype\":\"Purchase Order\",\"show_as_button\":true,\"visiblity_condition\":true,\"button_label\":\"Close Purchase Order\",\"doc_field\":\"status\",\"field_values\":\"To Receive, To Bill, To Receive and Bill\"}",
+    "element_type": "Trigger",
+    "id": "0l3cpiPF4DjSa2citqzxP",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1515,\"y\":795}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_trigger"
+   },
+   {
     "data": "{\"message\":\"Rejected This\",\"renderAsHtml\":false,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "qULj0Qr0qZ5iA6lpZbF1F",
@@ -1340,6 +1354,20 @@
     "type": "chatnext_assistant_message"
    },
    {
+    "data": "{\"question\":\"Please provide a reason for closing this Purchase Order.\",\"renderAsHtml\":false,\"answer_var\":\"value\",\"validate_answer\":false,\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "JRQ9-BD6JR8ejCpuIgWwY",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1515,\"y\":885}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_text_question"
+   },
+   {
     "data": "{\"message\":\"Approved This\",\"renderAsHtml\":false,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "DaHysBGYRQb2Jpxa6ORLM",
@@ -1347,6 +1375,34 @@
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
     "position": "{\"x\":2640,\"y\":465}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_message"
+   },
+   {
+    "data": "{\"node_label\":\"\",\"python_code\":\"doc = frappe.get_doc(\\\"Purchase Order\\\", variables[\\\"doc\\\"][\\\"name\\\"])\\nfrappe.db.set_value(\\\"Purchase Order\\\", doc.name, \\\"custom_close_purchase_order_remark_manually\\\", variables[\\\"value\\\"])\\nfrappe.db.set_value(\\\"Purchase Order\\\", doc.name, \\\"status\\\", \\\"Completed\\\")\\nfrappe.db.set_value(\\\"Purchase Order\\\", doc.name, \\\"per_received\\\", 100)\\nfrappe.db.set_value(\\\"Purchase Order\\\", doc.name, \\\"per_billed\\\", 100)\",\"skip_queue_and_execute_immediately\":false,\"execute_current_node_as_user\":\"\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "agPrfS-P3oFZiQCXHo-NW",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1515,\"y\":975}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "exec_python"
+   },
+   {
+    "data": "{\"message\":\"The Purchase Order has been closed successfully.\",\"renderAsHtml\":false,\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "cboHTUse7hG-GrIrHM-3E",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1515,\"y\":1065}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -1380,6 +1436,20 @@
     "target": null,
     "targethandle": null,
     "type": "exec_python"
+   },
+   {
+    "data": "{\"submit\":true}",
+    "element_type": "Action",
+    "id": "4omamkW8QIwDyBHT1HN0J",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1515,\"y\":1155}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_close_modal"
    },
    {
     "data": "{\"is_dynamic_form\":false,\"selected_form\":{\"name\":\"user_details\",\"label\":\"User Detials\"},\"prefill_data\":\"\",\"answer_var\":\"value\",\"submit\":true}",
@@ -1842,15 +1912,71 @@
     "target": "7eg4tQ0pBF-_hpVVh5o4h",
     "targethandle": "input",
     "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-0l3cpiPF4DjSa2citqzxPoutput-JRQ9-BD6JR8ejCpuIgWwYinput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "0l3cpiPF4DjSa2citqzxP",
+    "sourcehandle": "output",
+    "target": "JRQ9-BD6JR8ejCpuIgWwY",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-JRQ9-BD6JR8ejCpuIgWwYoutput-agPrfS-P3oFZiQCXHo-NWinput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "JRQ9-BD6JR8ejCpuIgWwY",
+    "sourcehandle": "output",
+    "target": "agPrfS-P3oFZiQCXHo-NW",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-agPrfS-P3oFZiQCXHo-NWoutput-cboHTUse7hG-GrIrHM-3Einput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "agPrfS-P3oFZiQCXHo-NW",
+    "sourcehandle": "output",
+    "target": "cboHTUse7hG-GrIrHM-3E",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-cboHTUse7hG-GrIrHM-3Eoutput-4omamkW8QIwDyBHT1HN0Jinput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "cboHTUse7hG-GrIrHM-3E",
+    "sourcehandle": "output",
+    "target": "4omamkW8QIwDyBHT1HN0J",
+    "targethandle": "input",
+    "type": "smoothstep"
    }
   ],
   "funnel_name": "Exim Flow",
   "funnel_type": "Private",
-  "modified": "2025-02-19 12:32:26.485463",
+  "modified": "2025-03-17 09:44:28.425362",
   "module": null,
   "name": "Exim Flow",
   "status": "published",
   "variable_list": "[]",
-  "viewport": "{\"x\":-1049.8695967940964,\"y\":65.14490273233736,\"zoom\":0.6915953145054823}"
+  "viewport": "{\"x\":-402.86959679409665,\"y\":-241.8550972676626,\"zoom\":0.6915953145054823}"
  }
 ]

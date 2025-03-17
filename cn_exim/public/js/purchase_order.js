@@ -97,11 +97,6 @@ frappe.ui.form.on("Purchase Order", {
         frm.remove_custom_button('Update Items');
         }, 10)
     },
-    // on_submit:function(frm){
-    //     setTimeout(() => {
-    //         frm.remove_custom_button('Update Items');
-    //     }, 10)
-    // }
 })
 
 
@@ -117,21 +112,6 @@ frappe.ui.form.on('Purchase Order Item', {
                     fieldname: 'delivery_schedule',
                     fieldtype: 'Table',
                     fields: [
-                        {
-                            label: 'Item Code',
-                            fieldname: 'item_code',
-                            fieldtype: 'Link',
-                            options: 'Item',
-                            in_list_view: 1,
-                            reqd:1,
-                            get_query: () => {
-                                return {
-                                    filters: {
-                                        item_code: data.item_code
-                                    }
-                                };
-                            }
-                        },
                         {
                             label: 'Schedule Date',
                             fieldname: 'date',
@@ -172,7 +152,7 @@ frappe.ui.form.on('Purchase Order Item', {
 
                     values.delivery_schedule.forEach(row => {
                         let add_child = frm.add_child("custom_delivery_schedule_details");
-                        add_child.item_code = row.item_code;
+                        add_child.item_code = data.item_code;
                         add_child.schedule_date = row.date;
                         add_child.qty = row.qty;
                     });
