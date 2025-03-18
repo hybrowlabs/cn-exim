@@ -46,5 +46,64 @@ frappe.ui.form.on("Item", {
                 }
             };
         };
+
+        let len = frm.doc.custom_item_charges_template.length
+
+        if(frm.doc.custom_material_type != undefined && len == 0){
+            get_item_wise_charges(frm)
+        }
+    },
+    custom_material_type: function (frm) {
+        get_item_wise_charges(frm)
+    },
+    item_group:function(frm){
+        get_item_wise_charges_in_item(frm)
     }
 })
+
+
+function get_item_wise_charges(frm){
+    frappe.call({
+        method: "cn_exim.config.py.item.get_item_charges",
+        args: {
+            name: frm.doc.custom_material_type
+        },
+        callback: function (response) {
+            let data = response.message
+            frm.set_value("custom_item_charge", data[0]['item_charges'])
+
+            data.forEach(obj => {
+                let row = frm.add_child("custom_item_charges_template")
+                row.type = obj.type;
+                row.account_head = obj.account_head;
+                row.amount = obj.amount;
+                row.description = obj.description;
+                row.reference_row = obj.reference_row;
+            })
+            frm.refresh_field("custom_item_charges_template")
+        }
+    })
+}
+
+function get_item_wise_charges_in_item(frm){
+    frappe.call({
+        method: "cn_exim.config.py.item.get_item_charges_from_item_group",
+        args: {
+            name: frm.doc.item_group
+        },
+        callback: function (response) {
+            let data = response.message
+            frm.set_value("custom_item_charge", data[0]['custom_item_charge'])
+
+            data.forEach(obj => {
+                let row = frm.add_child("custom_item_charges_template")
+                row.type = obj.type;
+                row.account_head = obj.account_head;
+                row.amount = obj.amount;
+                row.description = obj.description;
+                row.reference_row = obj.reference_row;
+            })
+            frm.refresh_field("custom_item_charges_template")
+        }
+    })
+}

@@ -12,7 +12,10 @@
   "column_break_lhvg",
   "counter",
   "qty_updating",
-  "materil_type_description"
+  "materil_type_description",
+  "section_break_eope",
+  "item_charges",
+  "item_charges_template"
  ],
  "fields": [
   {
@@ -50,11 +53,27 @@
    "fieldname": "materil_type_description",
    "fieldtype": "Small Text",
    "label": "Materil Type Description"
+  },
+  {
+   "fieldname": "section_break_eope",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_charges",
+   "fieldtype": "Link",
+   "label": "Item Charges",
+   "options": "Item Charges"
+  },
+  {
+   "fieldname": "item_charges_template",
+   "fieldtype": "Table",
+   "label": "Item Charges Template",
+   "options": "Item Charges Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-07 13:48:52.103251",
+ "modified": "2025-03-18 00:11:37.621066",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Types",

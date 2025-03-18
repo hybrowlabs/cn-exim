@@ -35,7 +35,7 @@ frappe.ui.form.on("Purchase Order", {
                             "purchase_order_list": purchase_order_list,
                             "purchase_order_details": po_item_details,
                             "remarks": "test",
-                            "total_amount":frm.doc.total,
+                            "total_amount": frm.doc.total,
                         }
                     },
                     callback: function (r) {
@@ -94,15 +94,31 @@ frappe.ui.form.on("Purchase Order", {
             }, __("Create"))
         }
         setTimeout(() => {
-        frm.remove_custom_button('Update Items');
+            frm.remove_custom_button('Update Items');
         }, 10)
+    },
+    before_save: function (frm) {
+        frm.doc.items.forEach(row => {
+            update_charges_tax_table(frm, row)
+        })
+        set_print_format_base_on_field_value(frm)
+    },
+    taxes_and_charges: function (frm) {
+        frm.doc.items.forEach(row => {
+            update_charges_tax_table(frm, row)
+        })
     },
 })
 
 
 frappe.ui.form.on('Purchase Order Item', {
-    custom_create_delivery_schedule: function(frm, cdt, cdn) {
+    custom_create_delivery_schedule: function (frm, cdt, cdn) {
         var data = locals[cdt][cdn];
+
+        // Fetch existing schedule details for the selected item where received_qty == 0
+        let existing_schedule = frm.doc.custom_delivery_schedule_details.filter(element =>
+            element.parent == frm.doc.name && element.item_code == data.item_code && element.received_qty == 0
+        );
 
         let d = new frappe.ui.Dialog({
             title: 'Create Delivery Schedule',
@@ -117,19 +133,20 @@ frappe.ui.form.on('Purchase Order Item', {
                             fieldname: 'date',
                             fieldtype: 'Date',
                             in_list_view: 1,
-                            reqd:1,
-                            
-                            
+                            reqd: 1,
                         },
                         {
                             label: 'Quantity',
                             fieldname: 'qty',
                             fieldtype: 'Float',
                             in_list_view: 1,
-                            reqd:1,
+                            reqd: 1,
                         }
                     ],
-                    data: [],
+                    data: existing_schedule.map(row => ({
+                        date: row.schedule_date,
+                        qty: row.qty
+                    })),
                     get_data: () => {
                         return d.get_values().delivery_schedule || [];
                     }
@@ -137,10 +154,9 @@ frappe.ui.form.on('Purchase Order Item', {
             ],
             primary_action_label: 'Submit',
             primary_action(values) {
-                console.log(values);
                 let total_qty = 0;
 
-                // Calculate total quantity
+                // Calculate total quantity entered in the dialog
                 values.delivery_schedule.forEach(row => {
                     total_qty += row.qty;
                 });
@@ -150,27 +166,46 @@ frappe.ui.form.on('Purchase Order Item', {
                 } else {
                     d.hide();
 
+                    // Remove old rows that do not match the new schedule
+                    frm.doc.custom_delivery_schedule_details = frm.doc.custom_delivery_schedule_details.filter(element =>
+                        !(element.item_code == data.item_code && !values.delivery_schedule.some(row => row.date === element.schedule_date))
+                    );
+
+                    // Update existing rows or create new ones
                     values.delivery_schedule.forEach(row => {
-                        let add_child = frm.add_child("custom_delivery_schedule_details");
-                        add_child.item_code = data.item_code;
-                        add_child.schedule_date = row.date;
-                        add_child.qty = row.qty;
+                        let existing_row = frm.doc.custom_delivery_schedule_details.find(element =>
+                            element.item_code == data.item_code && element.schedule_date == row.date
+                        );
+
+                        if (existing_row) {
+                            // Update the quantity if date matches
+                            existing_row.qty = row.qty;
+                        } else {
+                            // Add a new row if the date is changed
+                            let add_child = frm.add_child("custom_delivery_schedule_details");
+                            add_child.item_code = data.item_code;
+                            add_child.schedule_date = row.date;
+                            add_child.qty = row.qty;
+                            add_child.material_request = data.material_request;
+                        }
                     });
 
-                    // Refresh the child table to show updates
+                    // Refresh the child table to reflect changes
                     frm.refresh_field("custom_delivery_schedule_details");
 
-                    frappe.msgprint('Delivery schedule created successfully.');
+                    frappe.msgprint('Delivery schedule updated successfully.');
                 }
             }
         });
 
+        // Show dialog
         d.show();
-    }
+    },
+    item_code: function (frm, cdt, cdn) {
+        let row = locals[cdt][cdn]
+        update_charges_tax_table(frm, row)
+    },
 });
-
-
-
 
 
 
@@ -200,4 +235,49 @@ function update_progress_bar(frm, stage_status) {
     `;
 
     frm.fields_dict.custom_progress_bar.$wrapper.html(progress_html);
+}
+
+
+function update_charges_tax_table(frm, row) {
+    if (row.custom_item_charges_templte != undefined) {
+        frappe.call({
+            method: "cn_exim.config.py.purchase_order.get_item_wise_charges",
+            args: {
+                name: row.custom_item_charges_templte
+            },
+            callback: function (response) {
+                let data = response.message
+
+                data.forEach(element => {
+                    let exists = frm.doc.taxes.some(tax =>
+                        tax.charge_type === element.type &&
+                        tax.account_head === element.account_head &&
+                        tax.custom_item_code === row.item_code
+                    );
+                    if (!exists) {
+                        let new_row = frm.add_child("taxes")
+                        new_row.charge_type = element.type;
+                        new_row.account_head = element.account_head;
+                        new_row.tax_amount = element.tax_amount;
+                        new_row.custom_item_code = row.item_code;
+                        new_row.description = element.description;
+                    }
+                })
+                frm.refresh_field("taxes")
+            }
+        })
+    }
+}
+
+
+function set_print_format_base_on_field_value(frm) {
+    if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 0) {
+        frm.set_value("custom_print_format", "Import Po Before Release")
+    }
+    else if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
+        frm.set_value("custom_print_format", "Import Po After Release")
+    }
+    else if (frm.doc.custom_purchase_sub_type == "Domestic") {
+        frm.set_value("custom_print_format", "Domestic Po After Release")
+    }
 }

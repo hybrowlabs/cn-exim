@@ -159,7 +159,7 @@
   {
    "fieldname": "ransport_receipt_date",
    "fieldtype": "Date",
-   "label": "ransport Receipt Date"
+   "label": "Transport Receipt Date"
   },
   {
    "fieldname": "gst_vehicle_type",
@@ -438,7 +438,7 @@
    "link_fieldname": "e_way_bill"
   }
  ],
- "modified": "2025-01-29 11:25:20.487853",
+ "modified": "2025-03-17 15:48:27.339816",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "E-way Bill",

@@ -1108,7 +1108,7 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":2370,\"y\":-30}",
+    "position": "{\"x\":2370,\"y\":60}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -1234,7 +1234,7 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":2235,\"y\":210}",
+    "position": "{\"x\":2235,\"y\":225}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -1452,6 +1452,20 @@
     "type": "chatnext_assistant_close_modal"
    },
    {
+    "data": "{\"node_label\":\"\",\"python_code\":\"doc = frappe.get_doc(\\\"Purchase Order\\\", variables['doc']['name'])\\nprint_format = \\\"\\\"\\nif doc.custom_purchase_sub_type == \\\"Import\\\":\\n        print_format = \\\"Import Po After Release\\\"\\nelif doc.custom_purchase_sub_type == \\\"Domestic\\\":\\n        print_format = \\\"Domestic Po After Release\\\"\\nfrappe.db.set_value(\\\"Purchase Order\\\", doc.name, \\\"custom_print_format\\\", print_format)\",\"skip_queue_and_execute_immediately\":false,\"execute_current_node_as_user\":\"\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "element_type": "Action",
+    "id": "8kmSMosDxT6jDU76n9HwB",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":2625,\"y\":-15}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "exec_python"
+   },
+   {
     "data": "{\"is_dynamic_form\":false,\"selected_form\":{\"name\":\"user_details\",\"label\":\"User Detials\"},\"prefill_data\":\"\",\"answer_var\":\"value\",\"submit\":true}",
     "element_type": "Action",
     "id": "nwo8sMmX7vOLsmwTE_dvj",
@@ -1658,20 +1672,6 @@
     "source": "K6Fy1piYzcrkDmpostN3I",
     "sourcehandle": "Reject",
     "target": "zs60aSI6l8L1eyvSwHvnM",
-    "targethandle": "input",
-    "type": "smoothstep"
-   },
-   {
-    "data": null,
-    "element_type": "edge",
-    "id": "reactflow__edge-RaUIsl-rwZji6J-_tNKRDoutput-Nrkwg81-1aebVy2FfuvZdinput",
-    "parent": "Exim Flow",
-    "parentfield": "funnel_definition",
-    "parenttype": "Funnel",
-    "position": null,
-    "source": "RaUIsl-rwZji6J-_tNKRD",
-    "sourcehandle": "output",
-    "target": "Nrkwg81-1aebVy2FfuvZd",
     "targethandle": "input",
     "type": "smoothstep"
    },
@@ -1968,15 +1968,43 @@
     "target": "4omamkW8QIwDyBHT1HN0J",
     "targethandle": "input",
     "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-RaUIsl-rwZji6J-_tNKRDoutput-8kmSMosDxT6jDU76n9HwBinput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "RaUIsl-rwZji6J-_tNKRD",
+    "sourcehandle": "output",
+    "target": "8kmSMosDxT6jDU76n9HwB",
+    "targethandle": "input",
+    "type": "smoothstep"
+   },
+   {
+    "data": null,
+    "element_type": "edge",
+    "id": "reactflow__edge-8kmSMosDxT6jDU76n9HwBoutput-Nrkwg81-1aebVy2FfuvZdinput",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": null,
+    "source": "8kmSMosDxT6jDU76n9HwB",
+    "sourcehandle": "output",
+    "target": "Nrkwg81-1aebVy2FfuvZd",
+    "targethandle": "input",
+    "type": "smoothstep"
    }
   ],
   "funnel_name": "Exim Flow",
   "funnel_type": "Private",
-  "modified": "2025-03-17 09:44:28.425362",
+  "modified": "2025-03-18 17:10:42.225755",
   "module": null,
   "name": "Exim Flow",
   "status": "published",
   "variable_list": "[]",
-  "viewport": "{\"x\":-402.86959679409665,\"y\":-241.8550972676626,\"zoom\":0.6915953145054823}"
+  "viewport": "{\"x\":-1015.350826879429,\"y\":207.80102893101906,\"zoom\":0.7673730480004467}"
  }
 ]
