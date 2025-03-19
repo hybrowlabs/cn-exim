@@ -212,7 +212,6 @@ def custom_make_item_gl_entries(self, gl_entries, warehouse_account=None):
                 )
 
         def make_divisional_loss_gl_entry(item, outgoing_amount):
-            print(item,"\n\n\n\n\n")
             if item.is_fixed_asset:
                 return
 
