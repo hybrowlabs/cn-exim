@@ -103,11 +103,34 @@ frappe.ui.form.on("Purchase Order", {
         })
         set_print_format_base_on_field_value(frm)
     },
-    taxes_and_charges: function (frm) {
-        frm.doc.items.forEach(row => {
-            update_charges_tax_table(frm, row)
-        })
-    },
+    onload: function (frm) {
+        if (frm.doc.items && Array.isArray(frm.doc.items)) { 
+            frm.doc.items.forEach(item => {
+                if (!item.custom_item_charges_templte) {
+                    frappe.call({
+                        method: "frappe.client.get_value",
+                        args: {
+                            doctype: "Item",
+                            filters: {
+                                name: item.item_code
+                            },
+                            fieldname: "custom_item_charge"
+                        },
+                        callback: function (response) {
+                            if (response && response.message) {
+                                let data = response.message;
+                                item.custom_item_charges_templte = data.custom_item_charge;
+                                frm.refresh_field("items");
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            console.warn("No items found in frm.doc.items");
+        }
+        
+    }
 })
 
 
@@ -258,7 +281,7 @@ function update_charges_tax_table(frm, row) {
                         let new_row = frm.add_child("taxes")
                         new_row.charge_type = element.type;
                         new_row.account_head = element.account_head;
-                        new_row.tax_amount = element.tax_amount;
+                        new_row.tax_amount = element.amount;
                         new_row.custom_item_code = row.item_code;
                         new_row.description = element.description;
                     }
@@ -268,6 +291,8 @@ function update_charges_tax_table(frm, row) {
         })
     }
 }
+
+
 
 
 function set_print_format_base_on_field_value(frm) {

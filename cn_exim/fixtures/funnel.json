@@ -1312,7 +1312,7 @@
     "type": "chatnext_assistant_message"
    },
    {
-    "data": "{\"name_of_action\":\"Close Purchase Order Manually\",\"page_type\":\"doctype\",\"node_label\":\"Close Purchase Order Manually\",\"submit\":true,\"variable_path_for_output\":\"\",\"doctype\":\"Purchase Order\",\"show_as_button\":true,\"visiblity_condition\":true,\"button_label\":\"Close Purchase Order\",\"doc_field\":\"status\",\"field_values\":\"To Receive, To Bill, To Receive and Bill\"}",
+    "data": "{\"name_of_action\":\"Close Purchase Order Manually\",\"page_type\":\"doctype\",\"node_label\":\"Close Purchase Order Manually\",\"submit\":true,\"variable_path_for_output\":\"\",\"doctype\":\"Purchase Order\",\"show_as_button\":false,\"visiblity_condition\":true,\"button_label\":\"Close Purchase Order\",\"doc_field\":\"status\",\"field_values\":\"To Receive, To Bill, To Receive and Bill\"}",
     "element_type": "Trigger",
     "id": "0l3cpiPF4DjSa2citqzxP",
     "parent": "Exim Flow",
@@ -2000,11 +2000,11 @@
   ],
   "funnel_name": "Exim Flow",
   "funnel_type": "Private",
-  "modified": "2025-03-18 17:10:42.225755",
+  "modified": "2025-03-19 11:32:51.950896",
   "module": null,
   "name": "Exim Flow",
   "status": "published",
   "variable_list": "[]",
-  "viewport": "{\"x\":-1015.350826879429,\"y\":207.80102893101906,\"zoom\":0.7673730480004467}"
+  "viewport": "{\"x\":-146.56904783972277,\"y\":-128.09369280632797,\"zoom\":0.5}"
  }
 ]

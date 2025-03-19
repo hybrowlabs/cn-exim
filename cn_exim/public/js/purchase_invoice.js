@@ -11,7 +11,7 @@ frappe.ui.form.on("Purchase Invoice", {
     },
     onload: function (frm) {
         if (frm.doc.docstatus == 0) {
-            let has_purchase_order = frm.doc.items.some(d => d.purchase_order); 
+            let has_purchase_order = frm.doc.items.some(d => d.purchase_order);
 
             if (has_purchase_order) {
                 $.each(frm.doc.items || [], function (i, d) {
@@ -22,9 +22,13 @@ frappe.ui.form.on("Purchase Invoice", {
                                 name: d.purchase_order
                             },
                             callback: function (response) {
-                                let data = response.message[0]
 
-                                frm.set_value("payment_terms_template", data['payment_terms_template'])
+                                let data = response.message[0]
+                                if (data.payment_terms_template) {
+                                    console.log("this call")
+                                    frm.set_value("payment_terms_template", data['payment_terms_template'])
+                                }
+
                             }
                         })
                     }
