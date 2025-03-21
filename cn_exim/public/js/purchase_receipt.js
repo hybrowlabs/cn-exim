@@ -1,6 +1,7 @@
 frappe.ui.form.on("Purchase Receipt", {
     refresh: function (frm) {
-        frm.add_custom_button("Landed Cost Voucher", function () {
+        frm.remove_custom_button("Landed Cost Voucher", "Create")
+        frm.add_custom_button("Landed Cost Vouchers", function () {
             let purchase_receipts = []
             let taxes_list = []
 
@@ -11,54 +12,86 @@ frappe.ui.form.on("Purchase Receipt", {
                 'grand_total': frm.doc.base_grand_total,
             })
 
-            let d = new frappe.ui.Dialog({
-                title: "Enter Details",
-                fields: [
-                    {
-                        label: "Amount",
-                        fieldname: "amount",
-                        fieldtype: "Data"
-                    },
-                    {
-                        label: "Description",
-                        fieldname: "description",
-                        fieldtype: "Data"
-                    }
-                ],
-                size: "small",
-                primary_action_label: 'Submit',
-                primary_action(value) {
-                    taxes_list.push({
-                        'amount': value['amount'],
-                        'description': value['description'],
-                    })
+            frm.doc.custom_purchase_extra_charge.forEach(item =>{
+                taxes_list.push({
+                    "expense_account":item.account_head,
+                    "description":item.description,
+                    "amount":item.amount,
+                })
+            })
 
-                    d.hide();
-                    frappe.call({
-                        method: "frappe.client.insert",
-                        args: {
-                            doc: {
-                                'doctype': "Landed Cost Voucher",
-                                'distribute_charges_based_on': "Amount",
-                                'purchase_receipts': purchase_receipts,
-                                'taxes': taxes_list,
-                            }
-                        },
-                        callback: function (r) {
-                            if (!r.exc) {
-                                frappe.show_alert({
-                                    message: __('Landed Code Voucher created successfully!'),
-                                    indicator: 'green'
-                                }, 5);
-                            } else {
-                                frappe.msgprint('There was an error saving the Purchase Receipt');
-                                console.error('Error Saving Document:', r.exc);
-                            }
-                        }
-                    })
+            frappe.call({
+                method: "frappe.client.insert",
+                args: {
+                    doc: {
+                        'doctype': "Landed Cost Voucher",
+                        'distribute_charges_based_on': "Amount",
+                        'purchase_receipts': purchase_receipts,
+                        'taxes': taxes_list,
+                    }
+                },
+                callback: function (r) {
+                    if (!r.exc) {
+                        frappe.show_alert({
+                            message: __('Landed Code Voucher created successfully!'),
+                            indicator: 'green'
+                        }, 5);
+                        frappe.set_route("Form", "Landed Cost Voucher", r.message.name);
+                    } else {
+                        frappe.msgprint('There was an error saving the Purchase Receipt');
+                        console.error('Error Saving Document:', r.exc);
+                    }
                 }
             })
-            d.show();
+
+            // let d = new frappe.ui.Dialog({
+            //     title: "Enter Details",
+            //     fields: [
+            //         {
+            //             label: "Amount",
+            //             fieldname: "amount",
+            //             fieldtype: "Data"
+            //         },
+            //         {
+            //             label: "Description",
+            //             fieldname: "description",
+            //             fieldtype: "Data"
+            //         }
+            //     ],
+            //     size: "small",
+            //     primary_action_label: 'Submit',
+            //     primary_action(value) {
+            //         taxes_list.push({
+            //             'amount': value['amount'],
+            //             'description': value['description'],
+            //         })
+
+            //         d.hide();
+            //         frappe.call({
+            //             method: "frappe.client.insert",
+            //             args: {
+            //                 doc: {
+            //                     'doctype': "Landed Cost Voucher",
+            //                     'distribute_charges_based_on': "Amount",
+            //                     'purchase_receipts': purchase_receipts,
+            //                     'taxes': taxes_list,
+            //                 }
+            //             },
+            //             callback: function (r) {
+            //                 if (!r.exc) {
+            //                     frappe.show_alert({
+            //                         message: __('Landed Code Voucher created successfully!'),
+            //                         indicator: 'green'
+            //                     }, 5);
+            //                 } else {
+            //                     frappe.msgprint('There was an error saving the Purchase Receipt');
+            //                     console.error('Error Saving Document:', r.exc);
+            //                 }
+            //             }
+            //         })
+            //     }
+            // })
+            // d.show();
 
         }, ("Create"))
 
@@ -314,4 +347,3 @@ function get_qty(frm) {
         }
     }
 }
-

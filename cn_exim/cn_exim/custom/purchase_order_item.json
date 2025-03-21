@@ -785,7 +785,7 @@
    "description": null,
    "docstatus": 0,
    "dt": "Purchase Order Item",
-   "fetch_from": "item_code.custom_item_charge",
+   "fetch_from": "",
    "fetch_if_empty": 1,
    "fieldname": "custom_item_charges_templte",
    "fieldtype": "Link",

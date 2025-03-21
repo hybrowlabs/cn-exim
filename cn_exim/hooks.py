@@ -44,6 +44,7 @@ doctype_js = {
     "Material Request": "public/js/material_request.js",
     "Blanket Order": "public/js/blanket_order.js",
     "Item Group": "public/js/item_group.js",
+    "Supplier": "public/js/supplier.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

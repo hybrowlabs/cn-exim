@@ -7,12 +7,12 @@
  "engine": "InnoDB",
  "field_order": [
   "material_tyep",
-  "account_refrence",
-  "account_refrence_description",
+  "qty_updating",
   "column_break_lhvg",
   "counter",
-  "qty_updating",
   "materil_type_description",
+  "section_break_jlze",
+  "material_type_account",
   "section_break_eope",
   "item_charges",
   "item_charges_template"
@@ -38,25 +38,14 @@
    "label": "Qty updating"
   },
   {
-   "fieldname": "account_refrence",
-   "fieldtype": "Link",
-   "label": "Account Refrence",
-   "options": "Account Category Refrence"
-  },
-  {
-   "fetch_from": "account_refrence.description",
-   "fieldname": "account_refrence_description",
-   "fieldtype": "Data",
-   "label": "Account Refrence Description"
-  },
-  {
    "fieldname": "materil_type_description",
    "fieldtype": "Small Text",
    "label": "Materil Type Description"
   },
   {
    "fieldname": "section_break_eope",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "item_charges",
@@ -69,11 +58,21 @@
    "fieldtype": "Table",
    "label": "Item Charges Template",
    "options": "Item Charges Template"
+  },
+  {
+   "fieldname": "section_break_jlze",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "material_type_account",
+   "fieldtype": "Table",
+   "label": "Material Type Account",
+   "options": "Material Type Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-18 00:11:37.621066",
+ "modified": "2025-03-20 15:19:41.377874",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Types",

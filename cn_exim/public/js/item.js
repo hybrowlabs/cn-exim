@@ -47,63 +47,101 @@ frappe.ui.form.on("Item", {
             };
         };
 
-        let len = frm.doc.custom_item_charges_template.length
+        // let len = frm.doc.custom_item_charges_template.length
 
-        if(frm.doc.custom_material_type != undefined && len == 0){
-            get_item_wise_charges(frm)
-        }
+        // if(frm.doc.custom_material_type != undefined && len == 0){
+        //     get_item_wise_charges(frm)
+        // }
     },
+    // custom_material_type: function (frm) {
+    //     get_item_wise_charges(frm)
+    // },
+    // item_group:function(frm){
+    //     get_item_wise_charges_in_item(frm)
+    // }
     custom_material_type: function (frm) {
-        get_item_wise_charges(frm)
-    },
-    item_group:function(frm){
-        get_item_wise_charges_in_item(frm)
+        frappe.call({
+            method: "cn_exim.config.py.item.get_default_account",
+            args: {
+                name: frm.doc.custom_material_type
+            },
+            callback: function (response) {
+                let data = response.message
+
+                data.forEach(obj => {
+                    let found = false;
+
+                    // Check if the company already exists in the child table
+                    frm.doc.item_defaults.forEach(row => {
+                        if (obj.company === row.company) {
+                            row.custom_stock_received_but_not_billed = obj.stock_received_but_not_billed;
+                            row.custom_default_inventory_account = obj.default_inventory_account;
+                            row.expense_account = obj.default_inventory_account;
+                            found = true;  // Mark as found
+                        }
+                    });
+
+                    // If no matching company was found, create a new row
+                    if (!found || frm.doc.item_defaults.length === 0) {
+                        let new_row = frm.add_child("item_defaults");
+                        new_row.company = obj.company;
+                        new_row.custom_stock_received_but_not_billed = obj.stock_received_but_not_billed;
+                        new_row.custom_default_inventory_account = obj.default_inventory_account;
+                        new_row.expense_account = obj.default_inventory_account;
+                    }
+                });
+
+                // Refresh child table after updates
+                frm.refresh_field("item_defaults");
+
+            }
+        })
     }
 })
 
 
-function get_item_wise_charges(frm){
-    frappe.call({
-        method: "cn_exim.config.py.item.get_item_charges",
-        args: {
-            name: frm.doc.custom_material_type
-        },
-        callback: function (response) {
-            let data = response.message
-            frm.set_value("custom_item_charge", data[0]['item_charges'])
+// function get_item_wise_charges(frm){
+//     frappe.call({
+//         method: "cn_exim.config.py.item.get_item_charges",
+//         args: {
+//             name: frm.doc.custom_material_type
+//         },
+//         callback: function (response) {
+//             let data = response.message
+//             frm.set_value("custom_item_charge", data[0]['item_charges'])
 
-            data.forEach(obj => {
-                let row = frm.add_child("custom_item_charges_template")
-                row.type = obj.type;
-                row.account_head = obj.account_head;
-                row.amount = obj.amount;
-                row.description = obj.description;
-                row.reference_row = obj.reference_row;
-            })
-            frm.refresh_field("custom_item_charges_template")
-        }
-    })
-}
+//             data.forEach(obj => {
+//                 let row = frm.add_child("custom_item_charges_template")
+//                 row.type = obj.type;
+//                 row.account_head = obj.account_head;
+//                 row.amount = obj.amount;
+//                 row.description = obj.description;
+//                 row.reference_row = obj.reference_row;
+//             })
+//             frm.refresh_field("custom_item_charges_template")
+//         }
+//     })
+// }
 
-function get_item_wise_charges_in_item(frm){
-    frappe.call({
-        method: "cn_exim.config.py.item.get_item_charges_from_item_group",
-        args: {
-            name: frm.doc.item_group
-        },
-        callback: function (response) {
-            let data = response.message
-            frm.set_value("custom_item_charge", data[0]['custom_item_charge'])
+// function get_item_wise_charges_in_item(frm){
+//     frappe.call({
+//         method: "cn_exim.config.py.item.get_item_charges_from_item_group",
+//         args: {
+//             name: frm.doc.item_group
+//         },
+//         callback: function (response) {
+//             let data = response.message
+//             frm.set_value("custom_item_charge", data[0]['custom_item_charge'])
 
-            data.forEach(obj => {
-                let row = frm.add_child("custom_item_charges_template")
-                row.type = obj.type;
-                row.account_head = obj.account_head;
-                row.amount = obj.amount;
-                row.description = obj.description;
-                row.reference_row = obj.reference_row;
-            })
-            frm.refresh_field("custom_item_charges_template")
-        }
-    })
-}
+//             data.forEach(obj => {
+//                 let row = frm.add_child("custom_item_charges_template")
+//                 row.type = obj.type;
+//                 row.account_head = obj.account_head;
+//                 row.amount = obj.amount;
+//                 row.description = obj.description;
+//                 row.reference_row = obj.reference_row;
+//             })
+//             frm.refresh_field("custom_item_charges_template")
+//         }
+//     })
+// }

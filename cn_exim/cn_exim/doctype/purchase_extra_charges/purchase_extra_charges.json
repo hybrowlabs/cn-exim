@@ -1,20 +1,38 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-03-17 22:56:12.103606",
+ "creation": "2025-03-20 09:11:57.711126",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item_code",
-  "type",
+  "supplier",
   "account_head",
   "amount",
-  "column_break_fywx",
-  "description",
-  "reference_row"
+  "item_code",
+  "column_break_drgl",
+  "reference_item_code",
+  "description"
  ],
  "fields": [
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "fieldname": "column_break_drgl",
+   "fieldtype": "Column Break"
+  },
   {
    "fieldname": "account_head",
    "fieldtype": "Link",
@@ -24,49 +42,33 @@
    "reqd": 1
   },
   {
-   "fieldname": "type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Type",
-   "options": "\nActual\nOn Net Total\nOn Previous Row Amout\nOn Previous Row Total"
-  },
-  {
-   "depends_on": "eval:doc.type == \"On Previous Row Amout\"",
-   "fieldname": "reference_row",
-   "fieldtype": "Data",
-   "label": "Reference Row #"
-  },
-  {
-   "fieldname": "amount",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Amount"
-  },
-  {
-   "fieldname": "column_break_fywx",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "Description"
+   "label": "Description",
+   "reqd": 1
   },
   {
    "fieldname": "item_code",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "reference_item_code",
+   "fieldtype": "Link",
+   "label": "Reference Item Code",
    "options": "Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-21 22:14:24.544325",
+ "modified": "2025-03-21 22:17:57.412737",
  "modified_by": "Administrator",
  "module": "Cn Exim",
- "name": "Item Charges Template",
+ "name": "Purchase Extra Charges",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",

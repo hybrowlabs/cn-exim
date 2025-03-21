@@ -22,3 +22,9 @@ def get_item_charges_from_item_group(name):
     """, (name,), as_dict=True)
 
     return data
+
+@frappe.whitelist()
+def get_default_account(name):
+    data = frappe.db.sql(" select * from `tabMaterial Type Account` where parent=%s ",(name), as_dict=True)
+    
+    return data

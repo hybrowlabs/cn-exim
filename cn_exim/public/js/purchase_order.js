@@ -96,40 +96,72 @@ frappe.ui.form.on("Purchase Order", {
         setTimeout(() => {
             frm.remove_custom_button('Update Items');
         }, 10)
-    },
-    before_save: function (frm) {
-        frm.doc.items.forEach(row => {
-            update_charges_tax_table(frm, row)
-        })
-        set_print_format_base_on_field_value(frm)
-    },
-    onload: function (frm) {
-        if (frm.doc.items && Array.isArray(frm.doc.items)) { 
-            frm.doc.items.forEach(item => {
-                if (!item.custom_item_charges_templte) {
-                    frappe.call({
-                        method: "frappe.client.get_value",
-                        args: {
-                            doctype: "Item",
-                            filters: {
-                                name: item.item_code
-                            },
-                            fieldname: "custom_item_charge"
-                        },
-                        callback: function (response) {
-                            if (response && response.message) {
-                                let data = response.message;
-                                item.custom_item_charges_templte = data.custom_item_charge;
-                                frm.refresh_field("items");
-                            }
-                        }
-                    });
+        frm.set_query("account_head", "custom_purchase_extra_charge", function () {
+            return {
+                filters: {
+                    company: frm.doc.company
                 }
-            });
-        } else {
-            console.warn("No items found in frm.doc.items");
-        }
-        
+            }
+        })
+    },
+    supplier: function (frm) {
+        frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+                doctype: "Supplier",
+                filters: {
+                    name: frm.doc.supplier
+                },
+                fieldname: "supplier_group"
+            },
+            callback: function (response) {
+                console.log("response", response.message["supplier_group"])
+
+                if (response.message['supplier_group'] == "Domestic Material") {
+                    let type = response.message['supplier_group']
+                    // setInterval(function () {
+                        // set_filter_item_supplier_group_wise(type, frm)
+                    // }, 500);
+                }
+            }
+        })
+    },
+    // before_save: function (frm) {
+    //     frm.doc.items.forEach(row => {
+    //         update_charges_tax_table(frm, row)
+    //     })
+    //     set_print_format_base_on_field_value(frm)
+    // },
+    onload: function (frm) {
+        let type = ""
+        // set_filter_item_supplier_group_wise(type, frm)
+        //     if (frm.doc.items && Array.isArray(frm.doc.items)) { 
+        //         frm.doc.items.forEach(item => {
+        //             console.log(item.item_code)
+        //             if (!item.custom_item_charges_templte && item.item_code != undefined) {
+        //                 frappe.call({
+        //                     method: "frappe.client.get_value",
+        //                     args: {
+        //                         doctype: "Item",
+        //                         filters: {
+        //                             name: item.item_code
+        //                         },
+        //                         fieldname: "custom_item_charge"
+        //                     },
+        //                     callback: function (response) {
+        //                         if (response && response.message) {
+        //                             let data = response.message;
+        //                             item.custom_item_charges_templte = data.custom_item_charge;
+        //                             frm.refresh_field("items");
+        //                         }
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     } else {
+        //         console.warn("No items found in frm.doc.items");
+        //     }
+
     }
 })
 
@@ -224,10 +256,14 @@ frappe.ui.form.on('Purchase Order Item', {
         // Show dialog
         d.show();
     },
-    item_code: function (frm, cdt, cdn) {
+    // item_code: function (frm, cdt, cdn) {
+    //     let row = locals[cdt][cdn]
+    //     update_charges_tax_table(frm, row)
+    // },
+    custom_item_charges_templte: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn]
-        update_charges_tax_table(frm, row)
-    },
+        set_extra_charges_in_table(frm, row)
+    }
 });
 
 
@@ -261,36 +297,36 @@ function update_progress_bar(frm, stage_status) {
 }
 
 
-function update_charges_tax_table(frm, row) {
-    if (row.custom_item_charges_templte != undefined) {
-        frappe.call({
-            method: "cn_exim.config.py.purchase_order.get_item_wise_charges",
-            args: {
-                name: row.custom_item_charges_templte
-            },
-            callback: function (response) {
-                let data = response.message
+// function update_charges_tax_table(frm, row) {
+//     if (row.custom_item_charges_templte != undefined) {
+//         frappe.call({
+//             method: "cn_exim.config.py.purchase_order.get_item_wise_charges",
+//             args: {
+//                 name: row.custom_item_charges_templte
+//             },
+//             callback: function (response) {
+//                 let data = response.message
 
-                data.forEach(element => {
-                    let exists = frm.doc.taxes.some(tax =>
-                        tax.charge_type === element.type &&
-                        tax.account_head === element.account_head &&
-                        tax.custom_item_code === row.item_code
-                    );
-                    if (!exists) {
-                        let new_row = frm.add_child("taxes")
-                        new_row.charge_type = element.type;
-                        new_row.account_head = element.account_head;
-                        new_row.tax_amount = element.amount;
-                        new_row.custom_item_code = row.item_code;
-                        new_row.description = element.description;
-                    }
-                })
-                frm.refresh_field("taxes")
-            }
-        })
-    }
-}
+//                 data.forEach(element => {
+//                     let exists = frm.doc.taxes.some(tax =>
+//                         tax.charge_type === element.type &&
+//                         tax.account_head === element.account_head &&
+//                         tax.custom_item_code === row.item_code
+//                     );
+//                     if (!exists) {
+//                         let new_row = frm.add_child("taxes")
+//                         new_row.charge_type = element.type;
+//                         new_row.account_head = element.account_head;
+//                         new_row.tax_amount = element.amount;
+//                         new_row.custom_item_code = row.item_code;
+//                         new_row.description = element.description;
+//                     }
+//                 })
+//                 frm.refresh_field("taxes")
+//             }
+//         })
+//     }
+// }
 
 
 
@@ -304,5 +340,52 @@ function set_print_format_base_on_field_value(frm) {
     }
     else if (frm.doc.custom_purchase_sub_type == "Domestic") {
         frm.set_value("custom_print_format", "Domestic Po After Release")
+    }
+}
+
+function set_extra_charges_in_table(frm, row) {
+    frappe.call({
+        method: "cn_exim.config.py.purchase_order.get_extra_charge_template",
+        args: {
+            name: row.custom_item_charges_templte
+        },
+        callback: function (response) {
+            let data = response.message
+
+            let total_charge = 0
+            data.forEach(obj => {
+                let new_row = frm.add_child("custom_purchase_extra_charge")
+                new_row.amount = obj.amount;
+                new_row.account_head = obj.account_head;
+                new_row.description = obj.description;
+                new_row.reference_item_code = row.item_code;
+                new_row.item_code = obj.item_code;
+                total_charge += obj.amount;
+            })
+            frm.set_value("custom_total_charges", total_charge)
+            frm.refresh_field("custom_purchase_extra_charge")
+        }
+    })
+}
+
+
+function set_filter_item_supplier_group_wise(type, frm) {
+    if (frm.doc.type == "Domestic Material") {
+        frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+            return {
+                filters: {
+                    is_stock_item: 1
+                }
+            };
+        };
+    } else if (frm.doc.type == "Domestic Service") {
+        console.log("Type selected:", frm.doc.type);
+        frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+            return {
+                filters: {
+                    is_stock_item: 0
+                }
+            };
+        };
     }
 }

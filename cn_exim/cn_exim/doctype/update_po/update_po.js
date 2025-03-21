@@ -97,7 +97,7 @@ frappe.ui.form.on("Update Po", {
                                 'custom_local_freight_vendor_charges': frm.doc.local_freight_vendor_charges,
                                 'custom_freight_and_forwarding_vendor_charges': frm.doc.freight_and_forwarding_vendor_charges,
                                 'custom_update_po_number':frm.doc.name,
-                                'custom_total_charges':frm.doc.bcd_amount + frm.doc.hcs_amount + frm.doc.sws_amount + frm.doc.ex_works + frm.doc.other_charges + frm.doc.insurance_amount + frm.doc.cha_agenncy_charges + frm.doc.cha_clearing_charges + frm.doc.local_transporter_charges + frm.doc.local_freight_vendor_charges + frm.doc.freight_and_forwarding_vendor_charges,
+                                'custom_total_charge':frm.doc.bcd_amount + frm.doc.hcs_amount + frm.doc.sws_amount + frm.doc.ex_works + frm.doc.other_charges + frm.doc.insurance_amount + frm.doc.cha_agenncy_charges + frm.doc.cha_clearing_charges + frm.doc.local_transporter_charges + frm.doc.local_freight_vendor_charges + frm.doc.freight_and_forwarding_vendor_charges,
                                 'custom_total_category_charges':frm.doc.total_category_charges
                             }
                         },
