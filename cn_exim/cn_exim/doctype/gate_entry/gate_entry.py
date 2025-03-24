@@ -51,3 +51,14 @@ def get_update_po_details(e_waybill):
     data = frappe.db.sql(" select * from `tabUpdate Po` where e_way_bill=%s ", (e_waybill), as_dict=True)
     
     return data
+
+
+@frappe.whitelist()
+def get_tax_and_charges(po_name):
+    tax_table = frappe.db.sql(" select * from `tabPurchase Taxes and Charges` where parent=%s ",(po_name), as_dict=True)
+    extra_charge = frappe.db.sql(" select * from `tabPurchase Extra Charges` where parent=%s ", (po_name), as_dict=True)
+    
+    return {
+        "tax_table": tax_table,
+        "extra_charge": extra_charge
+    }

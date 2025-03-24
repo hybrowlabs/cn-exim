@@ -10,5 +10,14 @@ frappe.ui.form.on("Item Charges", {
                 }
             }
         })
+
+        frm.set_query("item_code", "item_charges_template", function(){
+            return{
+                filters:{
+                    company:frm.doc.company,
+                    is_stock_item:0
+                }
+            }
+        })
 	},
 });
