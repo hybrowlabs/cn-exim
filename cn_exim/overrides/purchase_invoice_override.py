@@ -7,24 +7,31 @@ from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import merge_sim
 
 def custom_set_expense_account(self, for_validate=False):
 		auto_accounting_for_stock = erpnext.is_perpetual_inventory_enabled(self.company)
-
 		if auto_accounting_for_stock:
 			for item in self.items:
 				data = frappe.db.sql(" select custom_stock_received_but_not_billed, custom_default_inventory_account from `tabItem Default` where parent=%s and company=%s ",(item.item_code, self.company), as_dict=True)
 
-            # If the custom field is set in the Item master, use it
 				account = data[0]['custom_stock_received_but_not_billed']
 				stock_items = self.get_stock_items()
-    
 
-				print(" account ", account)
 				if account:
 					stock_not_billed_account = account
 					item.expense_account = account
 					item.custom_srbnb_account = account
 				else:
+					if(account == None):
 					# Fallback to default ERPNext behavior
-					item.expense_account = account
+					# item.expense_account = account
+						
+						retrieve_account_head=frappe.db.sql("select account_head, supplier from `tabPurchase Extra Charges` where  item_code=%s and parent=%s",(item.item_code,self.custom_purchase_order), as_dict=True)
+						account=retrieve_account_head[0]["account_head"]
+						 
+						valid_account = frappe.db.exists("Account", {"name": account, "company": self.company})
+						if  not valid_account:
+							frappe.throw(_("Row {0}: Expense Account {1} does not belong to Company {2}. Please check your account settings.").format(item.idx, frappe.bold(account), frappe.bold(self.company)))
+						item.expense_account=valid_account
+					# else:
+					# 	item.expense_account=account
 					
 
 		self.asset_received_but_not_billed = None
@@ -113,8 +120,10 @@ def custom_set_expense_account(self, for_validate=False):
 								"This is done to handle accounting for cases when Purchase Receipt is created after Purchase Invoice"
 							)
 							frappe.msgprint(msg, title=_("Expense Head Changed"))
+						if(stock_not_billed_account):
+							item.expense_account = stock_not_billed_account							
 
-						item.expense_account = stock_not_billed_account
+
 			elif item.is_fixed_asset:
 				account = None
 				if not item.pr_detail and item.po_detail:
