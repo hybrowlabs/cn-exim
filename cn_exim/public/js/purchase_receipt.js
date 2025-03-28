@@ -97,18 +97,27 @@ frappe.ui.form.on("Purchase Receipt", {
 
     },
     custom_scan_barcodes: function (frm) {
+        if (!frm.doc.custom_scan_barcodes) return; 
         frappe.call({
             method: "cn_exim.config.py.purchase_receipt.get_po_details_to_gate_entry",
             args: {
                 gate_entry_name: frm.doc.custom_scan_barcodes
             },
             callback: function (r) {
+                if(!r.message) return;
                 let gate_entry = r.message[0]
                 let gate_entry_details = r.message[1]
+                let gate_entry_extra_purchase_items=r.message[2]
+                let get_purchase_order_details=r.message[3]
+                
+                if (!gate_entry.length || !gate_entry[0]['supplier']) {
+                    frappe.msgprint(__("No supplier details found in the response."));
+                    return;
+                }
 
                 frm.set_value("supplier", gate_entry[0]['supplier'])
                 frm.set_value("supplier_name", gate_entry[0]['supplier_name'])
-
+                
                 let len = frm.doc.items.length
                 let item_check = false
                 $.each(frm.doc.items || [], function (i, d) {
@@ -116,12 +125,13 @@ frappe.ui.form.on("Purchase Receipt", {
                         item_check = true
                     }
                 })
-
+                
                 if (len == 1 && item_check == true) {
                     frm.set_value("items", 0)
                 }
 
                 gate_entry_details.forEach(element => {
+                    if (!element.item) return; 
                     let row = frm.add_child("items")
                     row.item_code = element.item;
                     row.item_name = element.item_name;
@@ -132,6 +142,43 @@ frappe.ui.form.on("Purchase Receipt", {
                     row.base_amount = element.base_amount;
                 });
                 frm.refresh_field("items")
+                
+                gate_entry_extra_purchase_items.forEach(element =>{
+                    if(!element.supplier || !element.account_head) return;
+                    let row =frm.add_child("custom_purchase_extra_charge");
+                    row.supplier=element.supplier;
+                    row.account_head=element.account_head;
+                    row.item_code=element.item_code;
+                    row.amount=element.amount || 0;
+                    row.reference_item_code=element.reference_item_code;
+                    row.description=element.description || "";
+                })
+                frm.refresh_field("custom_purchase_extra_charge")
+
+                let custom_total_charges=get_purchase_order_details[0]['custom_total_charges']
+                if(custom_total_charges){
+                    setTimeout(()=>{
+                        frm.set_value("custom_total_charges",custom_total_charges)
+                        frm.refresh_field("custom_total_charges")
+                    },500)
+                }
+
+                if (get_purchase_order_details.length > 0 && get_purchase_order_details[0]['taxes_and_charges']) {
+                    let tax_template = get_purchase_order_details[0]['taxes_and_charges'];
+                    frappe.db.get_value("Purchase Taxes and Charges Template", tax_template, "name").then(r => {
+                        if (r.message && r.message.name) {
+                            setTimeout(() => {
+                                frm.set_value("taxes_and_charges", r.message.name);
+                                frm.refresh_field("taxes_and_charges");
+                            }, 1000);
+                        } else {
+                            frappe.throw("Invalid Taxes and Charges Template:", tax_template);
+                        }
+                    });
+                } else {
+                    frappe.msgprint("No Taxes and Charges found in Purchase Order");
+                }
+         
                 frm.set_value("custom_scan_barcodes", "")
             }
         })
