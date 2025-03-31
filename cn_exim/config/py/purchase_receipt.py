@@ -2,11 +2,22 @@ import frappe
 
 @frappe.whitelist()
 def get_po_details_to_gate_entry(gate_entry_name):
-    
-    gate_entry = frappe.db.sql(" select * from `tabGate Entry` where name=%s ", (gate_entry_name), as_dict=True)
-    gate_entry_chid = frappe.db.sql(" select * from `tabGate Entry Details` where parent=%s ", (gate_entry_name), as_dict=True)
-    
-    return gate_entry, gate_entry_chid
+    if not gate_entry_name:
+        return
+    gate_entry = frappe.db.sql(" select * from `tabGate Entry` where name=%s ", [gate_entry_name], as_dict=True)
+    gate_entry_chid = frappe.db.sql(" select * from `tabGate Entry Details` where parent=%s ", [gate_entry_name], as_dict=True)
+
+    parent=gate_entry_chid[0]["purchase_order"]
+    if not parent:
+        frappe.throw("No Purchase Order linked to this Gate Entry.")
+
+    gate_entry_extra_purchase_items=frappe.db.sql("select * from `tabPurchase Extra Charges` where parent=%s",parent,as_dict=True)
+
+    get_purchase_order_details=frappe.db.sql("select * from `tabPurchase Order` where name=%s",[parent],as_dict=True)
+
+    return gate_entry, gate_entry_chid ,gate_entry_extra_purchase_items , get_purchase_order_details
+
+
 
 # create stock entry for the deduct stock to temporary warehouse
 @frappe.whitelist()

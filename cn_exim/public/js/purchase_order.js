@@ -103,6 +103,43 @@ frappe.ui.form.on("Purchase Order", {
                 }
             }
         })
+
+        if(frm.doc.custom_purchase_extra_charge && frm.doc.custom_purchase_extra_charge.length !== 0 && frm.doc.docstatus === 1){
+            frm.add_custom_button("Extra Purchase Invoice", function () {
+                let supplier_grouped_items={}
+                frm.doc.custom_purchase_extra_charge.forEach(item=>{
+                    if ( !supplier_grouped_items[item.supplier]){
+                        supplier_grouped_items[item.supplier]=[]
+                    }
+                    supplier_grouped_items[item.supplier].push({
+                        // "purchase_order":frm.doc.name,
+                        "item_code":item.item_code,
+                        "rate":item.amount,
+                        "amount":item.amount,
+                        "qty":1,
+                        "expense_account":item.account_head
+                    })
+                })
+                Object.keys(supplier_grouped_items).forEach(supplier=>{
+                    frappe.call({
+                        method: "frappe.client.insert",
+                        args: {
+                            doc: {
+                                "doctype": "Purchase Invoice",
+                                "supplier": supplier,
+                                "items":supplier_grouped_items[supplier],
+                                "custom_purchase_order":frm.doc.name
+                            }
+                        },
+                        callback: function (r) {
+                            if (!r.exc) {
+                                frappe.set_route("Form", "Purchase Invoice", r.message.name)
+                            }
+                        }
+                    });
+                })
+            }, __("Create"))
+        }
     },
     supplier: function (frm) {
         frappe.call({
