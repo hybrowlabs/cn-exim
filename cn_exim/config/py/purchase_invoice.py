@@ -85,6 +85,16 @@ def get_landed_cost_voucher_details(purchase_invoice_name, custom_purchase_order
                     "amount":item.amount,
                     "description":item.description,
                 })
+            for tax in pi_doc.taxes:
+                taxes_data.append({
+                    "charge_type": tax.charge_type,
+                    "account_head": tax.account_head,
+                    "description": tax.description,
+                    "rate": tax.rate,
+                    "amount": tax.tax_amount,
+                    "total": tax.total,
+                    "receipt_document": pr.name
+                })
         # Step 1: Get Gate Entry Details for this Purchase Order
         gate_entries = frappe.db.sql("""
             SELECT parent as gate_entry
@@ -114,25 +124,25 @@ def get_landed_cost_voucher_details(purchase_invoice_name, custom_purchase_order
                     "grand_total": pr.grand_total
                 })
 
-                pr_taxes = frappe.db.sql("""
-                        SELECT charge_type, account_head, description, rate, tax_amount, total
-                        FROM `tabPurchase Taxes and Charges`
-                        WHERE parent = %s
-                    """, pr.name, as_dict=True)
+                # pr_taxes = frappe.db.sql("""
+                #         SELECT charge_type, account_head, description, rate, tax_amount, total
+                #         FROM `tabPurchase Taxes and Charges`
+                #         WHERE parent = %s
+                #     """, pr.name, as_dict=True)
                 
-                for tax in pr_taxes:
-                    taxes_data.append({
-                        "charge_type": tax.charge_type,
-                        "account_head": tax.account_head,
-                        "description": tax.description,
-                        "rate": tax.rate,
-                        "amount": tax.tax_amount,
-                        "total": tax.total,
-                        "receipt_document": pr.name
-                    })
+                # for tax in pr_taxes:
+                #     taxes_data.append({
+                #         "charge_type": tax.charge_type,
+                #         "account_head": tax.account_head,
+                #         "description": tax.description,
+                #         "rate": tax.rate,
+                #         "amount": tax.tax_amount,
+                #         "total": tax.total,
+                #         "receipt_document": pr.name
+                #     })
         return [purchase_receipts, taxes_data, purchase_invoice_details]
     except Exception as e:
         frappe.log_error(f"Failed to get Landed Cost Voucher details: {str(e)}", 
-                         "get_landed_cost_voucher_details error")
+                        "get_landed_cost_voucher_details error")
         frappe.throw(str(e))
     
