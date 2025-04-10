@@ -96,15 +96,18 @@ frappe.ui.form.on("Purchase Receipt", {
         }, ("Create"))
 
     },
-    custom_scan_barcodes: function (frm) {
+    custom_scan_barcodes: async function (frm) {
         if (!frm.doc.custom_scan_barcodes) return; 
+        let custom_scan_barcode=frm.doc.custom_scan_barcodes
         frappe.call({
             method: "cn_exim.config.py.purchase_receipt.get_po_details_to_gate_entry",
+            
             args: {
                 gate_entry_name: frm.doc.custom_scan_barcodes
             },
             callback: function (r) {
                 if(!r.message) return;
+
                 let gate_entry = r.message[0]
                 let gate_entry_details = r.message[1]
                 let gate_entry_extra_purchase_items=r.message[2]
@@ -117,6 +120,8 @@ frappe.ui.form.on("Purchase Receipt", {
 
                 frm.set_value("supplier", gate_entry[0]['supplier'])
                 frm.set_value("supplier_name", gate_entry[0]['supplier_name'])
+
+                frm.set_value("custom_gate_entry_no",custom_scan_barcode)
                 
                 let len = frm.doc.items.length
                 let item_check = false
@@ -129,19 +134,37 @@ frappe.ui.form.on("Purchase Receipt", {
                 if (len == 1 && item_check == true) {
                     frm.set_value("items", 0)
                 }
-
                 gate_entry_details.forEach(element => {
                     if (!element.item) return; 
-                    let row = frm.add_child("items")
-                    row.item_code = element.item;
-                    row.item_name = element.item_name;
-                    row.qty = element.qty;
-                    row.rate = element.rate;
-                    row.base_rate = element.rate_inr;
-                    row.amount = element.amount;
-                    row.base_amount = element.base_amount;
+                    let purchase_order_item_name = ""
+                    frappe.call({
+                        method:"cn_exim.config.py.purchase_receipt.get_purchase_order_item_name",
+                        args:{
+                            item_code:element.item,
+                            purchase_order:element.purchase_order
+                        },
+                        callback:function(r){
+
+                            
+                            let data = r.message[0]
+                            // console.log("coming",data);
+                            // console.log("coming",data.name);
+                            purchase_order_item_name = data.name
+                            
+                            let row = frm.add_child("items")
+                            row.item_code = element.item;
+                            row.item_name = element.item_name;
+                            row.qty = element.qty;
+                            row.rate = element.rate;
+                            row.base_rate = element.rate_inr;
+                            row.amount = element.amount;
+                            row.base_amount = element.base_amount;
+                            row.uom=element.uom;
+                            row.purchase_order_item = purchase_order_item_name;``
+                            frm.refresh_field("items")
+                        }
+                    })
                 });
-                frm.refresh_field("items")
                 
                 gate_entry_extra_purchase_items.forEach(element =>{
                     if(!element.supplier || !element.account_head) return;
@@ -229,6 +252,8 @@ frappe.ui.form.on("Purchase Receipt", {
 
         frm.doc.items.forEach(d => {
             if (d.purchase_order_item != undefined) {
+                console.log("this is comming from -> ",d.purchase_order_item);
+                
                 let promise = new Promise((resolve, reject) => {
                     frappe.call({
                         method: "cn_exim.config.py.purchase_receipt.validate_tolerance",

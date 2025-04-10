@@ -74,4 +74,12 @@ def update_blanket_order(name, item_code, qty):
         remaining_qty = float(data[0]['custom_received_qty']) + float(qty)
         
     frappe.db.set_value("Blanket Order Item", data[0]['name'], "custom_received_qty", remaining_qty)
-    
+
+@frappe.whitelist()
+def get_purchase_order_item_name(item_code, purchase_order):
+    data = frappe.db.sql("select name from `tabPurchase Order Item` where item_code=%s and parent=%s ",(item_code, purchase_order), as_dict=True)
+
+    # item_name=data[0]["name"]
+    # print(item_name)
+
+    return data  
