@@ -201,7 +201,6 @@ frappe.ui.form.on("Purchase Receipt", {
                 } else {
                     frappe.msgprint("No Taxes and Charges found in Purchase Order");
                 }
-         
                 frm.set_value("custom_scan_barcodes", "")
             }
         })
@@ -331,6 +330,34 @@ frappe.ui.form.on("Purchase Receipt", {
                 }
             })
         })
+
+        if(frm.is_new() && frm.doc.custom_gate_entry_no){
+            frappe.call({
+                method: "frappe.client.get_value",
+                args: {
+                    doctype: "Company",
+                    filters: {
+                        name: frm.doc.company
+                    },
+                    fieldname: "custom_default_temporary_warehouse"
+                },
+                callback: function (r) {
+                    if (r.message && r.message.custom_default_temporary_warehouse) {
+                        frappe.call({
+                            method: "cn_exim.config.py.purchase_receipt.create_stock_entry_for_stock_issus",
+                            args: {
+                                doc: frm.doc,
+                                warehouse: r.message.custom_default_temporary_warehouse
+                            },
+                            callback: function (response) {
+                            }
+                        });
+                    } else {
+                        frappe.msgprint("Temporary Warehouse not found for this Company!");
+                    }
+                }
+            });
+        }
     },
     onload: function (frm) {
         get_qty(frm)

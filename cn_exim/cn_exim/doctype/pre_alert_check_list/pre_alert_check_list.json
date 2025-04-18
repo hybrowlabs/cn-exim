@@ -458,15 +458,16 @@
    "show_dashboard": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
   {
-   "link_doctype": "Bill of Entry",
-   "link_fieldname": "custom_prealert_check_list"
+   "link_doctype": "BOE Entry",
+   "link_fieldname": "per_alert_check"
   }
  ],
- "modified": "2024-12-11 15:33:58.077118",
+ "modified": "2025-04-18 11:23:58.192734",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",

@@ -217,10 +217,16 @@
    "options": "E-way Bill"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2025-03-07 12:22:13.236323",
+ "links": [
+  {
+   "link_doctype": "Purchase Receipt",
+   "link_fieldname": "custom_gate_entry_no"
+  }
+ ],
+ "modified": "2025-04-18 14:55:26.125600",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

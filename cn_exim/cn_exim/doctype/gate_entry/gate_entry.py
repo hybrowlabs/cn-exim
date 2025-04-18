@@ -34,12 +34,16 @@ def create_stock_entry_for_stock_received(doc, warehouse):
     })
     
     for item in doc["gate_entry_details"]:
+        account = frappe.db.get_value("Item Default", {"parent": item['item']}, "custom_difference_account")
+        
         stock_entry.append("items",{
             "item_code" : item['item'],
             "item_name" : item['item_name'],
             "qty": item['qty'],
             "uom": item['uom'],
-            "t_warehouse": warehouse
+            "t_warehouse": warehouse,
+            "expense_account": account,
+            "allow_zero_valuation_rate": 1
         })
     
     stock_entry.insert()

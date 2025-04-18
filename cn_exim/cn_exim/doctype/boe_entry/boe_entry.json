@@ -350,8 +350,13 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2025-03-17 15:46:52.377773",
+ "links": [
+  {
+   "link_doctype": "E-way Bill",
+   "link_fieldname": "doctype_id"
+  }
+ ],
+ "modified": "2025-04-18 11:25:49.855624",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "BOE Entry",
