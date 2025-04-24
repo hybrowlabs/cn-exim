@@ -26,6 +26,7 @@ frappe.ui.form.on("Gate Entry", {
                         frappe.msgprint("This Purchase Order is already scanned.");
                     }
                     else {
+                        let final_qty_map = {};
                         items.forEach(obj => {
                             let row = frm.add_child("gate_entry_details")
                             row.purchase_order = purchase_order[0]['name'];
@@ -37,8 +38,23 @@ frappe.ui.form.on("Gate Entry", {
                             row.amount = obj.amount;
                             row.rate_inr = obj.base_rate;
                             row.amount_inr = obj.base_amount;
+
+                            if (final_qty_map[purchase_order[0]['name']]) {
+                                final_qty_map[purchase_order[0]['name']] += obj.qty;
+                            } else {
+                                final_qty_map[purchase_order[0]['name']] = obj.qty;
+                            }
                         })
+                        frm.clear_table("purchase_order_in_gate_entry");
+
+                        // Add summed rows to purchase_order_in_gate_entry
+                        for (let po in final_qty_map) {
+                            let po_row = frm.add_child("purchase_order_in_gate_entry");
+                            po_row.purchase_order = po;
+                            po_row.incoming_quantity = final_qty_map[po];
+                        }
                         frm.refresh_field("gate_entry_details")
+                        frm.refresh_field("purchase_order_in_gate_entry")
                     }
                 }
                 else {
@@ -61,7 +77,6 @@ frappe.ui.form.on("Gate Entry", {
                         fieldname: ["name"]
                     },
                     callback: function (r) {
-                        console.log("length",r)
                         if (r.message && r.message['name']) {
                             // A PR already exists
                             frappe.msgprint(`Purchase Receipt <a href="/app/purchase-receipt/${r.message['name']}" target="_blank"><b>${r.message['name']}</b></a> already exists for this Gate Entry.`);
@@ -188,6 +203,7 @@ frappe.ui.form.on("Gate Entry", {
                                             "custom_gate_entry_no": frm.doc.name,
                                             "items": purchase_item_list,
                                             "taxes": purchase_tax_list,
+                                            "currency":frm.doc.currency,
                                             "custom_purchase_extra_charge": purchase_extra_charges_list,
                                             "custom_bcd_amount": data['bcd_amount'] || 0,
                                             "custom_pickup_request": data['pickup_request'] || "",
@@ -262,6 +278,13 @@ frappe.ui.form.on("Gate Entry", {
             }, __("Create"));
         }
 
+        frm.set_query("service_name", function(){
+            return {
+                filters:{
+                    supplier_group:"Service"
+                }
+            }
+        })
     },
 
     on_submit: function (frm) {

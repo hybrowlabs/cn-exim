@@ -11,8 +11,9 @@ frappe.ui.form.on("Purchase Invoice", {
     },
     onload: function (frm) {
         if (frm.doc.docstatus == 0) {
-            let has_purchase_order = frm.doc.items.some(d => d.purchase_order);
+            let has_purchase_order = (frm.doc.items || []).some(d => d.purchase_order && d.purchase_order.trim() !== '');
 
+            console.log(has_purchase_order)
             if (has_purchase_order) {
                 $.each(frm.doc.items || [], function (i, d) {
                     if (frm.doc.payment_terms_template == undefined && d.purchase_order != undefined) {
@@ -82,31 +83,34 @@ frappe.ui.form.on("Purchase Invoice", {
                             // purchase_receipts.forEach(element => {
                                 
                             // });
-                            // console.log("Purchase Receipts:", purchase_receipts);
-                            // console.log("Taxes Data:", taxes_data);
-                            // console.log("Purchase Invoice Details:", purchase_invoice_details);
 
+                            let seen_receipts = new Set();
                             let purchase_receipt_rows = [];
 
                             if (Array.isArray(purchase_receipts)) {
-                                purchase_receipt_rows = purchase_receipts.map(receipt => {
-                                    return {
-                                        receipt_document_type: 'Purchase Receipt',
-                                        receipt_document: receipt.name,
-                                        supplier: receipt.supplier,
-                                        grand_total: receipt.grand_total
-                                    };
+                                purchase_receipts.forEach(receipt => {
+                                    if (!seen_receipts.has(receipt.name)) {
+                                        seen_receipts.add(receipt.name);
+                                        purchase_receipt_rows.push({
+                                            receipt_document_type: 'Purchase Receipt',
+                                            receipt_document: receipt.name,
+                                            supplier: receipt.supplier,
+                                            grand_total: receipt.grand_total
+                                        });
+                                    }
                                 });
-                            } 
-                            // If it's a single object
-                            else if (typeof purchase_receipts === 'object') {
-                                purchase_receipt_rows = [{
-                                    receipt_document_type: 'Purchase Receipt',
-                                    receipt_document: purchase_receipts.name,
-                                    supplier: purchase_receipts.supplier,
-                                    grand_total: purchase_receipts.grand_total
-                                }];
                             }
+
+                            console.log(purchase_receipt_rows)
+                            // If it's a single object
+                            // else if (typeof purchase_receipts === 'object') {
+                            //     purchase_receipt_rows = [{
+                            //         receipt_document_type: 'Purchase Receipt',
+                            //         receipt_document: purchase_receipts.name,
+                            //         supplier: purchase_receipts.supplier,
+                            //         grand_total: purchase_receipts.grand_total
+                            //     }];
+                            // }
 
                             let taxes_rows = [];
                             if (Array.isArray(taxes_data)) {

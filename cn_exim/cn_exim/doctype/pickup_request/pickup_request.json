@@ -1,11 +1,11 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "format:PR-{###}",
+ "autoname": "naming_series:",
  "creation": "2024-08-07 13:38:37.549161",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "name_of_supplier",
   "supplier_address",
   "supplier_address_display",
@@ -282,6 +282,12 @@
    "fieldtype": "Tab Break",
    "label": "Connections",
    "show_dashboard": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "PR-.###"
   }
  ],
  "grid_page_length": 50,
@@ -307,11 +313,11 @@
    "link_fieldname": "pickup_request"
   }
  ],
- "modified": "2025-04-18 11:24:40.371255",
+ "modified": "2025-04-23 16:08:04.266712",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
- "naming_rule": "Expression",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

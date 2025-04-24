@@ -11,33 +11,34 @@ def get_payment_trams(name):
 @frappe.whitelist()
 def get_due_date_based_on_condition(pr):
     purchase_receipt = frappe.get_doc("Purchase Receipt", pr)
-    purchase_order = frappe.get_doc("Purchase Order", purchase_receipt.items[0].purchase_order)
+    if purchase_receipt.items[0].purchase_order:
+        purchase_order = frappe.get_doc("Purchase Order", purchase_receipt.items[0].purchase_order)
     
-    payment_term = None
-    if purchase_order.payment_schedule:
-        payment_term = purchase_order.payment_schedule[0].payment_term
-    
-    if payment_term:
-        due_date_based_on = frappe.get_value("Payment Term", payment_term, "due_date_based_on")
-        days_to_add = frappe.get_value("Payment Term", payment_term, "credit_days")
+        payment_term = None
+        if purchase_order.payment_schedule:
+            payment_term = purchase_order.payment_schedule[0].payment_term
         
-        if due_date_based_on == "After invoice creation":
-            today_datetime = now_datetime()
+        if payment_term:
+            due_date_based_on = frappe.get_value("Payment Term", payment_term, "due_date_based_on")
+            days_to_add = frappe.get_value("Payment Term", payment_term, "credit_days")
+            
+            if due_date_based_on == "After invoice creation":
+                today_datetime = now_datetime()
+                new_date = add_days(today_datetime, days_to_add)
+                return {"due_date":frappe.utils.formatdate(new_date.date(), "yyyy-mm-dd")}
+            elif due_date_based_on == "After PR is created":
+                today_datetime = purchase_receipt.posting_date
+            else:
+                # Handle the case when due_date_based_on is not in either dictionary
+                if due_date_based_on in ["Completion of Work","On Installation"]:
+                    return {"status":True}
+                return None
+            
             new_date = add_days(today_datetime, days_to_add)
-            return {"due_date":frappe.utils.formatdate(new_date.date(), "yyyy-mm-dd")}
-        elif due_date_based_on == "After PR is created":
-            today_datetime = purchase_receipt.posting_date
-        else:
-            # Handle the case when due_date_based_on is not in either dictionary
-            if due_date_based_on in ["Completion of Work","On Installation"]:
-                return {"status":True}
-            return None
-        
-        new_date = add_days(today_datetime, days_to_add)
-        return {"due_date":new_date}
+            return {"due_date":new_date}
 
-    # Handle the case when payment_term is not found
-    return None
+        # Handle the case when payment_term is not found
+        return None
 
 @frappe.whitelist()
 def get_landed_cost_voucher_details(purchase_invoice_name, custom_purchase_order):
@@ -93,7 +94,7 @@ def get_landed_cost_voucher_details(purchase_invoice_name, custom_purchase_order
                     "rate": tax.rate,
                     "amount": tax.tax_amount,
                     "total": tax.total,
-                    "receipt_document": pr.name
+                    "receipt_document": pi_doc.name
                 })
         # Step 1: Get Gate Entry Details for this Purchase Order
         gate_entries = frappe.db.sql("""
@@ -105,6 +106,7 @@ def get_landed_cost_voucher_details(purchase_invoice_name, custom_purchase_order
         if not gate_entries:
             frappe.msgprint(("No Gate Entries found for Purchase Order {0}").format(custom_purchase_order))
             return [[]]
+    
     
         # Step 2: For each Gate Entry, get the linked Purchase Receipts
         for ge in gate_entries:

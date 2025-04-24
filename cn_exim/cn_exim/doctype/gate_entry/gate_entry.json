@@ -12,6 +12,7 @@
   "column_break_ughx",
   "gate_entry_no",
   "gate_entry_date",
+  "currency",
   "column_break_bhln",
   "supplier",
   "supplier_name",
@@ -31,12 +32,14 @@
   "service_name",
   "quantity_received",
   "received_remark",
-  "section_break_cpls",
-  "gate_entry_details",
+  "section_break_mpbl",
+  "purchase_order_in_gate_entry",
   "section_break_yjdd",
   "handover_to_person",
   "handover_remark",
   "amended_from",
+  "section_break_cpls",
+  "gate_entry_details",
   "connections_tab",
   "e_waybill_no"
  ],
@@ -75,7 +78,7 @@
   },
   {
    "fieldname": "driver_mobile_no",
-   "fieldtype": "Int",
+   "fieldtype": "Phone",
    "label": "Driver Mobile No"
   },
   {
@@ -100,8 +103,9 @@
   },
   {
    "fieldname": "service_name",
-   "fieldtype": "Data",
-   "label": "Service Name"
+   "fieldtype": "Link",
+   "label": "Service Name",
+   "options": "Supplier"
   },
   {
    "fieldname": "section_break_e3zl",
@@ -215,6 +219,22 @@
    "fieldtype": "Link",
    "label": "E-Waybill No",
    "options": "E-way Bill"
+  },
+  {
+   "fieldname": "section_break_mpbl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_order_in_gate_entry",
+   "fieldtype": "Table",
+   "label": "Purchase Order Details",
+   "options": "Purchase Order In Gate Entry"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
   }
  ],
  "grid_page_length": 50,
@@ -226,7 +246,7 @@
    "link_fieldname": "custom_gate_entry_no"
   }
  ],
- "modified": "2025-04-18 14:55:26.125600",
+ "modified": "2025-04-23 17:41:03.787452",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

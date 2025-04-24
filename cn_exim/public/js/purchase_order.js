@@ -1,14 +1,61 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
+        // if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
+        //     frm.add_custom_button("Pickup Request", function () {
+        //         let purchase_order_list = [{
+        //             po_number: frm.doc.name,
+        //             currency: frm.doc.currency,
+        //         }];
+                
+        //         let po_item_details = []
+                
+        //         frm.doc.items.forEach(element => {
+        //             po_item_details.push({
+        //                 'item': element.item_code,
+        //                 'material': element.item_name,
+        //                 'quantity': element.qty,
+        //                 'material_desc': element.description,
+        //                 'pick_qty': element.qty,
+        //                 'po_number': element.parent,
+        //                 'currency': frm.doc.currency,
+        //                 'currency_rate': frm.doc.conversion_rate,
+        //                 'rate': element.rate,
+        //                 'amount': element.amount,
+        //                 'amount_in_inr': element.base_amount,
+        //             })
+        //         });
+                
+        //         frappe.call({
+        //             method: "frappe.client.insert",
+        //             args: {
+        //                 doc: {
+        //                     "doctype": "Pickup Request",
+        //                     "name_of_supplier": frm.doc.supplier,
+        //                     "supplier_address": frm.doc.supplier_address,
+        //                     "purchase_order_list": purchase_order_list,
+        //                     "purchase_order_details": po_item_details,
+        //                     "remarks": "test",
+        //                     "total_amount": frm.doc.total,
+        //                 }
+        //             },
+        //             callback: function (r) {
+        //                 if (!r.exc) {
+        //                     frappe.set_route("Form", "Pickup Request", r.message.name)
+        //                 }
+        //             }
+        //         });
+
+        //     }, __("Create"))
+        // }
         if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{
                     po_number: frm.doc.name,
                     currency: frm.doc.currency,
                 }];
-
-                let po_item_details = []
-
+        
+                let po_item_details = [];
+        
                 frm.doc.items.forEach(element => {
                     po_item_details.push({
                         'item': element.item_code,
@@ -22,31 +69,32 @@ frappe.ui.form.on("Purchase Order", {
                         'rate': element.rate,
                         'amount': element.amount,
                         'amount_in_inr': element.base_amount,
-                    })
+                    });
                 });
-
+        
                 frappe.call({
                     method: "frappe.client.insert",
                     args: {
                         doc: {
-                            "doctype": "Pickup Request",
-                            "name_of_supplier": frm.doc.supplier,
-                            "supplier_address": frm.doc.supplier_address,
-                            "purchase_order_list": purchase_order_list,
-                            "purchase_order_details": po_item_details,
-                            "remarks": "test",
-                            "total_amount": frm.doc.total,
+                            doctype: "Pickup Request",
+                            name_of_supplier: frm.doc.supplier,
+                            supplier_address: frm.doc.supplier_address,
+                            purchase_order_list: purchase_order_list,
+                            purchase_order_details: po_item_details,
+                            remarks: "test",
+                            total_amount: frm.doc.total
                         }
                     },
                     callback: function (r) {
                         if (!r.exc) {
-                            frappe.set_route("Form", "Pickup Request", r.message.name)
+                            frappe.set_route("Form", "Pickup Request", r.message.name);
                         }
                     }
                 });
-
-            }, __("Create"))
+        
+            }, __("Create"));
         }
+        
         frappe.call({
             method: "cn_exim.config.py.purchase_order.get_stage_status",
             args: { purchase_order_name: frm.doc.name },
@@ -61,6 +109,10 @@ frappe.ui.form.on("Purchase Order", {
             frm.add_custom_button("Gate Entry", function () {
 
                 let get_entry_details = []
+                let purchase_order_details = []
+                let qty = 0
+                let received_qty = 0
+
 
                 frm.doc.items.forEach(element => {
                     get_entry_details.push({
@@ -75,6 +127,16 @@ frappe.ui.form.on("Purchase Order", {
                         "amount_inr": element.base_amount
                     })
                 })
+                frm.doc.items.forEach(obj => {
+                    qty += obj.qty
+                    received_qty += obj.received_qty
+                })
+
+                let finial_qty = qty - received_qty
+                purchase_order_details.push({
+                    "purchase_order": frm.doc.name,
+                    "incoming_quantity": finial_qty
+                })
                 frappe.call({
                     method: "frappe.client.insert",
                     args: {
@@ -82,7 +144,8 @@ frappe.ui.form.on("Purchase Order", {
                             "doctype": "Gate Entry",
                             "supplier": frm.doc.supplier,
                             "supplier_name": frm.doc.supplier_name,
-                            "gate_entry_details": get_entry_details
+                            "gate_entry_details": get_entry_details,
+                            "purchase_order_in_gate_entry": purchase_order_details
                         }
                     },
                     callback: function (r) {
@@ -104,31 +167,31 @@ frappe.ui.form.on("Purchase Order", {
             }
         })
 
-        if(frm.doc.custom_purchase_extra_charge && frm.doc.custom_purchase_extra_charge.length !== 0 && frm.doc.docstatus === 1){
+        if (frm.doc.custom_purchase_extra_charge && frm.doc.custom_purchase_extra_charge.length !== 0 && frm.doc.docstatus === 1) {
             frm.add_custom_button("Extra Purchase Invoice", function () {
-                let supplier_grouped_items={}
-                frm.doc.custom_purchase_extra_charge.forEach(item=>{
-                    if ( !supplier_grouped_items[item.supplier]){
-                        supplier_grouped_items[item.supplier]=[]
+                let supplier_grouped_items = {}
+                frm.doc.custom_purchase_extra_charge.forEach(item => {
+                    if (!supplier_grouped_items[item.supplier]) {
+                        supplier_grouped_items[item.supplier] = []
                     }
                     supplier_grouped_items[item.supplier].push({
                         // "purchase_order":frm.doc.name,
-                        "item_code":item.item_code,
-                        "rate":item.amount,
-                        "amount":item.amount,
-                        "qty":1,
-                        "expense_account":item.account_head
+                        "item_code": item.item_code,
+                        "rate": item.amount,
+                        "amount": item.amount,
+                        "qty": 1,
+                        "expense_account": item.account_head
                     })
                 })
-                Object.keys(supplier_grouped_items).forEach(supplier=>{
+                Object.keys(supplier_grouped_items).forEach(supplier => {
                     frappe.call({
                         method: "frappe.client.insert",
                         args: {
                             doc: {
                                 "doctype": "Purchase Invoice",
                                 "supplier": supplier,
-                                "items":supplier_grouped_items[supplier],
-                                "custom_purchase_order":frm.doc.name
+                                "items": supplier_grouped_items[supplier],
+                                "custom_purchase_order": frm.doc.name
                             }
                         },
                         callback: function (r) {
@@ -157,7 +220,7 @@ frappe.ui.form.on("Purchase Order", {
                 if (response.message['supplier_group'] == "Domestic Material") {
                     let type = response.message['supplier_group']
                     // setInterval(function () {
-                        // set_filter_item_supplier_group_wise(type, frm)
+                    // set_filter_item_supplier_group_wise(type, frm)
                     // }, 500);
                 }
             }
@@ -199,7 +262,7 @@ frappe.ui.form.on("Purchase Order", {
         //         console.warn("No items found in frm.doc.items");
         //     }
 
-    }
+    },
 })
 
 
@@ -300,7 +363,7 @@ frappe.ui.form.on('Purchase Order Item', {
     custom_item_charges_templte: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn]
         set_extra_charges_in_table(frm, row)
-    }
+    },
 });
 
 
@@ -408,7 +471,7 @@ function set_extra_charges_in_table(frm, row) {
 
 function set_filter_item_supplier_group_wise(type, frm) {
     if (frm.doc.type == "Domestic Material") {
-        frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+        frm.fields_dict['items'].grid.get_field('item_code').get_query = function (doc, cdt, cdn) {
             return {
                 filters: {
                     is_stock_item: 1
@@ -417,7 +480,7 @@ function set_filter_item_supplier_group_wise(type, frm) {
         };
     } else if (frm.doc.type == "Domestic Service") {
         console.log("Type selected:", frm.doc.type);
-        frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+        frm.fields_dict['items'].grid.get_field('item_code').get_query = function (doc, cdt, cdn) {
             return {
                 filters: {
                     is_stock_item: 0

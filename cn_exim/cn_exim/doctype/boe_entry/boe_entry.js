@@ -23,6 +23,10 @@ frappe.ui.form.on("BOE Entry", {
                                 item_name: item.material_name,
                                 qty: item.quantity,
                                 total_inr_value: item.total_amount,
+                                rate: item.item_price,
+                                amount: item.amount,
+                                currency: parent_date[0]['currency'],
+                                rate_inr: item.total_amount / item.quantity
                             })
                             total_amount += item.total_amount
                         })
