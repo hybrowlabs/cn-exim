@@ -26,7 +26,10 @@ def custom_set_expense_account(self, for_validate=False):
 					# item.expense_account = account
 						
 						retrieve_account_head=frappe.db.sql("select account_head, supplier from `tabPurchase Extra Charges` where  item_code=%s and parent=%s",(item.item_code,self.custom_purchase_order), as_dict=True)
-						account=retrieve_account_head[0]["account_head"]
+						if retrieve_account_head:
+							account=retrieve_account_head[0]["account_head"]
+						else:
+							account = None
 						
 						valid_account = frappe.db.exists("Account", {"name": account, "company": self.company})
 						if  not valid_account:

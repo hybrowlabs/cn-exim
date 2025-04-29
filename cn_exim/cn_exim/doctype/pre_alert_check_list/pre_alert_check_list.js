@@ -118,6 +118,8 @@ frappe.ui.form.on("Pre-Alert Check List", {
                             'igst_amount':frm.doc.igst_amount,
                             'total_duty':frm.doc.total_duty,
                             'total_rode_tape':frm.doc.tot_rodt_ut,
+                            'total_freight': frm.doc.total_freight,
+                            "currency":frm.doc.currency,
                             'boe_entries':items
                         }
                     },

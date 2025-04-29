@@ -8,6 +8,7 @@
  "field_order": [
   "boe_no",
   "boe_date",
+  "currency",
   "column_break_ikqy",
   "naming_series",
   "per_alert_check",
@@ -24,6 +25,7 @@
   "column_break_qvtx",
   "total_inr_value",
   "sws_amount",
+  "total_freight",
   "column_break_sfbh",
   "accessible_value",
   "igst_amount",
@@ -59,6 +61,7 @@
   "amended_from",
   "attach_document_tab",
   "attach_document",
+  "status",
   "connections_tab"
  ],
  "fields": [
@@ -346,6 +349,25 @@
   {
    "fieldname": "column_break_lssv",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_freight",
+   "fieldtype": "Currency",
+   "label": "Total Freight"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nDraft\nSubmitted\nTo Bill",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -356,7 +378,7 @@
    "link_fieldname": "doctype_id"
   }
  ],
- "modified": "2025-04-18 11:25:49.855624",
+ "modified": "2025-04-28 15:08:38.110958",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "BOE Entry",

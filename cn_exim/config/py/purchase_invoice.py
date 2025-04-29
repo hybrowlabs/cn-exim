@@ -147,4 +147,98 @@ def get_landed_cost_voucher_details(purchase_invoice_name, custom_purchase_order
         frappe.log_error(f"Failed to get Landed Cost Voucher details: {str(e)}", 
                         "get_landed_cost_voucher_details error")
         frappe.throw(str(e))
-    
+
+
+
+@frappe.whitelist()
+def get_invoice_data_for_import(boe_list):
+    boe_list = frappe.json.loads(boe_list)
+
+    # Store mapping between per_alert_check and boe_entry_no
+    alert_to_boe_map = {}
+    for boe_entry_no in boe_list:
+        boe_doc = frappe.get_doc("BOE Entry", boe_entry_no)
+        per_alert_check = boe_doc.get("per_alert_check")
+        vendor = boe_doc.get("vendor")
+        currency = boe_doc.get("currency")
+        if per_alert_check:
+            alert_to_boe_map[per_alert_check] = boe_entry_no
+
+    child_details_list = []
+    po_data_map = {}
+
+    fields_to_sum = [
+        "bcd_amount", "hcs_amount", "swl_amount", "total_duty",
+        "freight_amount", "misc_charge_amt", "insurance_amount"
+    ]
+
+    # Add boe_entry_no to each item row
+    for per_alert, boe_entry_no in alert_to_boe_map.items():
+        data = frappe.db.sql(
+            "SELECT * FROM `tabPre-Alert Item Details` WHERE parent = %s",
+            (per_alert,),
+            as_dict=True
+        )
+        for item in data:
+            item["boe_entry_no"] = boe_entry_no
+            child_details_list.append(item)
+
+    # Aggregate values by po_no
+    for item in child_details_list:
+        po_no = item.get("po_no")
+        boe_entry_no = item.get("boe_entry_no")
+        if not po_no:
+            continue
+
+        key = (po_no, boe_entry_no)  # Combine po_no and boe_entry_no to uniquely group
+
+        if key not in po_data_map:
+            po_data_map[key] = {field: item.get(field, 0) or 0 for field in fields_to_sum}
+            po_data_map[key]["po_no"] = po_no
+            po_data_map[key]["boe_entry_no"] = boe_entry_no
+        else:
+            for field in fields_to_sum:
+                po_data_map[key][field] += item.get(field, 0) or 0
+
+    # Final conversion
+    field_to_description = {
+        "bcd_amount": "Basic Customs Duty",
+        "hcs_amount": "Hazard Communication Standard",
+        "swl_amount": "social welfare surcharge",
+        "total_duty": "Duty",
+        "freight_amount": "Freight",
+        "misc_charge_amt": "Misc. Charge Amount",
+        "insurance_amount": "Insurance Amount"
+    }
+
+    final_list = []
+
+    for (po_no, boe_entry_no), values in po_data_map.items():
+        for field, description in field_to_description.items():
+            amount = values.get(field, 0) or 0
+            if amount > 0:
+                final_list.append({
+                    "custom_po_number": po_no,
+                    "custom_boe_entry": boe_entry_no,
+                    "item_code": description,
+                    "rate": amount,
+                    "amount":amount,
+                    "description": field,
+                    "qty":1
+                })
+
+    # Example printout
+    return final_list, vendor, currency
+
+
+@frappe.whitelist()
+def update_boe_entry(boe_list):
+    boe_list = frappe.json.loads(boe_list)
+    for boe_entry_no in boe_list:
+        boe_doc = frappe.get_doc("BOE Entry", boe_entry_no)
+        if boe_doc:
+            boe_doc.update({
+                "status": "To Bill",
+            })
+            boe_doc.save()
+            frappe.db.commit()

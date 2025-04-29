@@ -123,7 +123,6 @@ frappe.ui.form.on("Gate Entry", {
                                 requests.push(request);
                             });
 
-                            console.log("Unique PO Numbers:", [...purchase_order_numbers]);
 
                             // First, wait for item data to be collected
                             Promise.all(requests).then(() => {
@@ -136,7 +135,6 @@ frappe.ui.form.on("Gate Entry", {
                                             method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_tax_and_charges",
                                             args: { po_name: po },
                                             callback: function (response) {
-                                                console.log("response", response)
                                                 if (response.message) {
                                                     let tax_table = response.message.tax_table || [];
                                                     let extra_charges = response.message.extra_charge || [];
@@ -201,9 +199,11 @@ frappe.ui.form.on("Gate Entry", {
                                             "supplier": frm.doc.supplier,
                                             "supplier_name": frm.doc.supplier_name,
                                             "custom_gate_entry_no": frm.doc.name,
+                                            "custom_supplier_document_no": frm.doc.bill_number,
+                                            "custom_supplier_document_date": frm.doc.bill_date,
                                             "items": purchase_item_list,
                                             "taxes": purchase_tax_list,
-                                            "currency":frm.doc.currency,
+                                            "currency": frm.doc.currency,
                                             "custom_purchase_extra_charge": purchase_extra_charges_list,
                                             "custom_bcd_amount": data['bcd_amount'] || 0,
                                             "custom_pickup_request": data['pickup_request'] || "",
@@ -269,7 +269,6 @@ frappe.ui.form.on("Gate Entry", {
                                     }
                                 });
                             }).catch(error => {
-                                console.error("Error processing PO items or tax details:", error);
                             });
                         }
                     }
@@ -278,10 +277,79 @@ frappe.ui.form.on("Gate Entry", {
             }, __("Create"));
         }
 
-        frm.set_query("service_name", function(){
+        frm.add_custom_button("Purchase Order", function () {
+            var d = new frappe.ui.form.MultiSelectDialog({
+                doctype: "Purchase Order",
+                target: this.cur_frm,
+                setters: {
+                    transaction_date: null,
+                    supplier_name: null,
+                },
+                add_filters_group: 1,
+                columns: ["name", "transaction_date", "supplier_name"],
+                get_query() {
+                    return {
+                        filters: [
+                            ["docstatus", "=", 1],
+                        ]
+                    };
+                },
+                action(selections) {
+                    var length = selections.length
+                    if (length > 0) {
+                        frappe.call({
+                            method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_multiple_purchase_order",
+                            args:{
+                                po_name: selections
+                            },
+                            callback: function (r) {
+                                let po_items_list = r.message['po_items_list']
+                                let purchase_order = r.message['po_total_qty']
+                                let po_details = r.message['po_details']
+
+
+                                frm.clear_table("gate_entry_details")
+
+                                po_items_list.forEach(obj => {
+                                    let row = frm.add_child("gate_entry_details")
+                                    row.purchase_order = obj.purchase_order;
+                                    row.item = obj.item;
+                                    row.item_name = obj.item_name;
+                                    row.uom = obj.uom;
+                                    row.rate = obj.rate;
+                                    row.qty = obj.qty;
+                                    row.amount = obj.amount;
+                                    row.rate_inr = obj.rate_inr;
+                                    row.amount_inr = obj.amount_inr;
+                                })
+                                frm.refresh_field("gate_entry_details")
+
+                                frm.clear_table("purchase_order_in_gate_entry");
+
+                                purchase_order.forEach(obj => {
+                                    let po_row = frm.add_child("purchase_order_in_gate_entry");
+                                    po_row.purchase_order = obj.purchase_order;
+                                    po_row.incoming_quantity = obj.incoming_quantity;
+                                })
+                                frm.refresh_field("purchase_order_in_gate_entry")
+
+
+                                frm.set_value("supplier", po_details.supplier)
+                                frm.set_value("supplier_name", po_details.supplier_name)
+                                frm.set_value("currency", po_details.currency)
+                                frm.set_value("currency_rate", po_details.conversion_rate)
+                            }
+                        })
+                    }
+                    d.dialog.hide();
+                }
+            });
+        }, __("Gate Item From"));
+
+        frm.set_query("service_name", function () {
             return {
-                filters:{
-                    supplier_group:"Service"
+                filters: {
+                    supplier_group: "Service"
                 }
             }
         })
