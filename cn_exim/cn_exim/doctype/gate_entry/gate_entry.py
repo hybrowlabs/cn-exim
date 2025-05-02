@@ -34,12 +34,16 @@ def create_stock_entry_for_stock_received(doc, warehouse):
     })
     
     for item in doc["gate_entry_details"]:
+        account = frappe.db.get_value("Item Default", {"parent": item['item']}, "custom_difference_account")
+        
         stock_entry.append("items",{
             "item_code" : item['item'],
             "item_name" : item['item_name'],
             "qty": item['qty'],
             "uom": item['uom'],
-            "t_warehouse": warehouse
+            "t_warehouse": warehouse,
+            "expense_account": account,
+            "allow_zero_valuation_rate": 1
         })
     
     stock_entry.insert()
@@ -62,3 +66,56 @@ def get_tax_and_charges(po_name):
         "tax_table": tax_table,
         "extra_charge": extra_charge
     }
+    
+    
+@frappe.whitelist()
+def get_multiple_purchase_order(po_name):
+    po_name = frappe.json.loads(po_name)
+    
+    po_items_list = []
+    po_total_qty_list = []
+
+    for i in po_name:
+        po_details = frappe.db.get_value(
+            "Purchase Order", {"name": i}, ["name", "supplier", "supplier_name", "currency", "conversion_rate"], as_dict=True
+        )
+        
+        po_item_details = frappe.db.sql(
+            "SELECT * FROM `tabPurchase Order Item` WHERE parent=%s", (po_details.get("name")), as_dict=True
+        )
+        
+        for item in po_item_details:
+            po_items_list.append({
+                "purchase_order": item.get("parent"),
+                "item": item.get("item_code"),
+                "item_name": item.get("item_name"),
+                "uom": item.get("uom"),
+                "rate": item.get("rate"),
+                "amount": item.get("amount"),
+                "qty": item.get("qty"),
+                "rate_inr": item.get("base_rate"),
+                "amount_inr": item.get("base_amount")
+            })
+
+            # Handling total quantity PO-wise
+            po_number = item.get("parent")
+            qty = item.get("qty")
+            found = False
+            for entry in po_total_qty_list:
+                if entry["purchase_order"] == po_number:
+                    entry["incoming_quantity"] += qty
+                    found = True
+                    break
+
+            if not found:
+                po_total_qty_list.append({
+                    "purchase_order": po_number,
+                    "incoming_quantity": qty
+                })
+            
+    return {
+        "po_details": po_details,
+        "po_items_list": po_items_list,
+        "po_total_qty": po_total_qty_list
+    }
+    

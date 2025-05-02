@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-21 12:16:47.725204",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "purchase_order",
+  "incoming_quantity",
+  "actual_incoming_qty"
+ ],
+ "fields": [
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Purchase Order",
+   "options": "Purchase Order"
+  },
+  {
+   "fieldname": "incoming_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Incoming Quantity"
+  },
+  {
+   "fieldname": "actual_incoming_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Actual Incoming Qty"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-21 12:26:13.925150",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Purchase Order In Gate Entry",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

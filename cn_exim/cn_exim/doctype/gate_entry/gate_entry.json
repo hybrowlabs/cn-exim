@@ -12,33 +12,38 @@
   "column_break_ughx",
   "gate_entry_no",
   "gate_entry_date",
+  "currency",
   "column_break_bhln",
   "supplier",
   "supplier_name",
+  "currency_rate",
   "section_break_khbh",
   "vehicle_no",
+  "e_waybill_no",
   "column_break_ggqh",
   "driver_name",
   "column_break_crir",
   "driver_mobile_no",
   "section_break_xlfw",
   "challan_no",
-  "bill_date",
   "bill_number",
+  "bill_date",
   "material_short_description",
   "section_break_e3zl",
   "airway_bill_no",
   "service_name",
-  "quantity_received",
+  "vehicle_size",
   "received_remark",
-  "section_break_cpls",
-  "gate_entry_details",
+  "section_break_mpbl",
+  "purchase_order_in_gate_entry",
   "section_break_yjdd",
   "handover_to_person",
+  "deaprtment",
   "handover_remark",
   "amended_from",
-  "connections_tab",
-  "e_waybill_no"
+  "section_break_cpls",
+  "gate_entry_details",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -61,12 +66,12 @@
   {
    "fieldname": "vehicle_no",
    "fieldtype": "Data",
-   "label": "Vehicle No"
+   "label": "Vehicle No/ POD"
   },
   {
    "fieldname": "bill_date",
    "fieldtype": "Date",
-   "label": "Bill Date"
+   "label": "Supplier Invoice Date"
   },
   {
    "fieldname": "driver_name",
@@ -74,34 +79,31 @@
    "label": "Driver Name"
   },
   {
+   "default": "+91-",
    "fieldname": "driver_mobile_no",
-   "fieldtype": "Int",
+   "fieldtype": "Phone",
    "label": "Driver Mobile No"
   },
   {
    "fieldname": "challan_no",
-   "fieldtype": "Int",
+   "fieldtype": "Data",
    "label": "Challan No"
   },
   {
-   "fieldname": "quantity_received",
-   "fieldtype": "Data",
-   "label": "Quantity Received"
-  },
-  {
    "fieldname": "bill_number",
-   "fieldtype": "Int",
-   "label": "Bill Number"
+   "fieldtype": "Data",
+   "label": "Supplier Invoice No"
   },
   {
    "fieldname": "airway_bill_no",
-   "fieldtype": "Int",
+   "fieldtype": "Data",
    "label": "Airway Bill No"
   },
   {
    "fieldname": "service_name",
-   "fieldtype": "Data",
-   "label": "Service Name"
+   "fieldtype": "Link",
+   "label": "Transporter/ Courier Agency Name",
+   "options": "Supplier"
   },
   {
    "fieldname": "section_break_e3zl",
@@ -110,7 +112,7 @@
   {
    "fieldname": "gate_entry_no",
    "fieldtype": "Data",
-   "label": "Gate Entry No",
+   "label": "Gate Entry No (Manual)",
    "unique": 1
   },
   {
@@ -212,15 +214,54 @@
   },
   {
    "fieldname": "e_waybill_no",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "E-Waybill No",
    "options": "E-way Bill"
+  },
+  {
+   "fieldname": "section_break_mpbl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_order_in_gate_entry",
+   "fieldtype": "Table",
+   "label": "Purchase Order Details",
+   "options": "Purchase Order In Gate Entry"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fetch_from": "handover_to_person.department",
+   "fieldname": "deaprtment",
+   "fieldtype": "Link",
+   "label": "Deaprtment",
+   "options": "Department"
+  },
+  {
+   "fieldname": "vehicle_size",
+   "fieldtype": "Data",
+   "label": "Vehicle Size"
+  },
+  {
+   "fieldname": "currency_rate",
+   "fieldtype": "Currency",
+   "label": "Currency Rate"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2025-03-07 12:22:13.236323",
+ "links": [
+  {
+   "link_doctype": "Purchase Receipt",
+   "link_fieldname": "custom_gate_entry_no"
+  }
+ ],
+ "modified": "2025-05-02 15:32:27.194342",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

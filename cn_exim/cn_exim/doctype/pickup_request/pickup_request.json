@@ -1,11 +1,11 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "format:PR-{###}",
+ "autoname": "naming_series:",
  "creation": "2024-08-07 13:38:37.549161",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "name_of_supplier",
   "supplier_address",
   "supplier_address_display",
@@ -282,8 +282,15 @@
    "fieldtype": "Tab Break",
    "label": "Connections",
    "show_dashboard": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "PR-.###"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
@@ -300,13 +307,17 @@
    "link_doctype": "Pre-Alert Check List",
    "link_fieldname": "po_no",
    "table_fieldname": "item_details"
+  },
+  {
+   "link_doctype": "BOE Entry",
+   "link_fieldname": "pickup_request"
   }
  ],
- "modified": "2025-03-07 13:27:41.242843",
+ "modified": "2025-04-23 16:08:04.266712",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
- "naming_rule": "Expression",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

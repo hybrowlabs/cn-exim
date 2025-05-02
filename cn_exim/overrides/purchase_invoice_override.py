@@ -10,9 +10,11 @@ def custom_set_expense_account(self, for_validate=False):
 		if auto_accounting_for_stock:
 			for item in self.items:
 				data = frappe.db.sql(" select custom_stock_received_but_not_billed, custom_default_inventory_account from `tabItem Default` where parent=%s and company=%s ",(item.item_code, self.company), as_dict=True)
-
-				account = data[0]['custom_stock_received_but_not_billed']
+				
+				account = None
 				stock_items = self.get_stock_items()
+				if data:
+					account = data[0]['custom_stock_received_but_not_billed']
 
 				if account:
 					stock_not_billed_account = account
@@ -24,14 +26,17 @@ def custom_set_expense_account(self, for_validate=False):
 					# item.expense_account = account
 						
 						retrieve_account_head=frappe.db.sql("select account_head, supplier from `tabPurchase Extra Charges` where  item_code=%s and parent=%s",(item.item_code,self.custom_purchase_order), as_dict=True)
-						account=retrieve_account_head[0]["account_head"]
-						 
+						if retrieve_account_head:
+							account=retrieve_account_head[0]["account_head"]
+						else:
+							account = None
+						
 						valid_account = frappe.db.exists("Account", {"name": account, "company": self.company})
 						if  not valid_account:
 							frappe.throw(_("Row {0}: Expense Account {1} does not belong to Company {2}. Please check your account settings.").format(item.idx, frappe.bold(account), frappe.bold(self.company)))
 						item.expense_account=valid_account
-					# else:
-					# 	item.expense_account=account
+						stock_not_billed_account = account
+						item.custom_srbnb_account = account
 					
 
 		self.asset_received_but_not_billed = None
@@ -75,17 +80,14 @@ def custom_set_expense_account(self, for_validate=False):
 				else:
 					# check if 'Stock Received But Not Billed' account is credited in Purchase receipt or not
 					data = frappe.db.sql(" select custom_stock_received_but_not_billed, custom_default_inventory_account from `tabItem Default` where parent=%s and company=%s ",(item.item_code, self.company), as_dict=True)
-					stock_not_billed_account = data[0]['custom_stock_received_but_not_billed']
+					if data:
+						stock_not_billed_account = data[0]['custom_stock_received_but_not_billed']
 					if item.purchase_receipt:
-						print("\n\n\n purchase receipt", item.purchase_receipt, "\n\n\n")
 						negative_expense_booked_in_pr = frappe.db.sql(
 							"""select name from `tabGL Entry`
 							where voucher_type='Purchase Receipt' and voucher_no=%s and account = %s""",
 							(item.purchase_receipt, stock_not_billed_account),
 						)
-
-    
-						print("\n\n\n", negative_expense_booked_in_pr, "\n\n\n")
 						if negative_expense_booked_in_pr:
 							if (
 								for_validate

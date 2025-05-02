@@ -11,14 +11,12 @@
   "check_list_no",
   "column_break_vfqm",
   "naming_series",
-  "bill_of_entry_no",
   "check_list_date",
   "column_break_kard",
   "rfq_number",
   "pickup_request",
   "column_break_lnsc",
   "vendor",
-  "bill_of_entry_date",
   "section_break_xqat",
   "currency",
   "exch_rate",
@@ -395,16 +393,6 @@
    "label": "Check List Date"
   },
   {
-   "fieldname": "bill_of_entry_no",
-   "fieldtype": "Data",
-   "label": "Bill of Entry No"
-  },
-  {
-   "fieldname": "bill_of_entry_date",
-   "fieldtype": "Date",
-   "label": "Bill of Entry Date"
-  },
-  {
    "fieldname": "bill_of_entry_details_tab",
    "fieldtype": "Tab Break",
    "label": "Bill of Entry Details"
@@ -458,15 +446,16 @@
    "show_dashboard": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
   {
-   "link_doctype": "Bill of Entry",
-   "link_fieldname": "custom_prealert_check_list"
+   "link_doctype": "BOE Entry",
+   "link_fieldname": "per_alert_check"
   }
  ],
- "modified": "2024-12-11 15:33:58.077118",
+ "modified": "2025-04-28 14:43:04.657601",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pre-Alert Check List",

@@ -83,3 +83,38 @@ def get_purchase_order_item_name(item_code, purchase_order):
     # print(item_name)
 
     return data  
+
+
+
+@frappe.whitelist()
+def create_stock_entry_for_stock_issus(doc, warehouse):
+    doc = frappe.parse_json(doc)
+    
+    gate_entry = doc.get("custom_gate_entry_no") or doc.get("name")
+
+    stock_entry = frappe.get_doc({
+        "doctype": "Stock Entry",
+        "stock_entry_type": "Material Issue",
+        "custom_gate_entry": gate_entry,
+        "items": []
+    })
+
+    doc_list = doc.get("gate_entry_details") or doc.get("items") or []
+
+    for item in doc_list:
+        item_code = item.get("item") or item.get("item_code")
+        if not item_code:
+            continue  # Skip if no item code
+
+        stock_entry.append("items", {
+            "item_code": item_code,
+            "item_name": item.get("item_name"),
+            "qty": item.get("qty"),
+            "uom": item.get("uom"),
+            "s_warehouse": warehouse,
+            "expense_account": frappe.db.get_value("Item Default", {"parent": item_code}, "custom_difference_account"),
+            "allow_zero_valuation_rate": 1
+        })
+
+    stock_entry.insert()
+    stock_entry.submit()

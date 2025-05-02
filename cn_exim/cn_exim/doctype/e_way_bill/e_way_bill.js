@@ -97,18 +97,35 @@ frappe.ui.form.on("E-way Bill", {
 
             frm.add_custom_button("Gate Entry", function () {
                 let item_list = []
+                let purchase_order_map = {};
                 let po_no = ''
+                let currency = ""
                 $.each(frm.doc.items || [], function (i, d) {
                     item_list.push({
                         purchase_order: d.purchase_order,
                         item: d.item_code,
                         item_name: d.item_name,
                         uom: d.uom,
-                        amount: d.total_inr_value,
+                        amount: d.amount,
                         qty: d.qty,
+                        rate_inr: d.rate_inr,
+                        amount_inr: d.total_inr_value,
+                        rate:d.rate,
                     })
                     po_no = d.purchase_order
+                    currency = d.currency
+
+                    if (purchase_order_map[d.purchase_order]) {
+                        purchase_order_map[d.purchase_order].incoming_quantity += d.qty;
+                    } else {
+                        // Create new PO entry
+                        purchase_order_map[d.purchase_order] = {
+                            purchase_order: d.purchase_order,
+                            incoming_quantity: d.qty
+                        };
+                    }
                 })
+                let purchase_order_details = Object.values(purchase_order_map);
                 frappe.call({
                     method: "frappe.client.get_list",
                     args: {
@@ -128,6 +145,10 @@ frappe.ui.form.on("E-way Bill", {
                                     supplier_name: r.message[0]['supplier_name'],
                                     e_waybill_no: frm.doc.name,
                                     gate_entry_details: item_list,
+                                    purchase_order_in_gate_entry: purchase_order_details,
+                                    vehicle_no: frm.doc.vehicle_no,
+                                    driver_name: frm.doc.driver_name,
+                                    currency:currency,
                                 }
                             },
                             callback: function (r) {
