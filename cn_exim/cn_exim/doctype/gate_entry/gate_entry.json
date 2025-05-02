@@ -79,6 +79,7 @@
    "label": "Driver Name"
   },
   {
+   "default": "+91-",
    "fieldname": "driver_mobile_no",
    "fieldtype": "Phone",
    "label": "Driver Mobile No"
@@ -213,7 +214,7 @@
   },
   {
    "fieldname": "e_waybill_no",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "E-Waybill No",
    "options": "E-way Bill"
   },
@@ -260,7 +261,7 @@
    "link_fieldname": "custom_gate_entry_no"
   }
  ],
- "modified": "2025-04-29 14:09:39.330548",
+ "modified": "2025-05-02 15:32:27.194342",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

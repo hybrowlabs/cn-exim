@@ -49,7 +49,31 @@ frappe.ui.form.on("BOE Entry", {
                         })
                     }
                 })
+            }, __("Create"))
 
+            frm.add_custom_button("Payment Entry", function(){
+                let total_amount = frm.doc.bcd_amount + frm.doc.h_cess_amount + frm.doc.sws_amount + frm.doc.igst_amount;
+                frappe.model.with_doctype("Payment Entry", function() {
+                    let doc = frappe.model.get_new_doc("Payment Entry");
+                
+                    doc.payment_type = "Pay";
+                    doc.party_type = "Supplier";
+                    doc.paid_from = frm.doc.company;
+                    doc.paid_amount = total_amount;
+                    doc.currency = frm.doc.currency;
+                    doc.received_amount = total_amount;
+                
+                    frappe.set_route("Form", "Payment Entry", doc.name);
+                
+                    // Set party after route change to ensure party_type is applied
+                    frappe.after_ajax(() => {
+                        setTimeout(() => {
+                            locals["Payment Entry"][doc.name].party = frm.doc.vendor;
+                            frappe.model.set_value("Payment Entry", doc.name, "party", frm.doc.vendor);
+                        }, 300); // delay to allow party_type to process
+                    });
+                });                
+                
             }, __("Create"))
         }
     }
