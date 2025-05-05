@@ -115,6 +115,7 @@ frappe.ui.form.on("Purchase Order", {
 
 
                 frm.doc.items.forEach(element => {
+                    let qty = element.qty - element.received_qty
                     get_entry_details.push({
                         "purchase_order": frm.doc.name,
                         "item": element.item_code,
@@ -122,9 +123,10 @@ frappe.ui.form.on("Purchase Order", {
                         "uom": element.uom,
                         "rate": element.rate,
                         "amount": element.base_rate,
-                        "qty": element.qty,
+                        "qty": qty,
                         "rate_inr": element.amount,
-                        "amount_inr": element.base_amount
+                        "amount_inr": element.base_amount,
+                        "po_qty": element.qty,
                     })
                 })
                 frm.doc.items.forEach(obj => {
