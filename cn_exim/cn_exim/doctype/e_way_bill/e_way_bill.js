@@ -111,6 +111,7 @@ frappe.ui.form.on("E-way Bill", {
                         rate_inr: d.rate_inr,
                         amount_inr: d.total_inr_value,
                         rate:d.rate,
+                        po_qty: d.po_qty,
                     })
                     po_no = d.purchase_order
                     currency = d.currency
@@ -221,6 +222,7 @@ frappe.ui.form.on("E-way Bill", {
                             row.item_name = item.material_name
                             row.qty = item.quantity
                             row.total_inr_value = item.total_amount
+                            row.po_qty = item.po_qty
                             total_amount += item.total_amount
                         })
                         frm.refresh_field("items")

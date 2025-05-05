@@ -14,6 +14,7 @@
   "item",
   "uom",
   "amount",
+  "po_qty",
   "section_break_rjqn",
   "rate_inr",
   "column_break_kjbr",
@@ -88,12 +89,18 @@
    "fieldname": "amount_inr",
    "fieldtype": "Currency",
    "label": "Amount (INR)"
+  },
+  {
+   "fieldname": "po_qty",
+   "fieldtype": "Float",
+   "label": "Po Qty"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-24 10:40:32.291943",
+ "modified": "2025-05-03 14:57:21.503004",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry Details",
