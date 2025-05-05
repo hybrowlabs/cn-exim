@@ -18,13 +18,14 @@ frappe.ui.form.on("Pre Alert", {
                 data.forEach(function (obj) {
                     var row = frm.add_child("item_details")
                     row.item_code = obj['item'];
-                    row.quantity = obj['quantity']
+                    row.quantity = obj['pick_qty']
                     row.description = obj['material_desc']
                     row.material_name = obj['material']
                     row.po_no = obj['po_number']
                     row.item_price = obj['rate']
                     row.amount = obj['amount']
                     row.item_price = obj['rate']
+                    row.po_qty = obj['quantity']
                     row.total_inr_value = obj['amount'] * frm.doc.exch_rate
                     frappe.call({
                         method: "frappe.client.get_list",
@@ -116,6 +117,7 @@ frappe.ui.form.on("Pre Alert", {
                         'po_no': item.po_no,
                         'item_code': item.item_code,
                         'quantity': item.quantity,
+                        "po_qty": item.po_qty,
                         'amount': item.amount,
                         'insurance_amount': item.insurance_amount,
                         'hsn_code': item.hsn_code,

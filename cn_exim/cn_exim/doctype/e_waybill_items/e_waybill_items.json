@@ -21,7 +21,8 @@
   "item_name",
   "currency",
   "rate",
-  "uom"
+  "uom",
+  "po_qty"
  ],
  "fields": [
   {
@@ -117,13 +118,18 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount"
+  },
+  {
+   "fieldname": "po_qty",
+   "fieldtype": "Float",
+   "label": "Po Qty"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-24 11:10:46.734709",
+ "modified": "2025-05-05 10:53:46.050436",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "E Waybill Items",
