@@ -13,9 +13,19 @@ def custom_set_expense_account(self, for_validate=False):
 				
 				account = None
 				stock_items = self.get_stock_items()
-				if data:
-					account = data[0]['custom_stock_received_but_not_billed']
+    
+				if data and data[0].get("custom_stock_received_but_not_billed"):
+					account = data[0]["custom_stock_received_but_not_billed"]
 
+				# Step 2: If not in Item Default, check in Company
+				elif frappe.db.get_value("Company", self.company, "stock_received_but_not_billed"):
+					account = frappe.db.get_value("Company", self.company, "stock_received_but_not_billed")
+
+				# Step 3: If not in Company, check default account from Warehouse
+				elif item.default_warehouse:
+					account = frappe.db.get_value("Warehouse", item.default_warehouse, "account")
+
+				print("Account from Item Default:\n\n\n", account, "\n\n\n")
 				if account:
 					stock_not_billed_account = account
 					item.expense_account = account
