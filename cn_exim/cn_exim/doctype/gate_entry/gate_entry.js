@@ -277,30 +277,36 @@ frappe.ui.form.on("Gate Entry", {
             }, __("Create"));
         }
 
-        frm.add_custom_button("Purchase Order", function () {
-            var d = new frappe.ui.form.MultiSelectDialog({
-                doctype: "Purchase Order",
-                target: this.cur_frm,
-                setters: {
-                    transaction_date: null,
-                    supplier_name: null,
-                },
-                add_filters_group: 1,
-                columns: ["name", "transaction_date", "supplier_name"],
-                get_query() {
-                    return {
-                        filters: [
-                            ["docstatus", "=", 1],
-                        ]
-                    };
-                },
-                action(selections) {
-                    var length = selections.length
-                    if (length > 0) {
+
+        frm.add_custom_button(__('Get PO Items'), function () {
+            if (frm.doc.supplier == undefined || frm.doc.supplier == "") {
+                frappe.msgprint("Please select supplier first");
+                return;
+            }
+            else {
+                let d = new frappe.ui.form.MultiSelectDialog({
+                    doctype: "Purchase Order",
+                    target: frm,
+                    setters: {
+                        supplier: frm.doc.supplier,
+                        supplier_name: null
+                    },
+                    columns: ["name", "transaction_date", "supplier_name"],
+                    get_query: function () {
+                        return {
+                            filters: {
+                                docstatus: 1,
+                                status: ["not in", ["Closed", "On Hold"]],
+                                per_received: ["<", 99.99],
+                                company: frm.doc.company,
+                            }
+                        };
+                    },
+                    action(selections) {
                         frappe.call({
                             method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_multiple_purchase_order",
-                            args:{
-                                po_name: selections
+                            args: {
+                                po_name: JSON.stringify(selections)
                             },
                             callback: function (r) {
                                 let po_items_list = r.message['po_items_list']
@@ -339,12 +345,13 @@ frappe.ui.form.on("Gate Entry", {
                                 frm.set_value("currency", po_details.currency)
                                 frm.set_value("currency_rate", po_details.conversion_rate)
                             }
-                        })
+                        });
+
+                        d.dialog.hide();
                     }
-                    d.dialog.hide();
-                }
-            });
-        }, __("Gate Item From"));
+                });
+            }
+        }, __('Get Items From'));
 
         frm.set_query("service_name", function () {
             return {
