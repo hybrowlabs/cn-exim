@@ -9,10 +9,12 @@
   "naming_series",
   "scan_barcode",
   "company",
+  "currency",
   "column_break_ughx",
   "gate_entry_no",
   "gate_entry_date",
-  "currency",
+  "posting_time",
+  "edit_posting_date_and_time",
   "column_break_bhln",
   "supplier",
   "supplier_name",
@@ -22,6 +24,7 @@
   "e_waybill_no",
   "column_break_ggqh",
   "driver_name",
+  "lr_number",
   "column_break_crir",
   "driver_mobile_no",
   "section_break_xlfw",
@@ -50,7 +53,8 @@
    "default": "Today",
    "fieldname": "gate_entry_date",
    "fieldtype": "Date",
-   "label": "Gate Entry Date"
+   "label": "Gate Entry Date",
+   "read_only_depends_on": "eval:doc.edit_posting_date_and_time == 0"
   },
   {
    "fetch_from": "supplier.supplier_name",
@@ -79,10 +83,10 @@
    "label": "Driver Name"
   },
   {
-   "default": "+91-",
    "fieldname": "driver_mobile_no",
-   "fieldtype": "Phone",
-   "label": "Driver Mobile No"
+   "fieldtype": "Data",
+   "label": "Driver Mobile No",
+   "length": 10
   },
   {
    "fieldname": "challan_no",
@@ -250,6 +254,24 @@
    "fieldname": "currency_rate",
    "fieldtype": "Currency",
    "label": "Currency Rate"
+  },
+  {
+   "fieldname": "lr_number",
+   "fieldtype": "Data",
+   "label": "LR Number"
+  },
+  {
+   "default": "0",
+   "fieldname": "edit_posting_date_and_time",
+   "fieldtype": "Check",
+   "label": " Edit Posting Date and Time"
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_time",
+   "fieldtype": "Time",
+   "label": "Posting Time",
+   "read_only_depends_on": "eval:doc.edit_posting_date_and_time == 0"
   }
  ],
  "grid_page_length": 50,
@@ -261,8 +283,8 @@
    "link_fieldname": "custom_gate_entry_no"
   }
  ],
- "modified": "2025-05-03 14:15:11.603911",
- "modified_by": "hardik@mail.hybrowlabs.com",
+ "modified": "2025-05-19 10:30:14.517852",
+ "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
  "naming_rule": "By \"Naming Series\" field",

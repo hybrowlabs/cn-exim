@@ -353,6 +353,8 @@ frappe.ui.form.on("Gate Entry", {
                 }
             }
         })
+
+        
     },
 
     on_submit: function (frm) {
