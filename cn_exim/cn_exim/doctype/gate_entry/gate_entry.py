@@ -122,3 +122,25 @@ def get_multiple_purchase_order(po_name):
         "po_items_list": po_items_list,
         "po_total_qty": po_total_qty_list
     }
+
+
+@frappe.whitelist()
+def update_po_qty(po_name, item_code, qty):
+    
+    frappe.db.sql(" update `tabPurchase Order Item` set custom_gate_entry_qty=custom_gate_entry_qty+%s where parent=%s and item_code=%s ", (qty, po_name, item_code))
+                    
+    return True
+
+@frappe.whitelist()
+def get_row_wise_qty(po_name, item_code):
+    # No need for json.loads if they are already strings
+    data_qty = frappe.db.sql("""
+        SELECT custom_gate_entry_qty, qty, received_qty 
+        FROM `tabPurchase Order Item` 
+        WHERE parent = %s AND item_code = %s
+    """, (po_name, item_code), as_dict=True)
+
+    if not data_qty:
+        return []  # Always return a valid JSON-serializable object
+
+    return data_qty
