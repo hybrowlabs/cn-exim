@@ -79,10 +79,10 @@
    "label": "Driver Name"
   },
   {
-   "default": "+91-",
    "fieldname": "driver_mobile_no",
-   "fieldtype": "Phone",
-   "label": "Driver Mobile No"
+   "fieldtype": "Data",
+   "label": "Driver Mobile No",
+   "length": 10
   },
   {
    "fieldname": "challan_no",
@@ -189,6 +189,7 @@
   {
    "fieldname": "gate_entry_details",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Gate Entry Details",
    "options": "Gate Entry Details"
   },
@@ -261,7 +262,7 @@
    "link_fieldname": "custom_gate_entry_no"
   }
  ],
- "modified": "2025-05-02 15:32:27.194342",
+ "modified": "2025-05-19 11:39:50.392554",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
