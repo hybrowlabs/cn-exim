@@ -118,3 +118,26 @@ def create_stock_entry_for_stock_issus(doc, warehouse):
 
     stock_entry.insert()
     stock_entry.submit()
+    
+    
+@frappe.whitelist()
+def update_gate_entry_and_purchase_order(name, doc):
+    frappe.db.set_value("Gate Entry", name, "grn_created", 1)
+    
+    items = frappe.parse_json(doc).get("items", [])
+    
+    for item in items:
+        purchase_order_item = item.get("purchase_order_item")
+        gate_received_qty = frappe.db.sql(" select qty from `tabGate Entry Details` where parent=%s and item=%s", (name, item.get("item_code")), as_dict=True)
+        received_qty = gate_received_qty[0].get("qty") if gate_received_qty else 0.0
+        if purchase_order_item:
+            gate_entry_qty = frappe.db.get_value(
+                "Purchase Order Item", purchase_order_item, "custom_gate_entry_qty"
+            ) or 0.0
+
+            updated_qty = gate_entry_qty - received_qty
+            frappe.db.set_value(
+                "Purchase Order Item", purchase_order_item, "custom_gate_entry_qty", updated_qty
+            )
+
+        

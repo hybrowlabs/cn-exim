@@ -98,7 +98,8 @@ def get_multiple_purchase_order(po_name):
                 "amount": item.get("amount"),
                 "qty": item.get("qty"),
                 "rate_inr": item.get("base_rate"),
-                "amount_inr": item.get("base_amount")
+                "amount_inr": item.get("base_amount"),
+                "received_qty": item.get("received_qty"),
             })
 
             # Handling total quantity PO-wise

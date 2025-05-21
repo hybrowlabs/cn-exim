@@ -46,7 +46,8 @@
   "deaprtment",
   "handover_remark",
   "amended_from",
-  "connections_tab"
+  "connections_tab",
+  "grn_created"
  ],
  "fields": [
   {
@@ -54,7 +55,8 @@
    "fieldname": "gate_entry_date",
    "fieldtype": "Date",
    "label": "Gate Entry Date",
-   "read_only_depends_on": "eval:doc.edit_posting_date_and_time == 0"
+   "read_only_depends_on": "eval:doc.edit_posting_date_and_time == 0",
+   "reqd": 1
   },
   {
    "fetch_from": "supplier.supplier_name",
@@ -75,7 +77,8 @@
   {
    "fieldname": "bill_date",
    "fieldtype": "Date",
-   "label": "Supplier Invoice Date"
+   "label": "Supplier Invoice Date",
+   "mandatory_depends_on": "eval:!doc.challan_no"
   },
   {
    "fieldname": "driver_name",
@@ -96,7 +99,8 @@
   {
    "fieldname": "bill_number",
    "fieldtype": "Data",
-   "label": "Supplier Invoice No"
+   "label": "Supplier Invoice No",
+   "mandatory_depends_on": "eval:!doc.challan_no"
   },
   {
    "fieldname": "airway_bill_no",
@@ -157,7 +161,8 @@
    "fieldname": "supplier",
    "fieldtype": "Link",
    "label": "Supplier",
-   "options": "Supplier"
+   "options": "Supplier",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_xlfw",
@@ -258,7 +263,8 @@
   {
    "fieldname": "lr_number",
    "fieldtype": "Data",
-   "label": "LR Number"
+   "label": "LR Number",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -272,6 +278,14 @@
    "fieldtype": "Time",
    "label": "Posting Time",
    "read_only_depends_on": "eval:doc.edit_posting_date_and_time == 0"
+  },
+  {
+   "default": "0",
+   "fieldname": "grn_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Grn Created",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
@@ -283,7 +297,7 @@
    "link_fieldname": "custom_gate_entry_no"
   }
  ],
- "modified": "2025-05-19 13:59:40.478378",
+ "modified": "2025-05-21 11:44:39.430946",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

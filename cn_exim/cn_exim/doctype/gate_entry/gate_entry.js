@@ -72,7 +72,8 @@ frappe.ui.form.on("Gate Entry", {
                     args: {
                         doctype: "Purchase Receipt",
                         filters: {
-                            custom_gate_entry_no: frm.doc.name
+                            custom_gate_entry_no: frm.doc.name,
+                            docstatus: ["!=", 2]
                         },
                         fieldname: ["name"]
                     },
@@ -323,11 +324,12 @@ frappe.ui.form.on("Gate Entry", {
                                     row.item_name = obj.item_name;
                                     row.uom = obj.uom;
                                     row.rate = obj.rate;
-                                    row.qty = obj.qty;
+                                    // row.qty = obj.qty;
                                     row.amount = obj.amount;
                                     row.rate_inr = obj.rate_inr;
                                     row.amount_inr = obj.amount_inr;
                                     row.po_qty = obj.qty;
+                                    row.po_pending_qty = obj.qty - obj.received_qty;
                                 })
                                 frm.refresh_field("gate_entry_details")
 
@@ -364,6 +366,12 @@ frappe.ui.form.on("Gate Entry", {
     },
 
     before_save: function (frm) {
+        // Prevent infinite loop: skip validation if already validated once
+        if (frm._already_validated) {
+            frm._already_validated = false;  // Reset for future saves
+            return;
+        }
+
         let promises = [];
 
         frm.doc.gate_entry_details.forEach(function (row) {
@@ -375,7 +383,6 @@ frappe.ui.form.on("Gate Entry", {
                         item_code: row.item,
                     },
                     callback: function (r) {
-                        console.log(r)
                         if (!r.message || r.message.length === 0) {
                             reject("No data found for PO and Item.");
                             return;
@@ -392,22 +399,22 @@ frappe.ui.form.on("Gate Entry", {
                         }
 
                         if (gate_entry_qty == 0 && row.qty > po_qty) {
-                            reject("Gate Entry Quantity cannot be greater than Purchase Order Quantity.");
+                            reject(`Gate Entry Quantity cannot be greater than Purchase Order for item code '${row.item}'. Your max entry qty: ${remaining_qty}`)
                             return;
                         }
-
-                        if (gate_entry_qty > row.qty) {
-                            reject("Gate Entry Quantity already logged is greater than current entry.");
-                            return;
+                        if (received_qty == 0) {
+                            if (row.qty > po_qty - gate_entry_qty) {
+                                reject(`Gate Entry Quantity is greater than remaining quantity for item code '${row.item}'. Your max entry qty: ${po_qty - gate_entry_qty}`);
+                                return;
+                            }
                         }
-
-                        let remaining_qty = po_qty - received_qty;
-                        if (row.qty > remaining_qty) {
-                            reject("Gate Entry Quantity cannot be greater than remaining Purchase Order Quantity.");
-                            return;
+                        else{
+                            if (row.qty > po_qty - (received_qty + gate_entry_qty)) {
+                                reject(`Gate Entry Quantity is greater than remaining quantity for item code '${row.item}'. Your max entry qty: ${po_qty - (received_qty + gate_entry_qty)}`);
+                                return;
+                            }
                         }
-
-                        resolve(); // Passed validation
+                        resolve();
                     }
                 });
             });
@@ -415,7 +422,7 @@ frappe.ui.form.on("Gate Entry", {
             promises.push(promise);
         });
 
-        // Stop automatic save — handle it manually after validation
+        // Block save initially
         frappe.validated = false;
 
         Promise.allSettled(promises).then(results => {
@@ -423,70 +430,11 @@ frappe.ui.form.on("Gate Entry", {
             if (errors.length > 0) {
                 errors.forEach(msg => frappe.msgprint(msg));
             } else {
-                frm.save(); // All good, save manually
+                frm._already_validated = true;
+                frm.save();
             }
         });
     },
-
-    // validate: function (frm) {
-        // let promises = [];
-
-        // frm.doc.gate_entry_details.forEach(function (row) {
-        //     let promise = new Promise((resolve) => {
-        //         frappe.call({
-        //             method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_row_wise_qty",
-        //             args: {
-        //                 po_name: row.purchase_order,
-        //                 item_code: row.item,
-        //             },
-        //             callback: function (r) {
-        //                 let server_row = r.message[0];
-        //                 let received_qty = server_row['received_qty'] || 0;
-        //                 let gate_entry_qty = server_row['custom_gate_entry_qty'] || 0;
-        //                 let po_qty = server_row['qty'] || 0;
-
-        //                 // 1. Entire PO already received
-        //                 if (received_qty >= po_qty) {
-        //                     frappe.msgprint("This Purchase Order is already received.");
-        //                     frappe.validated = false;
-        //                     return;
-        //                 }
-
-        //                 // 2. No previous gate entry — validate against PO qty
-        //                 if (gate_entry_qty == 0) {
-        //                     if (row.qty > po_qty) {
-        //                         frappe.msgprint("Gate Entry Quantity cannot be greater than Purchase Order Quantity.");
-        //                         frappe.validated = false;
-        //                         return;
-        //                     }
-        //                 }
-
-        //                 // 3. Gate Entry Qty > row.qty → Over-entry
-        //                 if (gate_entry_qty > row.qty) {
-        //                     frappe.msgprint("Gate Entry Quantity already logged is greater than current entry.");
-        //                     frappe.validated = false;
-        //                     return;
-        //                 }
-
-        //                 // 4. Row qty exceeds remaining qty after received
-        //                 let remaining_qty = po_qty - received_qty;
-        //                 if (row.qty > remaining_qty) {
-        //                     frappe.msgprint("Gate Entry Quantity cannot be greater than remaining Purchase Order Quantity.");
-        //                     frappe.validated = false;
-        //                     return;
-        //                 }
-        //                 resolve(); // Always resolve to continue checking
-        //             }
-        //         });
-        //     });
-
-        //     promises.push(promise);
-        // });
-
-        // // Prevent submission until all validations complete
-        // return Promise.all(promises);
-    // },
-
 
     on_submit: function (frm) {
         frappe.call({

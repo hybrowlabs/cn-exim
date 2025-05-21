@@ -244,6 +244,18 @@ frappe.ui.form.on("Purchase Receipt", {
                 })
             }
         })
+
+        if (frm.doc.custom_gate_entry_no != undefined) {
+            frappe.call({
+                method: "cn_exim.config.py.purchase_receipt.update_gate_entry_and_purchase_order",
+                args: {
+                    name: frm.doc.custom_gate_entry_no,
+                    doc: frm.doc
+                },
+                callback: function (r) {
+                }
+            })
+        }
     },
 
     before_submit: function (frm) {
