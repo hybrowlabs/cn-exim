@@ -81,7 +81,7 @@ def get_multiple_purchase_order(po_name):
 
     for i in po_name:
         po_details = frappe.db.get_value(
-            "Purchase Order", {"name": i}, ["name", "supplier", "supplier_name", "currency", "conversion_rate"], as_dict=True
+            "Purchase Order", {"name": i}, ["name", "supplier", "supplier_name", "currency", "conversion_rate", "cost_center"], as_dict=True
         )
         
         po_item_details = frappe.db.sql(
@@ -100,6 +100,7 @@ def get_multiple_purchase_order(po_name):
                 "rate_inr": item.get("base_rate"),
                 "amount_inr": item.get("base_amount"),
                 "received_qty": item.get("received_qty"),
+                "custom_gate_entry_qty": item.get("custom_gate_entry_qty"),
             })
 
             # Handling total quantity PO-wise

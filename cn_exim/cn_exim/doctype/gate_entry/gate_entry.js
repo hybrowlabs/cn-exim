@@ -329,7 +329,8 @@ frappe.ui.form.on("Gate Entry", {
                                     row.rate_inr = obj.rate_inr;
                                     row.amount_inr = obj.amount_inr;
                                     row.po_qty = obj.qty;
-                                    row.po_pending_qty = obj.qty - obj.received_qty;
+                                    row.po_pending_qty = (obj.qty ?? 0) - ((obj.received_qty ?? 0) + (obj.custom_gate_entry_qty ?? 0))
+                                    row.grn_panding_qty = obj.qty - obj.received_qty;
                                 })
                                 frm.refresh_field("gate_entry_details")
 
@@ -347,6 +348,7 @@ frappe.ui.form.on("Gate Entry", {
                                 frm.set_value("supplier_name", po_details.supplier_name)
                                 frm.set_value("currency", po_details.currency)
                                 frm.set_value("currency_rate", po_details.conversion_rate)
+                                frm.set_value("cost_center", po_details.cost_center)
                             }
                         });
 
