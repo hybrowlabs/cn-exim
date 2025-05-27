@@ -5,7 +5,6 @@ import frappe
 from frappe.model.document import Document
 from frappe import msgprint, sendmail
 from frappe.email.queue import flush
-import pandas as pd
 import os
 
 class PreAlert(Document):
@@ -64,6 +63,7 @@ def update_rodtep(name, use_rodtep):
 
 @frappe.whitelist()
 def send_mail_to_cha(cha_name, doc_name):
+    import pandas as pd
     # Fetch recipient emails
     recever = frappe.db.sql(
         """
