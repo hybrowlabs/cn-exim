@@ -20,29 +20,29 @@ def get_po_details_to_gate_entry(gate_entry_name):
 
 
 # create stock entry for the deduct stock to temporary warehouse
-@frappe.whitelist()
-def create_stock_entry(doc, gate_entry, warehouse):
-    doc = frappe.json.loads(doc)
+# @frappe.whitelist()
+# def create_stock_entry(doc, gate_entry, warehouse):
+#     doc = frappe.json.loads(doc)
     
     
-    stock_entry = frappe.get_doc({
-        "doctype":"Stock Entry",
-        "stock_entry_type": "Material Issue",
-        "custom_gate_entry": gate_entry,
-        "items":[]
-    })
+#     stock_entry = frappe.get_doc({
+#         "doctype":"Stock Entry",
+#         "stock_entry_type": "Material Issue",
+#         "custom_gate_entry": gate_entry,
+#         "items":[]
+#     })
     
-    for item in doc['items']:
-        stock_entry.append("items",{
-            "item_code" : item['item_code'],
-            "item_name" : item['item_name'],
-            "qty": item['qty'],
-            "uom": item['uom'],
-            "s_warehouse": warehouse
-        })
+#     for item in doc['items']:
+#         stock_entry.append("items",{
+#             "item_code" : item['item_code'],
+#             "item_name" : item['item_name'],
+#             "qty": item['qty'],
+#             "uom": item['uom'],
+#             "s_warehouse": warehouse
+#         })
         
-    stock_entry.insert()
-    stock_entry.submit()
+#     stock_entry.insert()
+#     stock_entry.submit()
     
 @frappe.whitelist()
 def validate_tolerance(name):
@@ -100,6 +100,7 @@ def create_stock_entry_for_stock_issus(doc, warehouse):
     })
 
     doc_list = doc.get("gate_entry_details") or doc.get("items") or []
+    shelf = frappe.db.get_value("Warehouse", warehouse, "custom_shelf") 
 
     for item in doc_list:
         item_code = item.get("item") or item.get("item_code")
@@ -113,7 +114,8 @@ def create_stock_entry_for_stock_issus(doc, warehouse):
             "uom": item.get("uom"),
             "s_warehouse": warehouse,
             "expense_account": frappe.db.get_value("Item Default", {"parent": item_code}, "custom_difference_account"),
-            "allow_zero_valuation_rate": 1
+            "allow_zero_valuation_rate": 1,
+            "shelf": shelf
         })
 
     stock_entry.insert()

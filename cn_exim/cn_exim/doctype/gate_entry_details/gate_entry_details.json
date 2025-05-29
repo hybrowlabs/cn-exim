@@ -67,7 +67,7 @@
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Qty"
+   "label": "Received Qty"
   },
   {
    "fieldname": "amount",
@@ -95,24 +95,24 @@
   {
    "fieldname": "po_qty",
    "fieldtype": "Float",
-   "label": "Po Qty"
+   "label": "PO Qty"
   },
   {
    "fieldname": "po_pending_qty",
    "fieldtype": "Float",
-   "label": "Po Pending qty"
+   "label": "PO Pending Qty"
   },
   {
    "fieldname": "grn_panding_qty",
    "fieldtype": "Float",
-   "label": "Grn Panding Qty"
+   "label": "GRN Pending Qty"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-05-21 11:12:14.351983",
+ "modified": "2025-05-27 17:30:20.359907",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry Details",

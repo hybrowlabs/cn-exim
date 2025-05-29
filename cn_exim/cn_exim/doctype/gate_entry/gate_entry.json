@@ -249,7 +249,8 @@
    "fieldname": "deaprtment",
    "fieldtype": "Link",
    "label": "Deaprtment",
-   "options": "Department"
+   "options": "Department",
+   "read_only": 1
   },
   {
    "fieldname": "vehicle_size",
@@ -265,7 +266,9 @@
    "fieldname": "lr_number",
    "fieldtype": "Data",
    "label": "LR Number",
-   "reqd": 1
+   "no_copy": 1,
+   "reqd": 1,
+   "unique": 1
   },
   {
    "default": "0",
@@ -302,9 +305,13 @@
   {
    "link_doctype": "Purchase Receipt",
    "link_fieldname": "custom_gate_entry_no"
+  },
+  {
+   "link_doctype": "Stock Entry",
+   "link_fieldname": "custom_gate_entry"
   }
  ],
- "modified": "2025-05-23 10:45:50.794212",
+ "modified": "2025-05-27 17:32:55.054462",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

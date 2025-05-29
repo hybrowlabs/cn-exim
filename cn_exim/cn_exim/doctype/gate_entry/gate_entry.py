@@ -21,7 +21,7 @@ def get_purchase_order_details(po_name):
 
 @frappe.whitelist()
 def get_po_item_name(po_name, item_code):
-    name =  frappe.db.sql(" select name from `tabPurchase Order Item` where parent=%s and item_code=%s ",(po_name, item_code), as_dict=True)
+    name =  frappe.db.sql(" select name, warehouse, parent from `tabPurchase Order Item` where parent=%s and item_code=%s ",(po_name, item_code), as_dict=True)
     
     return name
 
@@ -37,6 +37,8 @@ def create_stock_entry_for_stock_received(doc, warehouse):
         "items":[]
     })
     
+    shelf = frappe.db.get_value("Warehouse", warehouse, "custom_shelf")
+    
     for item in doc["gate_entry_details"]:
         account = frappe.db.get_value("Item Default", {"parent": item['item']}, "custom_difference_account")
         
@@ -47,7 +49,8 @@ def create_stock_entry_for_stock_received(doc, warehouse):
             "uom": item['uom'],
             "t_warehouse": warehouse,
             "expense_account": account,
-            "allow_zero_valuation_rate": 1
+            "allow_zero_valuation_rate": 1,
+            "to_shelf": shelf
         })
     
     stock_entry.insert()

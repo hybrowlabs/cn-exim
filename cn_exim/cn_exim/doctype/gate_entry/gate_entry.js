@@ -110,7 +110,9 @@ frappe.ui.form.on("Gate Entry", {
                                                     "base_rate": d.rate_inr,
                                                     "base_amount": d.amount_inr,
                                                     "qty": d.qty,
-                                                    "purchase_order_item": response.message[0]['name']
+                                                    "purchase_order_item": response.message[0]['name'],
+                                                    "warehouse": response.message[0]['warehouse'] || "",
+                                                    "purchase_order": response.message[0]['parent'] || "",
                                                 });
                                                 resolve();
                                             } else {
@@ -238,31 +240,31 @@ frappe.ui.form.on("Gate Entry", {
                                             args: { doc: purchase_receipt_data },
                                             callback: function (r) {
                                                 if (!r.exc) {
-                                                    frappe.call({
-                                                        method: "frappe.client.get_value",
-                                                        args: {
-                                                            doctype: "Company",
-                                                            filters: {
-                                                                name: frm.doc.company
-                                                            },
-                                                            fieldname: "custom_default_temporary_warehouse"
-                                                        },
-                                                        callback: function (r) {
-                                                            if (r.message && r.message.custom_default_temporary_warehouse) {
-                                                                frappe.call({
-                                                                    method: "cn_exim.config.py.purchase_receipt.create_stock_entry_for_stock_issus",
-                                                                    args: {
-                                                                        doc: frm.doc,
-                                                                        warehouse: r.message.custom_default_temporary_warehouse
-                                                                    },
-                                                                    callback: function (response) {
-                                                                    }
-                                                                });
-                                                            } else {
-                                                                frappe.msgprint("Temporary Warehouse not found for this Company!");
-                                                            }
-                                                        }
-                                                    });
+                                                    // frappe.call({
+                                                    //     method: "frappe.client.get_value",
+                                                    //     args: {
+                                                    //         doctype: "Company",
+                                                    //         filters: {
+                                                    //             name: frm.doc.company
+                                                    //         },
+                                                    //         fieldname: "custom_default_temporary_warehouse"
+                                                    //     },
+                                                        // callback: function (r) {
+                                                        //     if (r.message && r.message.custom_default_temporary_warehouse) {
+                                                        //         frappe.call({
+                                                        //             method: "cn_exim.config.py.purchase_receipt.create_stock_entry_for_stock_issus",
+                                                        //             args: {
+                                                        //                 doc: frm.doc,
+                                                        //                 warehouse: r.message.custom_default_temporary_warehouse
+                                                        //             },
+                                                        //             callback: function (response) {
+                                                        //             }
+                                                        //         });
+                                                        //     } else {
+                                                        //         frappe.msgprint("Temporary Warehouse not found for this Company!");
+                                                        //     }
+                                                    //     // }
+                                                    // });
                                                     frappe.set_route("Form", "Purchase Receipt", r.message.name);
                                                 }
                                             }
