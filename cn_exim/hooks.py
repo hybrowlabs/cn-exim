@@ -57,7 +57,7 @@ doctype_js = {
 
 # Home Pages
 # ----------
-fixtures = [{"dt": "Funnel"}]
+# fixtures = [{"dt": "Funnel"}]
 
 
 # application home page (will override Website Settings)
