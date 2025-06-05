@@ -113,6 +113,7 @@ frappe.ui.form.on("Gate Entry", {
                                                     "purchase_order_item": response.message[0]['name'],
                                                     "warehouse": response.message[0]['warehouse'] || "",
                                                     "purchase_order": response.message[0]['parent'] || "",
+                                                    "project": d.project || "",
                                                 });
                                                 resolve();
                                             } else {
@@ -207,6 +208,7 @@ frappe.ui.form.on("Gate Entry", {
                                             "items": purchase_item_list,
                                             "taxes": purchase_tax_list,
                                             "currency": frm.doc.currency,
+                                            "conversion_rate": frm.doc.currency_rate || 1,
                                             "custom_purchase_extra_charge": purchase_extra_charges_list,
                                             "custom_bcd_amount": data['bcd_amount'] || 0,
                                             "custom_pickup_request": data['pickup_request'] || "",
@@ -249,20 +251,20 @@ frappe.ui.form.on("Gate Entry", {
                                                     //         },
                                                     //         fieldname: "custom_default_temporary_warehouse"
                                                     //     },
-                                                        // callback: function (r) {
-                                                        //     if (r.message && r.message.custom_default_temporary_warehouse) {
-                                                        //         frappe.call({
-                                                        //             method: "cn_exim.config.py.purchase_receipt.create_stock_entry_for_stock_issus",
-                                                        //             args: {
-                                                        //                 doc: frm.doc,
-                                                        //                 warehouse: r.message.custom_default_temporary_warehouse
-                                                        //             },
-                                                        //             callback: function (response) {
-                                                        //             }
-                                                        //         });
-                                                        //     } else {
-                                                        //         frappe.msgprint("Temporary Warehouse not found for this Company!");
-                                                        //     }
+                                                    // callback: function (r) {
+                                                    //     if (r.message && r.message.custom_default_temporary_warehouse) {
+                                                    //         frappe.call({
+                                                    //             method: "cn_exim.config.py.purchase_receipt.create_stock_entry_for_stock_issus",
+                                                    //             args: {
+                                                    //                 doc: frm.doc,
+                                                    //                 warehouse: r.message.custom_default_temporary_warehouse
+                                                    //             },
+                                                    //             callback: function (response) {
+                                                    //             }
+                                                    //         });
+                                                    //     } else {
+                                                    //         frappe.msgprint("Temporary Warehouse not found for this Company!");
+                                                    //     }
                                                     //     // }
                                                     // });
                                                     frappe.set_route("Form", "Purchase Receipt", r.message.name);
@@ -412,7 +414,7 @@ frappe.ui.form.on("Gate Entry", {
                                 return;
                             }
                         }
-                        else{
+                        else {
                             if (row.qty > po_qty - (received_qty + gate_entry_qty)) {
                                 reject(`Gate Entry Quantity is greater than remaining quantity for item code '${row.item}'. Your max entry qty: ${po_qty - (received_qty + gate_entry_qty)}`);
                                 return;
@@ -482,4 +484,22 @@ frappe.ui.form.on("Gate Entry", {
             })
         })
     },
+    after_cancel: function (frm) {
+        frm.doc.gate_entry_details.forEach(row => {
+            frappe.call({
+                method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.update_po_after_cancel",
+                args: {
+                    po_name: row.purchase_order,
+                    item_code: row.item,
+                    qty: row.qty
+                },
+                callback: function (r) {
+                    if (r.message) {
+                        // Optional: show confirmation
+                        console.log("PO updated for item:", row.item);
+                    }
+                }
+            });
+        });
+    }
 })

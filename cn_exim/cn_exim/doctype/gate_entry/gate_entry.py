@@ -137,6 +137,20 @@ def update_po_qty(po_name, item_code, qty):
     return True
 
 @frappe.whitelist()
+def update_po_after_cancel(po_name, item_code, qty):
+    # Ensure qty is a float
+    qty = flt(qty)
+
+    # Update the custom_gate_entry_qty by subtracting the quantity
+    frappe.db.sql("""
+        UPDATE `tabPurchase Order Item` 
+        SET custom_gate_entry_qty = custom_gate_entry_qty - %s 
+        WHERE parent = %s AND item_code = %s
+    """, (qty, po_name, item_code))
+
+    return True
+
+@frappe.whitelist()
 def get_row_wise_qty(po_name, item_code):
     # No need for json.loads if they are already strings
     data_qty = frappe.db.sql("""

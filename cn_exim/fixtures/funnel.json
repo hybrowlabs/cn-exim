@@ -703,7 +703,7 @@
   "viewport": "{\"x\":45.16553179779021,\"y\":196.2126576688978,\"zoom\":0.8699980582254351}"
  },
  {
-  "archived": 0,
+  "archived": 1,
   "assistant_form_fields": "{}",
   "docstatus": 0,
   "doctype": "Funnel",
@@ -2000,10 +2000,10 @@
   ],
   "funnel_name": "Exim Flow",
   "funnel_type": "Private",
-  "modified": "2025-03-19 11:32:51.950896",
+  "modified": "2025-06-03 15:33:21.982859",
   "module": null,
   "name": "Exim Flow",
-  "status": "published",
+  "status": "archived",
   "variable_list": "[]",
   "viewport": "{\"x\":-146.56904783972277,\"y\":-128.09369280632797,\"zoom\":0.5}"
  }

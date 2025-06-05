@@ -106,78 +106,35 @@ frappe.ui.form.on("Purchase Order", {
         });
 
         if (frm.doc.docstatus == 1) {
-            // frm.add_custom_button("Gate Entry", function () {
-
-            //     let get_entry_details = []
-            //     let purchase_order_details = []
-            //     let qty = 0
-            //     let received_qty = 0
-
-
-            //     frm.doc.items.forEach(element => {
-            //         let qty = element.qty - element.received_qty
-            //         get_entry_details.push({
-            //             "purchase_order": frm.doc.name,
-            //             "item": element.item_code,
-            //             "item_name": element.item_name,
-            //             "uom": element.uom,
-            //             "rate": element.rate,
-            //             "amount": element.base_rate,
-            //             "qty": qty,
-            //             "rate_inr": element.amount,
-            //             "amount_inr": element.base_amount,
-            //             "po_qty": element.qty,
-            //         })
-            //     })
-            //     frm.doc.items.forEach(obj => {
-            //         qty += obj.qty
-            //         received_qty += obj.received_qty
-            //     })
-
-            //     let finial_qty = qty - received_qty
-            //     purchase_order_details.push({
-            //         "purchase_order": frm.doc.name,
-            //         "incoming_quantity": finial_qty
-            //     })
-            //     frappe.call({
-            //         method: "frappe.client.insert",
-            //         args: {
-            //             doc: {
-            //                 "doctype": "Gate Entry",
-            //                 "supplier": frm.doc.supplier,
-            //                 "supplier_name": frm.doc.supplier_name,
-            //                 "gate_entry_details": get_entry_details,
-            //                 "purchase_order_in_gate_entry": purchase_order_details
-            //             }
-            //         },
-            //         callback: function (r) {
-            //             if (!r.exc) {
-            //                 frappe.set_route("Form", "Gate Entry", r.message.name)
-            //             }
-            //         }
-            //     })
-            // }, __("Create"))
             frm.add_custom_button("Gate Entry", function () {
-                let get_entry_details = [];
-                let purchase_order_details = [];
                 let qty = 0;
                 let received_qty = 0;
 
+                let doc = frappe.model.get_new_doc('Gate Entry');
+                doc.naming_series = "GEN-.###";
+                doc.gate_entry_date = frappe.datetime.get_today();
+                doc.posting_time = frappe.datetime.now_time();
+                doc.supplier = frm.doc.supplier;
+                doc.supplier_name = frm.doc.supplier_name;
+                doc.company = frm.doc.company || "";
+                doc.currency = frm.doc.currency || "";
+                doc.currency_rate = frm.doc.conversion_rate || 1;
+
                 frm.doc.items.forEach(element => {
-                    let pending_qty = element.qty - element.received_qty;
-                    get_entry_details.push({
-                        "purchase_order": frm.doc.name,
-                        "item": element.item_code,
-                        "item_name": element.item_name,
-                        "uom": element.uom,
-                        "rate": element.rate,
-                        "amount": element.base_rate,
-                        "rate_inr": element.amount,
-                        "amount_inr": element.base_amount,
-                        "po_qty": element.qty,
-                        "po_pending_qty": element.qty - ((element.received_qty ?? 0) + (element.custom_gate_entry_qty ?? 0)),
-                        "grn_panding_qty": element.qty - element.received_qty ?? 0
-                    });
+                    let pending_qty = element.qty - ((element.received_qty ?? 0) + (element.custom_gate_entry_qty ?? 0));
+                    let row = frappe.model.add_child(doc, "Gate Entry Details", "gate_entry_details");
+
+                    row.purchase_order = frm.doc.name;
+                    row.item = element.item_code;
+                    row.item_name = element.item_name;
+                    row.uom = element.uom;
+                    row.rate = element.rate;
+                    row.amount = element.base_rate;
+                    row.rate_inr = element.amount;
+                    row.amount_inr = element.base_amount;
+                    row.po_qty = element.qty;
+                    row.po_pending_qty = pending_qty;
+                    row.grn_panding_qty = element.qty - (element.received_qty ?? 0);
                 });
 
                 frm.doc.items.forEach(obj => {
@@ -186,22 +143,14 @@ frappe.ui.form.on("Purchase Order", {
                 });
 
                 let final_qty = qty - received_qty;
-                purchase_order_details.push({
-                    "purchase_order": frm.doc.name,
-                    "incoming_quantity": final_qty
-                });
 
-                let doc = frappe.model.get_new_doc('Gate Entry');
-                doc.naming_series = "GEN-.###";
-                doc.gate_entry_date = frappe.datetime.get_today();
-                doc.posting_time = frappe.datetime.now_time();
-                doc.supplier = frm.doc.supplier;
-                doc.supplier_name = frm.doc.supplier_name;
-                doc.gate_entry_details = get_entry_details;
-                doc.purchase_order_in_gate_entry = purchase_order_details;
+                let po_row = frappe.model.add_child(doc, "Purchase Order In Gate Entry", "purchase_order_in_gate_entry");
+                po_row.purchase_order = frm.doc.name;
+                po_row.incoming_quantity = final_qty;
 
                 frappe.set_route('Form', 'Gate Entry', doc.name);
             }, __("Create"));
+
 
         }
         setTimeout(() => {

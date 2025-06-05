@@ -311,7 +311,7 @@
    "link_fieldname": "custom_gate_entry"
   }
  ],
- "modified": "2025-05-27 17:32:55.054462",
+ "modified": "2025-06-03 16:51:11.354904",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
