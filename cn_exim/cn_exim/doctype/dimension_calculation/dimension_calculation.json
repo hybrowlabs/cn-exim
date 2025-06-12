@@ -27,7 +27,7 @@
   {
    "fieldname": "widht_uom",
    "fieldtype": "Link",
-   "label": "Widht Uom",
+   "label": "Width Uom",
    "options": "UOM"
   },
   {
@@ -78,15 +78,17 @@
    "label": "Gross Weight"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-19 09:51:56.972936",
+ "modified": "2025-06-09 15:49:27.531780",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Dimension Calculation",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

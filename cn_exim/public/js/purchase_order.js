@@ -228,43 +228,46 @@ frappe.ui.form.on("Purchase Order", {
             }
         })
     },
-    // before_save: function (frm) {
-    //     frm.doc.items.forEach(row => {
-    //         update_charges_tax_table(frm, row)
-    //     })
-    //     set_print_format_base_on_field_value(frm)
-    // },
-    onload: function (frm) {
-        let type = ""
-        // set_filter_item_supplier_group_wise(type, frm)
-        //     if (frm.doc.items && Array.isArray(frm.doc.items)) { 
-        //         frm.doc.items.forEach(item => {
-        //             console.log(item.item_code)
-        //             if (!item.custom_item_charges_templte && item.item_code != undefined) {
-        //                 frappe.call({
-        //                     method: "frappe.client.get_value",
-        //                     args: {
-        //                         doctype: "Item",
-        //                         filters: {
-        //                             name: item.item_code
-        //                         },
-        //                         fieldname: "custom_item_charge"
-        //                     },
-        //                     callback: function (response) {
-        //                         if (response && response.message) {
-        //                             let data = response.message;
-        //                             item.custom_item_charges_templte = data.custom_item_charge;
-        //                             frm.refresh_field("items");
-        //                         }
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     } else {
-        //         console.warn("No items found in frm.doc.items");
-        //     }
-
+    custom_freight:function (frm) {
+        freight_amt_calculation(frm);
     },
+    custom_packaging: function (frm) {
+        package_amt_calculation(frm);
+    },
+    custom_development: function (frm) {
+        development_amt_calculation(frm);
+    },
+    custom_miscellaneous: function (frm) {
+        miscellaneous_amt_calculation(frm);
+    },
+    after_save: function (frm){
+        let freight_amount = isNaN(frm.doc.custom_freight) ? 0 : frm.doc.custom_freight
+        let packaging_amount = isNaN(frm.doc.custom_packaging) ? 0 : frm.doc.custom_packaging
+        let development_amount = isNaN(frm.doc.custom_development) ? 0 : frm.doc.custom_development
+        let miscellaneous_amount = isNaN(frm.doc.custom_miscellaneous) ? 0 : frm.doc.custom_miscellaneous
+        let amount = 0
+        frm.doc.items.forEach( row => {
+            if (row.amount) {
+                amount += isNaN(row.amount) ? 0 : row.amount
+            }   
+        })
+        let total = freight_amount + packaging_amount + development_amount + miscellaneous_amount + amount
+        frappe.call({
+            method: "cn_exim.config.py.purchase_order.update_total_amount",
+            args: {
+                purchase_order_name: frm.doc.name,
+                total_amount: total,
+                total_taxes_and_charges: frm.doc.total_taxes_and_charges,
+                rounding_adjustment: frm.doc.rounding_adjustment,
+            },
+            callback: function (response) {
+                if (!response.exc) {
+                    frm.refresh_field("total");
+                    frm.refresh_field("net_total")
+                }
+            }
+        })
+    }
 })
 
 
@@ -490,4 +493,69 @@ function set_filter_item_supplier_group_wise(type, frm) {
             };
         };
     }
+}
+
+
+
+function freight_amt_calculation(frm) {
+    let freight_amount = isNaN(frm.doc.custom_freight) ? 0 : frm.doc.custom_freight
+    let total = 0;
+    frm.doc.items.forEach(function (row) {
+        if (row.amount) {
+            total += row.amount;
+        }
+    });
+
+    frm.doc.items.forEach(row => {
+        let freight_per_item = (row.amount / total) * freight_amount;
+        frappe.model.set_value(row.doctype, row.name, "custom_freight", freight_per_item)
+    })
+    frm.refresh_field("items");
+}
+
+function package_amt_calculation(frm) {
+    let packaging_amount = isNaN(frm.doc.custom_packaging) ? 0 : frm.doc.custom_packaging
+    let total = 0;
+    frm.doc.items.forEach(function (row) {
+        if (row.amount) {
+            total += row.amount;
+        }
+    });
+
+    frm.doc.items.forEach(row => {
+        let packaging_per_item = (row.amount / total) * packaging_amount;
+        frappe.model.set_value(row.doctype, row.name, "custom_packaging", packaging_per_item)
+    })
+    frm.refresh_field("items");
+}
+
+function development_amt_calculation(frm) {
+    let development_amount = isNaN(frm.doc.custom_development) ? 0 : frm.doc.custom_development
+    let total = 0;
+    frm.doc.items.forEach(function (row) {
+        if (row.amount) {
+            total += row.amount;
+        }
+    });
+
+    frm.doc.items.forEach(row => {
+        let development_per_item = (row.amount / total) * development_amount;
+        frappe.model.set_value(row.doctype, row.name, "custom_development", development_per_item)
+    })
+    frm.refresh_field("items");
+}
+function miscellaneous_amt_calculation(frm) {
+    let miscellaneous_amount = isNaN(frm.doc.custom_miscellaneous) ? 0 : frm.doc.custom_miscellaneous
+    let total = 0;
+    frm.doc.items.forEach(function (row) {
+        if (row.amount) {
+            total += row.amount;
+        }
+    });
+
+    frm.doc.items.forEach(row => {
+        let miscellaneous_per_item = (row.amount / total) * miscellaneous_amount;
+        frappe.model.set_value(row.doctype, row.name, "custom_miscellaneous", miscellaneous_per_item)
+    })
+    frm.refresh_field("items");
 }

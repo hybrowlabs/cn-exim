@@ -42,3 +42,13 @@ def get_extra_charge_template(name):
     data = frappe.db.sql(" select * from `tabItem Charges Template` where  parent=%s ",(name), as_dict=True)
     
     return data
+
+
+@frappe.whitelist()
+def update_total_amount(purchase_order_name, total_amount, total_taxes_and_charges, rounding_adjustment):
+    frappe.db.set_value("Purchase Order", purchase_order_name, "total", total_amount)
+    frappe.db.set_value("Purchase Order", purchase_order_name, "net_total", total_amount)
+    grand_total = float(total_amount) + float(total_taxes_and_charges)
+    frappe.db.set_value("Purchase Order", purchase_order_name, "grand_total", grand_total)
+    rounded_total = float(grand_total) + float(rounding_adjustment)
+    frappe.db.set_value("Purchase Order", purchase_order_name, "rounded_total", rounded_total)

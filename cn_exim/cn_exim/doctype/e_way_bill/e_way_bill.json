@@ -438,7 +438,7 @@
    "link_fieldname": "e_way_bill"
   }
  ],
- "modified": "2025-03-17 15:48:27.339816",
+ "modified": "2025-06-09 16:54:52.961320",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "E-way Bill",
@@ -459,6 +459,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
