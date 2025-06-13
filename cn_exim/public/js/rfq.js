@@ -55,6 +55,33 @@ frappe.ui.form.on("Request for Quotation", {
             }
         })
     },
+    before_save: function (frm) {
+        if (!frm.doc.custom_previously_data || frm.doc.custom_previously_data.length === 0) {
+            let suppliers_list = [];
+            frm.doc.suppliers.forEach(row => {
+                if (row.supplier) {
+                    suppliers_list.push(row.supplier);
+                }
+            });
+            console.log(suppliers_list)
+            frm.doc.items.forEach(row => {
+                if (row.item_code) {
+                    frappe.call({
+                        method: "cn_exim.config.py.rfq.get_supplier_previously_data",
+                        args: {
+                            item_code: row.item_code,
+                            suppliers: suppliers_list
+                        },
+                        callback: function (r) {
+                            if (r.message) {
+                                add_data_in_child_table(frm, row.doctype, row.name, r.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
 })
 
 frappe.ui.form.on("Request for Quotation Item", {
@@ -158,7 +185,7 @@ function updateChargesHtml(frm, cdt, cdn) {
     displayStoredData(frm, d.name, d.item_code);
 
     // Function to display stored data from child table
-    function displayStoredData(frm, item_row_name, ) {
+    function displayStoredData(frm, item_row_name,) {
         frm.doc.custom_previously_data.forEach(function (data_row) {
             if (data_row.item_code === d.item_code) {
                 let newRow = `
