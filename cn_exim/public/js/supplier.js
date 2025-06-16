@@ -16,5 +16,69 @@ frappe.ui.form.on("Supplier",{
             frm.set_value("naming_series", "DM.#######")
             frm.set_value("is_internal_supplier", 1)
         }
+    },
+
+    refresh: function(frm) {
+        if (!frm.is_new()) {
+            frm.add_custom_button(__('Bulk Contact'), function() {
+                bulk_contact(frm);
+            }, __('Create'));
+        }
     }
 })
+
+
+
+
+
+
+function bulk_contact(frm) {
+    const dialog = new frappe.ui.Dialog({
+        title: 'Add Bulk Contacts',
+        size: 'large',
+        fields: [
+            {
+                fieldname: 'contacts',
+                fieldtype: 'Table',
+                label: 'Contacts',
+                cannot_add_rows: false,
+                in_place_edit: true,
+                reqd: 1,
+                fields: [
+                    { fieldname: 'full_name', fieldtype: 'Data', label: 'Full Name', in_list_view: 1 },
+                    { fieldname: 'email', fieldtype: 'Data', label: 'Email', options: 'Email', in_list_view: 1 },
+                    { fieldname: 'mobile_no', fieldtype: 'Int', label: 'Mobile No.', in_list_view: 1 },
+                    { fieldname: 'designation', fieldtype: 'Data', label: 'Designation', in_list_view: 1 }
+                ]
+            }
+        ],
+        primary_action_label: 'Create Contacts',
+        primary_action(values) {
+            if (values.contacts && values.contacts.length > 0) {
+                dialog.hide();
+                frappe.call({
+                    method: "cn_exim.overrides.supplier.create_contact",
+                    args: {
+                        contacts: values.contacts,
+                        supplier: frm.doc.name
+                    },
+                    callback: function (r) {
+                        if (r.message) {
+                            frappe.show_alert({
+                                message: __(r.message.created + " contact(s) created successfully."),
+                                indicator: 'green'
+                            });
+                            frm.reload_doc();
+                        }
+                    }
+                });
+            } else {
+                frappe.msgprint(__('Please add at least one contact.'));
+            }
+        }
+    });
+
+    dialog.show();
+}
+
+
