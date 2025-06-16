@@ -8,8 +8,86 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 			"label": "Material Request",
 			"fieldtype": "Link",
 			"options": "Material Request",
-			"reqd": 1
 		},
+		{
+			"fieldname": "company",
+			"label": "Company",
+			"fieldtype": "Link",
+			"options": "Company",
+		},
+		{
+			"fieldname": "from_date",
+			"label": "From Date",
+			"fieldtype": "Date",
+			"default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+		},
+		{
+			"fieldname": "to_date",
+			"label": "To Date",
+			"fieldtype": "Date",
+			"default": frappe.datetime.get_today(),
+		},
+		{
+			"fieldname": "item",
+			"label": "Item",
+			"fieldtype": "Link",
+			"options": "Item",
+			"get_query": function () {
+				return {
+					filters: {
+						'is_stock_item': 1,
+						'disabled': 0
+					}
+				};
+			}
+		},
+		{
+			"fieldname": "supplier",
+			"label": "Supplier",
+			"fieldtype": "Link",
+			"options": "Supplier",
+			"get_query": function () {
+				return {
+					filters: {
+						'disabled': 0
+					}
+				};
+			}
+		},
+		{
+			"fieldname": "supplier_quotation",
+			"label": "Supplier Quotation",
+			"fieldtype": "Link",
+			"options": "Supplier Quotation",
+			"get_query": function () {
+				return {
+					filters: {
+						'docstatus': 1, // Only show submitted quotations
+						'status': ['in', ['Open', 'Submitted']],
+					}
+				};
+			}
+		},
+		{
+			"fieldname": "request_for_quotation",
+			"label": "Request for Quotation",
+			"fieldtype": "Link",
+			"options": "Request for Quotation",
+			"get_query": function () {
+				return {
+					filters: {
+						'docstatus': 1, // Only show submitted RFQs
+						'status': ['in', ['Open', 'Submitted']],
+					}
+				};
+			}
+		},
+		{
+			"fieldname": "include_expired",
+			"label": "Include Expired",
+			"fieldtype": "Check",
+			"default": 0,
+		}
 	],
 
 	// Add the top button
