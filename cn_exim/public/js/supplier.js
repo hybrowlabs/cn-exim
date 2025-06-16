@@ -24,7 +24,17 @@ frappe.ui.form.on("Supplier",{
                 bulk_contact(frm);
             }, __('Create'));
         }
-    }
+    },
+
+    refresh: function(frm) {
+        if (frm.is_new()) {
+            frm.set_df_property("default_price_list", "hidden", 1);
+        }
+        else{
+            frm.set_df_property("default_price_list", "hidden", 0);
+            frm.refresh_field("default_price_list");
+        }
+    },
 })
 
 
