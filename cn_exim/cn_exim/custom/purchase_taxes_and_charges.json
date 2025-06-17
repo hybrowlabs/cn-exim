@@ -41,7 +41,6 @@
    "mandatory_depends_on": null,
    "modified": "2025-06-17 10:40:09.401846",
    "modified_by": "Administrator",
-   "module": "Cn Exim",
    "name": "Purchase Taxes and Charges-base_amount",
    "no_copy": 0,
    "non_negative": 0,
@@ -299,7 +298,7 @@
    "is_system_generated": 0,
    "modified": "2025-06-17 10:40:48.201874",
    "modified_by": "Administrator",
-   "module": "Cn Exim",
+
    "name": "Purchase Taxes and Charges-total-read_only",
    "owner": "Administrator",
    "property": "read_only",

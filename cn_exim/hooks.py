@@ -45,6 +45,7 @@ doctype_js = {
     "Blanket Order": "public/js/blanket_order.js",
     "Item Group": "public/js/item_group.js",
     "Supplier": "public/js/supplier.js",
+    "Contact": "public/js/contact.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -154,7 +155,10 @@ doc_events = {
     "Purchase Receipt":{
         "on_submit": "cn_exim.overrides.purchase_receipt.on_submit"
 
-    }
+    },
+    "Item": {
+        "validate": "cn_exim.overrides.item.validate",
+    },
 }
 
 # Scheduled Tasks
