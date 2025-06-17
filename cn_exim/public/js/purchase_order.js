@@ -214,10 +214,11 @@ frappe.ui.form.on("Purchase Order", {
                 filters: {
                     name: frm.doc.supplier
                 },
-                fieldname: "supplier_group"
+                fieldname: ["supplier_group", "custom_default_delivery_terms_template", "custom_delivery_terms"]
             },
             callback: function (response) {
                 console.log("response", response.message["supplier_group"])
+                
 
                 if (response.message['supplier_group'] == "Domestic Material") {
                     let type = response.message['supplier_group']
@@ -225,8 +226,20 @@ frappe.ui.form.on("Purchase Order", {
                     // set_filter_item_supplier_group_wise(type, frm)
                     // }, 500);
                 }
+
+                //fetching delivery terms template from supplier master
+
+                if (response.message['custom_default_delivery_terms_template']) {
+                    frm.set_value("custom_delivery_term", response.message['custom_default_delivery_terms_template'])
+                    frm.set_value("custom_delivery_terms", response.message['custom_delivery_terms'])
+                }
+
+
             }
         })
+
+
+
     },
     custom_freight:function (frm) {
         freight_amt_calculation(frm);
