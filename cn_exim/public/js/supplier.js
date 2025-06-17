@@ -23,18 +23,66 @@ frappe.ui.form.on("Supplier",{
             frm.add_custom_button(__('Bulk Contact'), function() {
                 bulk_contact(frm);
             }, __('Create'));
-        }
-    },
 
-    refresh: function(frm) {
-        if (frm.is_new()) {
-            frm.set_df_property("default_price_list", "hidden", 1);
-        }
-        else{
+
             frm.set_df_property("default_price_list", "hidden", 0);
             frm.refresh_field("default_price_list");
         }
+
+        else{
+            frm.set_df_property("default_price_list", "hidden", 1);
+        }
+
+
+
+        
+
+
+        if (!frm.doc.supplier_primary_contact) {
+            frappe.call({
+                method: "cn_exim.overrides.supplier.get_primary_contact_raw",
+                args: {
+                    supplier: frm.doc.name
+                },
+                callback: function (r) {
+                    if (r.message && r.message.length > 0) {
+                        frm.set_value("supplier_primary_contact", r.message[0].name);
+                        frm.save()
+                    }
+                    else{
+                        frm.set_value("supplier_primary_contact", r.message[0].name);
+
+                    }
+                }
+            });
+        }
+
+        if (!frm.doc.supplier_primary_address) {
+            frappe.call({
+                method: "cn_exim.overrides.supplier.get_primary_address_raw",
+                args: {
+                    supplier: frm.doc.name
+                },
+                callback: function (r) {
+                    if (r.message && r.message.length > 0) {
+                        frm.set_value("supplier_primary_address", r.message[0].name);
+                        frm.save()
+                    }
+                    else{
+                        frm.set_value("supplier_primary_address", r.message[0].name);
+
+                    }
+                }
+            });
+        }
+        
+        
+
+
+
     },
+
+    
 })
 
 

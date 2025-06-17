@@ -58,10 +58,36 @@ def create_contact(contacts, supplier):
 
         return frappe._dict({
             "message": _("Contacts created successfully"),
-            "created": created_count  # 👈 send count to frontend
+            "created": created_count  
         })
 
     except Exception as e:
         frappe.db.rollback()
         frappe.log_error(frappe.get_traceback(), "Bulk Contact Creation Error")
         frappe.throw(_("An error occurred while creating contacts: {0}").format(str(e)))
+
+
+
+@frappe.whitelist()
+def get_primary_contact_raw(supplier):
+    return frappe.db.sql("""
+        SELECT c.name, c.first_name, c.email_id
+        FROM `tabContact` c
+        JOIN `tabDynamic Link` dl ON dl.parent = c.name
+        WHERE dl.link_doctype = 'Supplier' AND dl.link_name = %s
+        ORDER BY c.creation ASC
+        LIMIT 1
+    """, supplier, as_dict=True)
+
+
+@frappe.whitelist()
+def get_primary_address_raw(supplier):
+    return frappe.db.sql("""
+        SELECT c.name, c.address_title
+        FROM `tabAddress` c
+        JOIN `tabDynamic Link` dl ON dl.parent = c.name
+        WHERE dl.link_doctype = 'Supplier' AND dl.link_name = %s
+        ORDER BY c.creation ASC
+        LIMIT 1
+    """, (supplier,), as_dict=True)
+
