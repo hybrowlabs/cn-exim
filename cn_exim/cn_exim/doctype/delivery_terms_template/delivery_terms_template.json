@@ -8,6 +8,7 @@
  "field_order": [
   "section_break_4gvv",
   "title",
+  "disable",
   "section_break_dcsn",
   "terms_and_conditions"
  ],
@@ -32,12 +33,18 @@
    "fieldname": "terms_and_conditions",
    "fieldtype": "Text Editor",
    "label": "Terms and Conditions"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable",
+   "fieldtype": "Check",
+   "label": "Disable"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-17 11:49:42.366183",
+ "modified": "2025-06-17 14:10:38.054612",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Delivery Terms Template",
