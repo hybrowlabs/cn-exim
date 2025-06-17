@@ -15,33 +15,41 @@ def create_contact(contacts, supplier):
 
         frappe.db.begin()
         created_count = 0
+        skipped_count = 0
 
         for contact in contacts:
+            full_name = str(contact.get("full_name") or "").strip()
+            designation = str(contact.get("designation") or "").strip()
+            email = str(contact.get("email") or "").strip()
+            mobile_no = str(contact.get("mobile_no") or "").strip()
+
+            if not (full_name or designation or email or mobile_no):
+                skipped_count += 1
+                continue
+
             contact_doc = frappe.new_doc("Contact")
             contact_doc.flags.ignore_permissions = True
             contact_doc.flags.ignore_links = True
             contact_doc.flags.ignore_mandatory = True
 
-            full_name = str(contact.get("full_name") or "").strip()
             name_parts = full_name.split()
-
             contact_doc.first_name = name_parts[0] if len(name_parts) > 0 else ""
             contact_doc.middle_name = name_parts[1] if len(name_parts) > 1 else ""
             contact_doc.last_name = " ".join(name_parts[2:]) if len(name_parts) > 2 else ""
 
-            contact_doc.designation = str(contact.get("designation") or "").strip()
+            contact_doc.designation = designation
             contact_doc.whatsapp_id = None
             contact_doc.is_whatsapp_registered = 0
 
-            if contact.get("email"):
+            if email:
                 contact_doc.append("email_ids", {
-                    "email_id": str(contact.get("email")).strip(),
+                    "email_id": email,
                     "is_primary": 1
                 })
 
-            if contact.get("mobile_no"):
+            if mobile_no:
                 contact_doc.append("phone_nos", {
-                    "phone": str(contact.get("mobile_no")).strip(),
+                    "phone": mobile_no,
                     "is_primary_mobile_no": 1
                 })
 
@@ -58,14 +66,14 @@ def create_contact(contacts, supplier):
 
         return frappe._dict({
             "message": _("Contacts created successfully"),
-            "created": created_count  
+            "created": created_count,
+            "skipped": skipped_count
         })
 
     except Exception as e:
         frappe.db.rollback()
         frappe.log_error(frappe.get_traceback(), "Bulk Contact Creation Error")
         frappe.throw(_("An error occurred while creating contacts: {0}").format(str(e)))
-
 
 
 @frappe.whitelist()
