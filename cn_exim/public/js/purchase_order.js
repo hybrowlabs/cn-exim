@@ -280,11 +280,54 @@ frappe.ui.form.on("Purchase Order", {
                 }
             }
         })
-    }
+    },
+    onload: function (frm) {
+        frm.doc.items.forEach(item => {
+            frappe.call({
+                method: "frappe.client.get_value",
+                args: {
+                    doctype: "Item",
+                    filters: {
+                        name: item.item_code
+                    },
+                    fieldname: "item_group"
+                },
+                callback: function (response) {
+                    let item_group = response.message.item_group;
+                    if (item_group == "Raw Material"){
+                        frm.fields_dict['items'].grid.grid_rows_by_docname[item.name].toggle_editable('rate', false)
+                    }
+                }
+            })
+        })
+    },
 })
 
 
 frappe.ui.form.on('Purchase Order Item', {
+    item_code: function (frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        // Fetch item group to determine if it is a material or service
+        frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+                doctype: "Item",
+                filters: { name: row.item_code },
+                fieldname: "item_group"
+            },
+            callback: function (response) {
+                if (response.message) {
+                    let item_group = response.message.item_group;
+                    console.log(item_group)
+                    if (item_group === "Raw Material") {
+                        frm.fields_dict['items'].grid.grid_rows_by_docname[row.name].toggle_editable('rate', false);
+                    } else {
+                        frm.fields_dict['items'].grid.grid_rows_by_docname[row.name].toggle_editable('rate', true);
+                    }
+                }
+            }
+        });
+    },
     custom_create_delivery_schedule: function (frm, cdt, cdn) {
         var data = locals[cdt][cdn];
 

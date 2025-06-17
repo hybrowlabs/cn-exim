@@ -46,6 +46,7 @@ doctype_js = {
     "Item Group": "public/js/item_group.js",
     "Supplier": "public/js/supplier.js",
     "Contact": "public/js/contact.js",
+    "Item Price": "public/js/item_price.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -153,12 +154,9 @@ doc_events = {
         "validate": "cn_exim.cn_exim.doctype.emd.emd.validate"
     },
     "Purchase Receipt":{
-        "on_submit": "cn_exim.overrides.purchase_receipt.on_submit"
-
-    },
-    "Item": {
-        "validate": "cn_exim.overrides.item.validate",
-    },
+        "on_submit": "cn_exim.overrides.purchase_receipt.on_submit",
+        "validate": "cn_exim.config.py.purchase_receipt.validate_over_under_tolerance"
+    }
 }
 
 # Scheduled Tasks

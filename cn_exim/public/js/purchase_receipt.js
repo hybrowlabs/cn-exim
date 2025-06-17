@@ -246,7 +246,7 @@ frappe.ui.form.on("Purchase Receipt", {
         })
     },
 
-    before_submit: function (frm) {
+    validate: function (frm) {
         let promises = [];
 
         frm.doc.items.forEach(d => {
@@ -260,6 +260,7 @@ frappe.ui.form.on("Purchase Receipt", {
                             name: d.purchase_order_item
                         },
                         callback: function (response) {
+                            console.log("response", tolerance);
                             let tolerance = response.message[0];
                             let qty = tolerance['qty'] - tolerance['received_qty'];
 

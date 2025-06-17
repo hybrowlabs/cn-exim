@@ -118,3 +118,35 @@ def create_stock_entry_for_stock_issus(doc, warehouse):
 
     stock_entry.insert()
     stock_entry.submit()
+
+
+@frappe.whitelist()
+def validate_over_under_tolerance(doc, method=None):
+    for i in doc.items:
+        if not i.purchase_order_item:
+            continue
+
+        po_item = frappe.db.get_value("Purchase Order Item",{"name": i.purchase_order_item},["item_code", "qty", "received_qty"],as_dict=True)
+
+        if not po_item:
+            continue
+
+        item_doc = frappe.get_doc("Item", po_item.item_code)
+        tolerance_match = None
+        for row in item_doc.get("custom_over_and_under_tolerance", []):
+            if row.supplier == doc.supplier:
+                tolerance_match = row
+                break
+
+        over_tolerance = (tolerance_match.over_tolerance_ if tolerance_match else item_doc.get("custom_default_over_tolerance_", 0))
+        under_tolerance = (tolerance_match.under_tolerance_ if tolerance_match else item_doc.get("custom_default_under_tolerance_", 0))
+        
+        accepted_qty = po_item.qty - po_item.received_qty
+        max_allowed = accepted_qty + float(over_tolerance)
+        min_allowed = accepted_qty - float(under_tolerance)
+
+        # Validate over/under tolerance
+        if i.qty > max_allowed:
+            frappe.throw(f"Received quantity {i.qty} for item {po_item.item_code} exceeds the over tolerance limit of {max_allowed}.")
+        if i.qty < min_allowed:
+            frappe.throw(f"Received quantity {i.qty} for item {po_item.item_code} is below the under tolerance limit of {min_allowed}.")

@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-17 17:00:28.973923",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "supplier",
+  "column_break_qcxb",
+  "under_tolerance_",
+  "column_break_wfql",
+  "over_tolerance_"
+ ],
+ "fields": [
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "column_break_qcxb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "under_tolerance_",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Under Tolerance (%)"
+  },
+  {
+   "fieldname": "column_break_wfql",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "over_tolerance_",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Over Tolerance (%)"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-06-17 17:01:53.875134",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Over and Under Allowance",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
