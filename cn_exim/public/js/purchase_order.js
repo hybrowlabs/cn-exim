@@ -1,52 +1,5 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
-        // if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
-        //     frm.add_custom_button("Pickup Request", function () {
-        //         let purchase_order_list = [{
-        //             po_number: frm.doc.name,
-        //             currency: frm.doc.currency,
-        //         }];
-
-        //         let po_item_details = []
-
-        //         frm.doc.items.forEach(element => {
-        //             po_item_details.push({
-        //                 'item': element.item_code,
-        //                 'material': element.item_name,
-        //                 'quantity': element.qty,
-        //                 'material_desc': element.description,
-        //                 'pick_qty': element.qty,
-        //                 'po_number': element.parent,
-        //                 'currency': frm.doc.currency,
-        //                 'currency_rate': frm.doc.conversion_rate,
-        //                 'rate': element.rate,
-        //                 'amount': element.amount,
-        //                 'amount_in_inr': element.base_amount,
-        //             })
-        //         });
-
-        //         frappe.call({
-        //             method: "frappe.client.insert",
-        //             args: {
-        //                 doc: {
-        //                     "doctype": "Pickup Request",
-        //                     "name_of_supplier": frm.doc.supplier,
-        //                     "supplier_address": frm.doc.supplier_address,
-        //                     "purchase_order_list": purchase_order_list,
-        //                     "purchase_order_details": po_item_details,
-        //                     "remarks": "test",
-        //                     "total_amount": frm.doc.total,
-        //                 }
-        //             },
-        //             callback: function (r) {
-        //                 if (!r.exc) {
-        //                     frappe.set_route("Form", "Pickup Request", r.message.name)
-        //                 }
-        //             }
-        //         });
-
-        //     }, __("Create"))
-        // }
         if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{
@@ -200,6 +153,13 @@ frappe.ui.form.on("Purchase Order", {
                 })
             }, __("Create"))
         }
+    },
+    validate:function(frm){
+        frm.doc.items.forEach(item => {
+            if(item.rate <= 0){
+                frappe.throw(`Item rate cannot be negative for item: ${item.item_code}`)
+            }
+        })
     },
     supplier: function (frm) {
         frappe.call({
