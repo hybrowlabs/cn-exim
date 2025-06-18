@@ -169,6 +169,21 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 			data-item-code="${data.item_code}" 
 			value="${data.remarks || ''}" style="width: 100%;">`;
 		}
+		if (["supplier", "item_code", "supplier_quotation", "request_for_quotation", "material_request"].includes(column.fieldname) && value) {
+
+            // Build correct route for each DocType
+            let route_map = {
+                "supplier": "supplier",
+                "item_code": "item",
+                "supplier_quotation": "supplier-quotation",
+                "request_for_quotation": "request-for-quotation",
+                "material_request": "material-request"
+            };
+
+            let route = route_map[column.fieldname];
+
+            return `<a href="/app/${route}/${value}" target="_blank">${value}</a>`;
+        }
 		return value;
 	},
 };
