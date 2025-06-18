@@ -99,6 +99,35 @@ frappe.ui.form.on("Item", {
     }
 })
 
+frappe.ui.form.on("Item Default", {
+    custom_key: function (frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        let material_type = frm.doc.item_group; // Properly declared
+
+        frappe.call({
+            method: "cn_exim.config.py.item.get_default_account_form_key_based_on_material_type",
+            args: {
+                name: material_type,
+                account_key: row.custom_key,
+                company: row.company
+            },
+            callback: function (response) {
+                if (response.message) {
+                    let data = response.message;
+
+                    data.forEach(obj => {
+                        row.custom_stock_received_but_not_billed = obj.stock_received_but_not_billed;
+                        row.custom_default_inventory_account = obj.default_inventory_account;
+                        row.expense_account = obj.default_expense_account;
+                    });
+                    frm.refresh_field("item_defaults");
+                }
+            }
+        });
+    }
+});
+
+
 
 // function get_item_wise_charges(frm){
 //     frappe.call({

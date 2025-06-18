@@ -133,17 +133,16 @@ def validate_over_under_tolerance(doc, method=None):
 
         item_doc = frappe.get_doc("Item", po_item.item_code)
         tolerance_match = None
-        for row in item_doc.get("custom_over_and_under_tolerance", []):
+        for row in item_doc.get("supplier_items", []):
             if row.supplier == doc.supplier:
                 tolerance_match = row
                 break
 
-        over_tolerance = (tolerance_match.over_tolerance_ if tolerance_match else item_doc.get("custom_default_over_tolerance_", 0))
-        under_tolerance = (tolerance_match.under_tolerance_ if tolerance_match else item_doc.get("custom_default_under_tolerance_", 0))
+        over_tolerance = (tolerance_match.custom_over_deliveryreceipt_allowance_ if tolerance_match else item_doc.get("custom_default_over_tolerance_", 0))
         
         accepted_qty = po_item.qty - po_item.received_qty
         max_allowed = accepted_qty + float(over_tolerance)
-        min_allowed = accepted_qty - float(under_tolerance)
+        min_allowed = accepted_qty - float(over_tolerance)
 
         # Validate over/under tolerance
         if i.qty > max_allowed:

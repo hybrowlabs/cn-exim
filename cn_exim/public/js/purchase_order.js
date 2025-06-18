@@ -1,61 +1,14 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
-        // if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
-        //     frm.add_custom_button("Pickup Request", function () {
-        //         let purchase_order_list = [{
-        //             po_number: frm.doc.name,
-        //             currency: frm.doc.currency,
-        //         }];
-                
-        //         let po_item_details = []
-                
-        //         frm.doc.items.forEach(element => {
-        //             po_item_details.push({
-        //                 'item': element.item_code,
-        //                 'material': element.item_name,
-        //                 'quantity': element.qty,
-        //                 'material_desc': element.description,
-        //                 'pick_qty': element.qty,
-        //                 'po_number': element.parent,
-        //                 'currency': frm.doc.currency,
-        //                 'currency_rate': frm.doc.conversion_rate,
-        //                 'rate': element.rate,
-        //                 'amount': element.amount,
-        //                 'amount_in_inr': element.base_amount,
-        //             })
-        //         });
-                
-        //         frappe.call({
-        //             method: "frappe.client.insert",
-        //             args: {
-        //                 doc: {
-        //                     "doctype": "Pickup Request",
-        //                     "name_of_supplier": frm.doc.supplier,
-        //                     "supplier_address": frm.doc.supplier_address,
-        //                     "purchase_order_list": purchase_order_list,
-        //                     "purchase_order_details": po_item_details,
-        //                     "remarks": "test",
-        //                     "total_amount": frm.doc.total,
-        //                 }
-        //             },
-        //             callback: function (r) {
-        //                 if (!r.exc) {
-        //                     frappe.set_route("Form", "Pickup Request", r.message.name)
-        //                 }
-        //             }
-        //         });
-
-        //     }, __("Create"))
-        // }
         if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{
                     po_number: frm.doc.name,
                     currency: frm.doc.currency,
                 }];
-        
+
                 let po_item_details = [];
-        
+
                 frm.doc.items.forEach(element => {
                     po_item_details.push({
                         'item': element.item_code,
@@ -71,7 +24,7 @@ frappe.ui.form.on("Purchase Order", {
                         'amount_in_inr': element.base_amount,
                     });
                 });
-        
+
                 frappe.call({
                     method: "frappe.client.insert",
                     args: {
@@ -91,10 +44,10 @@ frappe.ui.form.on("Purchase Order", {
                         }
                     }
                 });
-        
+
             }, __("Create"));
         }
-        
+
         frappe.call({
             method: "cn_exim.config.py.purchase_order.get_stage_status",
             args: { purchase_order_name: frm.doc.name },
@@ -205,6 +158,34 @@ frappe.ui.form.on("Purchase Order", {
                 })
             }, __("Create"))
         }
+
+        if (frm.doc.docstatus === 0 && frm.doc.status === "Draft" && !frm.is_new()) {
+            frm.add_custom_button("Update Rate", function () {
+                frm.doc.items.forEach(function (item) {
+                    if (item.item_code) {
+                        frappe.call({
+                            method: "frappe.client.get_list",
+                            args: {
+                                doctype: "Item Price",
+                                filters: {
+                                    item_code: item.item_code,
+                                    buying: 1,
+                                },
+                                fields: ["price_list_rate"],
+                                order_by: "creation desc",
+                                limit_page_length: 1
+                            },
+                            callback: function (response) {
+                                if (response.message && response.message.length > 0) {
+                                    let price = response.message[0].price_list_rate;
+                                    frappe.model.set_value(item.doctype, item.name, "rate", price);
+                                }
+                            }
+                        });
+                    }
+                });
+            })
+        }
     },
     supplier: function (frm) {
         frappe.call({
@@ -218,7 +199,7 @@ frappe.ui.form.on("Purchase Order", {
             },
             callback: function (response) {
                 console.log("response", response.message["supplier_group"])
-                
+
 
                 if (response.message['supplier_group'] == "Domestic Material") {
                     let type = response.message['supplier_group']
@@ -241,7 +222,7 @@ frappe.ui.form.on("Purchase Order", {
 
 
     },
-    custom_freight:function (frm) {
+    custom_freight: function (frm) {
         freight_amt_calculation(frm);
     },
     custom_packaging: function (frm) {
@@ -253,16 +234,16 @@ frappe.ui.form.on("Purchase Order", {
     custom_miscellaneous: function (frm) {
         miscellaneous_amt_calculation(frm);
     },
-    after_save: function (frm){
+    after_save: function (frm) {
         let freight_amount = isNaN(frm.doc.custom_freight) ? 0 : frm.doc.custom_freight
         let packaging_amount = isNaN(frm.doc.custom_packaging) ? 0 : frm.doc.custom_packaging
         let development_amount = isNaN(frm.doc.custom_development) ? 0 : frm.doc.custom_development
         let miscellaneous_amount = isNaN(frm.doc.custom_miscellaneous) ? 0 : frm.doc.custom_miscellaneous
         let amount = 0
-        frm.doc.items.forEach( row => {
+        frm.doc.items.forEach(row => {
             if (row.amount) {
                 amount += isNaN(row.amount) ? 0 : row.amount
-            }   
+            }
         })
         let total = freight_amount + packaging_amount + development_amount + miscellaneous_amount + amount
         frappe.call({
@@ -294,7 +275,7 @@ frappe.ui.form.on("Purchase Order", {
                 },
                 callback: function (response) {
                     let item_group = response.message.item_group;
-                    if (item_group == "Raw Material"){
+                    if (item_group == "Raw Material") {
                         frm.fields_dict['items'].grid.grid_rows_by_docname[item.name].toggle_editable('rate', false)
                     }
                 }
