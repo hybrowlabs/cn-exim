@@ -138,7 +138,7 @@ def validate_over_under_tolerance(doc, method=None):
                 tolerance_match = row
                 break
 
-        over_tolerance = (tolerance_match.custom_over_deliveryreceipt_allowance_ if tolerance_match else item_doc.get("custom_default_over_tolerance_", 0))
+        over_tolerance = (tolerance_match.custom_over_deliverreceipt_allowance_ if tolerance_match else item_doc.get("custom_default_over_tolerance_", 0))
         
         accepted_qty = po_item.qty - po_item.received_qty
         max_allowed = accepted_qty + float(over_tolerance)
