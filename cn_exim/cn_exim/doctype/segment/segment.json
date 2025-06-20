@@ -1,0 +1,152 @@
+{
+    "actions": [],
+    "allow_import": 1,
+    "allow_rename": 1,
+    "autoname": "format:{segment_number}-{segment_name}",
+    "creation": "2025-01-06 10:43:00.160889",
+    "default_view": "List",
+    "doctype": "DocType",
+    "editable_grid": 1,
+    "engine": "InnoDB",
+    "field_order": [
+     "segment_number",
+     "lft",
+     "rgt",
+     "is_group",
+     "disable",
+     "column_break_deqi",
+     "segment_name",
+     "child_segment",
+     "parent_segment",
+     "old_parent",
+     "section_break_nztw",
+     "plant",
+     "person_responsible",
+     "column_break_hxim",
+     "division",
+     "department"
+    ],
+    "fields": [
+     {
+      "fieldname": "segment_number",
+      "fieldtype": "Data",
+      "label": "Segment Number",
+      "unique": 1
+     },
+     {
+      "fieldname": "lft",
+      "fieldtype": "Int",
+      "hidden": 1,
+      "label": "Left",
+      "no_copy": 1,
+      "read_only": 1
+     },
+     {
+      "fieldname": "rgt",
+      "fieldtype": "Int",
+      "hidden": 1,
+      "label": "Right",
+      "no_copy": 1,
+      "read_only": 1
+     },
+     {
+      "default": "0",
+      "fieldname": "is_group",
+      "fieldtype": "Check",
+      "label": "Is Group"
+     },
+     {
+      "default": "0",
+      "fieldname": "disable",
+      "fieldtype": "Check",
+      "label": "Disable"
+     },
+     {
+      "fieldname": "column_break_deqi",
+      "fieldtype": "Column Break"
+     },
+     {
+      "fieldname": "segment_name",
+      "fieldtype": "Data",
+      "label": "Segment Name"
+     },
+     {
+      "fieldname": "child_segment",
+      "fieldtype": "Link",
+      "label": "child Segment",
+      "options": "Segment"
+     },
+     {
+      "fieldname": "parent_segment",
+      "fieldtype": "Link",
+      "label": "Parent Segment",
+      "options": "Segment"
+     },
+     {
+      "fieldname": "old_parent",
+      "fieldtype": "Link",
+      "label": "Old Parent",
+      "options": "Segment"
+     },
+     {
+      "fieldname": "section_break_nztw",
+      "fieldtype": "Section Break"
+     },
+     {
+      "fieldname": "plant",
+      "fieldtype": "Link",
+      "label": "Plant",
+      "options": "Branch"
+     },
+     {
+      "fieldname": "person_responsible",
+      "fieldtype": "Data",
+      "label": "Person Responsible"
+     },
+     {
+      "fieldname": "column_break_hxim",
+      "fieldtype": "Column Break"
+     },
+     {
+      "fieldname": "division",
+      "fieldtype": "Link",
+      "label": "Division",
+      "options": "Division"
+     },
+     {
+      "fieldname": "department",
+      "fieldtype": "Link",
+      "label": "Department",
+      "options": "Department"
+     }
+    ],
+    "index_web_pages_for_search": 1,
+    "is_calendar_and_gantt": 1,
+    "is_tree": 1,
+    "links": [],
+    "modified": "2025-01-06 10:43:00.160889",
+    "modified_by": "Administrator",
+    "module": "Cn Exim",
+    "name": "Segment",
+    "naming_rule": "Expression",
+    "nsm_parent_field": "parent_segment",
+    "owner": "Administrator",
+    "permissions": [
+     {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+     }
+    ],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}   

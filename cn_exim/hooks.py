@@ -48,6 +48,8 @@ doctype_js = {
     "Contact": "public/js/contact.js",
     "Item Price": "public/js/item_price.js",
     "Address": "public/js/address.js",
+    "Payment Entry": "public/js/payment_entry.js",
+    "Payment Request": "public/js/payment_request.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -249,3 +251,6 @@ scheduler_events = {
 
 
 import cn_exim.overrides.status_updater
+fixtures = [
+    {"dt": "Custom Field", "filters": [["module", "like", "Cn Exim"]]}
+]
