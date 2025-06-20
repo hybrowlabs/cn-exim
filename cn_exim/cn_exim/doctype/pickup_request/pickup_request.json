@@ -124,7 +124,7 @@
   {
    "fieldname": "origin_country",
    "fieldtype": "Link",
-   "label": "Origin Country",
+   "label": "Country Origin",
    "options": "Country"
   },
   {
@@ -313,7 +313,7 @@
    "link_fieldname": "pickup_request"
   }
  ],
- "modified": "2025-04-23 16:08:04.266712",
+ "modified": "2025-06-21 00:19:17.029499",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",

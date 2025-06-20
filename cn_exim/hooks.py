@@ -249,3 +249,12 @@ scheduler_events = {
 
 
 import cn_exim.overrides.status_updater
+
+fixtures = [
+    {
+        "doctype": "Funnel",
+        "filters": {
+            "name": ["in", ["Exim Flow", "Pre Alert Approval Flow"]]
+        }
+    }
+]
