@@ -73,7 +73,8 @@
   {
    "fieldname": "vehicle_no",
    "fieldtype": "Data",
-   "label": "Vehicle No/ POD"
+   "label": "Vehicle No/ POD",
+   "reqd": 1
   },
   {
    "fieldname": "bill_date",
@@ -311,7 +312,7 @@
    "link_fieldname": "custom_gate_entry"
   }
  ],
- "modified": "2025-06-03 16:51:11.354904",
+ "modified": "2025-06-20 14:36:06.238940",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",

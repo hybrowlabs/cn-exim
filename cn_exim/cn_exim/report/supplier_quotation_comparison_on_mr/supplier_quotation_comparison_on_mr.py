@@ -5,8 +5,6 @@ import frappe
 from frappe.model.document import Document
 import json
 
-import frappe
-
 def execute(filters=None):
     columns, data = get_columns(), get_data(filters)
     return columns, data
@@ -22,6 +20,9 @@ def get_columns():
         {"label": "Currency", "fieldname": "currency", "fieldtype": "Link", "options": "Currency", "width": 100},
         {"label": "Price", "fieldname": "price", "fieldtype": "Currency", "width": 100},
         {"label": "Price (Inr)", "fieldname": "price_inr", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Price", "fieldname": "previous_price", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Price (Inr)", "fieldname": "previous_price_inr", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Supplier", "fieldname": "previous_supplier", "fieldtype": "Currency", "width": 100},
         {"label": "Supplier Quotation", "fieldname": "supplier_quotation", "fieldtype": "Link", "options": "Supplier Quotation", "width": 150},
         {"label": "Valid Till", "fieldname": "valid_till", "fieldtype": "Date", "width": 100},
         {"label": "Lead Time", "fieldname": "lead_time", "fieldtype": "Data", "width": 100},
@@ -35,8 +36,12 @@ def get_data(filters):
     values = {}
 
     if filters.get("material_request"):
-        conditions.append("s_item.material_request = %(material_request)s")
-        values["material_request"] = filters.get("material_request")
+        # Handle both JSON list and comma-separated string
+        mr_list = frappe.parse_json(filters.get("material_request"))
+        if isinstance(mr_list, str):
+            mr_list = [mr.strip() for mr in mr_list.split(",")]
+        conditions.append("s_item.material_request IN %(material_request)s")
+        values["material_request"] = mr_list
 
     if filters.get("company"):
         conditions.append("sq.company = %(company)s")
@@ -51,20 +56,32 @@ def get_data(filters):
         values["to_date"] = filters.get("to_date")
 
     if filters.get("item"):
-        conditions.append("s_item.item_code = %(item)s")
-        values["item"] = filters.get("item")
+        item_list = frappe.parse_json(filters.get("item"))
+        if isinstance(item_list, str):
+            item_list = [item.strip() for item in item_list.split(",")]
+        conditions.append("s_item.item_code IN %(item)s")
+        values["item"] = item_list
 
     if filters.get("supplier"):
-        conditions.append("sq.supplier = %(supplier)s")
-        values["supplier"] = filters.get("supplier")
+        sp_list = frappe.parse_json(filters.get("supplier"))
+        if isinstance(sp_list, str):
+            sp_list = [sp.strip() for sp in sp_list.split("-")]
+        conditions.append("sq.supplier IN %(supplier)s")
+        values["supplier"] = sp_list
 
     if filters.get("supplier_quotation"):
-        conditions.append("sq.name = %(supplier_quotation)s")
-        values["supplier_quotation"] = filters.get("supplier_quotation")
+        sq_list = frappe.parse_json(filters.get("supplier_quotation"))
+        if isinstance(sq_list, str):
+            sq_list = [sq.strip() for sq in sq_list.split("-")]
+        conditions.append("sq.name in %(supplier_quotation)s")
+        values["supplier_quotation"] = sq_list
 
     if filters.get("request_for_quotation"):
-        conditions.append("s_item.request_for_quotation = %(request_for_quotation)s")
-        values["request_for_quotation"] = filters.get("request_for_quotation")
+        rfq_list = frappe.parse_json(filters.get("request_for_quotation"))
+        if isinstance(rfq_list, str):
+            rfq_list = [rfq.strip() for rfq in rfq_list.split("-")]
+        conditions.append("s_item.request_for_quotation in %(request_for_quotation)s")
+        values["request_for_quotation"] = rfq_list
 
     if not filters.get("include_expired"):
         conditions.append("sq.valid_till >= CURDATE()")
@@ -88,7 +105,36 @@ def get_data(filters):
             sq.valid_till AS valid_till,
             s_item.request_for_quotation AS request_for_quotation,
             s_item.material_request AS material_request,
-            s_item.custom_remark AS remarks
+            s_item.custom_remark AS remarks,
+            
+            -- Subquery to get last purchase order rate
+            IFNull((
+                SELECT poi.rate
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus = 1
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1
+            ), 0) AS previous_price,
+            -- Previous Base Rate
+            IFNull ((
+                SELECT poi.base_rate
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus = 1
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1
+            ), 0) AS previous_price_inr,
+            
+            -- Subquery to get last purchase order supplier
+            IFNull((
+                SELECT po.supplier
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus = 1
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1
+            ), '-') AS previous_supplier
         FROM
             `tabSupplier Quotation` sq
         INNER JOIN

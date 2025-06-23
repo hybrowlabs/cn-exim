@@ -6,8 +6,11 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 		{
 			"fieldname": "material_request",
 			"label": "Material Request",
-			"fieldtype": "Link",
+			"fieldtype": "MultiSelectList",
 			"options": "Material Request",
+			"get_data": function (txt) {
+				return frappe.db.get_link_options('Material Request', txt, { docstatus: 1 });
+			}
 		},
 		{
 			"fieldname": "company",
@@ -30,56 +33,37 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 		{
 			"fieldname": "item",
 			"label": "Item",
-			"fieldtype": "Link",
+			"fieldtype": "MultiSelectList",
 			"options": "Item",
-			"get_query": function () {
-				return {
-					filters: {
-						'is_stock_item': 1,
-						'disabled': 0
-					}
-				};
+			"get_data": function (txt) {
+				return frappe.db.get_link_options("Item", txt, { is_stock_item: 1, disabled: 0 })
 			}
 		},
 		{
 			"fieldname": "supplier",
 			"label": "Supplier",
-			"fieldtype": "Link",
+			"fieldtype": "MultiSelectList",
 			"options": "Supplier",
-			"get_query": function () {
-				return {
-					filters: {
-						'disabled': 0
-					}
-				};
+			"get_data": function (txt) {
+				return frappe.db.get_link_options("Supplier", txt, { disabled: 0 })
 			}
 		},
 		{
 			"fieldname": "supplier_quotation",
 			"label": "Supplier Quotation",
-			"fieldtype": "Link",
+			"fieldtype": "MultiSelectList",
 			"options": "Supplier Quotation",
-			"get_query": function () {
-				return {
-					filters: {
-						'docstatus': 1, // Only show submitted quotations
-						'status': ['in', ['Open', 'Submitted']],
-					}
-				};
+			"get_data": function (txt) {
+				return frappe.db.get_link_options("Supplier Quotation", txt, { docstatus: 1 });
 			}
 		},
 		{
 			"fieldname": "request_for_quotation",
 			"label": "Request for Quotation",
-			"fieldtype": "Link",
+			"fieldtype": "MultiSelectList",
 			"options": "Request for Quotation",
-			"get_query": function () {
-				return {
-					filters: {
-						'docstatus': 1, // Only show submitted RFQs
-						'status': ['in', ['Open', 'Submitted']],
-					}
-				};
+			"get_data": function (txt) {
+				return frappe.db.get_link_options("Request for Quotation", txt, {docstatus: 1})
 			}
 		},
 		{
@@ -171,19 +155,19 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 		}
 		if (["supplier", "item_code", "supplier_quotation", "request_for_quotation", "material_request"].includes(column.fieldname) && value) {
 
-            // Build correct route for each DocType
-            let route_map = {
-                "supplier": "supplier",
-                "item_code": "item",
-                "supplier_quotation": "supplier-quotation",
-                "request_for_quotation": "request-for-quotation",
-                "material_request": "material-request"
-            };
+			// Build correct route for each DocType
+			let route_map = {
+				"supplier": "supplier",
+				"item_code": "item",
+				"supplier_quotation": "supplier-quotation",
+				"request_for_quotation": "request-for-quotation",
+				"material_request": "material-request"
+			};
 
-            let route = route_map[column.fieldname];
+			let route = route_map[column.fieldname];
 
-            return `<a href="/app/${route}/${value}" target="_blank">${value}</a>`;
-        }
+			return `<a href="/app/${route}/${value}" target="_blank">${value}</a>`;
+		}
 		return value;
 	},
 };
