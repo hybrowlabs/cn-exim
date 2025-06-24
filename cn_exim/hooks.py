@@ -49,7 +49,9 @@ doctype_js = {
     "Item Price": "public/js/item_price.js",
     "Address": "public/js/address.js",
 }
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {
+    "Item Price": "public/js/item_price_listview.js",
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 

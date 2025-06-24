@@ -33,11 +33,6 @@ frappe.ui.form.on("Supplier",{
             frm.set_df_property("default_price_list", "hidden", 1);
         }
 
-
-
-        
-
-
         if (!frm.doc.supplier_primary_contact) {
             frappe.call({
                 method: "cn_exim.overrides.supplier.get_primary_contact_raw",
@@ -76,13 +71,12 @@ frappe.ui.form.on("Supplier",{
             });
         }
         
-        
-
-
-
     },
-
-    
+    onload:function(frm){
+        setTimeout(() => {
+            $("button:contains('New Contact')").hide();
+        }, 500);
+    }
 })
 
 

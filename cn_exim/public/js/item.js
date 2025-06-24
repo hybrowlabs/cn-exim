@@ -96,6 +96,18 @@ frappe.ui.form.on("Item", {
 
             }
         })
+    },
+    custom_total_shelf_life_in_month:function(frm){
+        if (frm.doc.custom_shelf_life_uom == "Month"){
+            shelf_life_in_day = parseInt(frm.doc.custom_total_shelf_life_in_month) * 30
+            frm.set_value("shelf_life_in_days", shelf_life_in_day)
+        }
+    },
+    custom_minimum_shelf_life_in_month:function(frm){
+        if (frm.doc.custom_shelf_life_uom == "Month"){
+            minimum_shelf_life_in_day = parseInt(frm.doc.custom_minimum_shelf_life_in_month) * 30
+            frm.set_value("custom_minimum_shelf_life", minimum_shelf_life_in_day)
+        }
     }
 })
 

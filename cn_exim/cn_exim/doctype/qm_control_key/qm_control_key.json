@@ -1,0 +1,44 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{qm_control_key}",
+ "creation": "2025-06-24 12:24:31.528454",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "qm_control_key"
+ ],
+ "fields": [
+  {
+   "fieldname": "qm_control_key",
+   "fieldtype": "Data",
+   "label": "QM Control Key "
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-24 12:25:28.879986",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "QM Control Key",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
