@@ -67,6 +67,12 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 			}
 		},
 		{
+			"fieldname": "po_created",
+			"label": "Po Created",
+			"fieldtype": "Check",
+			"default": 0
+		},
+		{
 			"fieldname": "include_expired",
 			"label": "Include Expired",
 			"fieldtype": "Check",
@@ -153,7 +159,7 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 			data-item-code="${data.item_code}" 
 			value="${data.remarks || ''}" style="width: 100%;">`;
 		}
-		if (["supplier", "item_code", "supplier_quotation", "request_for_quotation", "material_request"].includes(column.fieldname) && value) {
+		if (["supplier", "item_code", "supplier_quotation", "request_for_quotation", "material_request", "purchase_order"].includes(column.fieldname) && value) {
 
 			// Build correct route for each DocType
 			let route_map = {
@@ -161,13 +167,15 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 				"item_code": "item",
 				"supplier_quotation": "supplier-quotation",
 				"request_for_quotation": "request-for-quotation",
-				"material_request": "material-request"
+				"material_request": "material-request",
+				"purchase_order": "purchase-order"
 			};
 
 			let route = route_map[column.fieldname];
 
 			return `<a href="/app/${route}/${value}" target="_blank">${value}</a>`;
 		}
+		
 		return value;
 	},
 };

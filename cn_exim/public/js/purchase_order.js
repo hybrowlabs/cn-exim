@@ -176,50 +176,39 @@ frappe.ui.form.on("Purchase Order", {
 
                 if (response.message['supplier_group'] == "Domestic Material") {
                     let type = response.message['supplier_group']
-                    // setInterval(function () {
-                    // set_filter_item_supplier_group_wise(type, frm)
-                    // }, 500);
                 }
             }
         })
     },
-    // before_save: function (frm) {
-    //     frm.doc.items.forEach(row => {
-    //         update_charges_tax_table(frm, row)
-    //     })
-    //     set_print_format_base_on_field_value(frm)
-    // },
-    onload: function (frm) {
-        let type = ""
-        // set_filter_item_supplier_group_wise(type, frm)
-        //     if (frm.doc.items && Array.isArray(frm.doc.items)) { 
-        //         frm.doc.items.forEach(item => {
-        //             console.log(item.item_code)
-        //             if (!item.custom_item_charges_templte && item.item_code != undefined) {
-        //                 frappe.call({
-        //                     method: "frappe.client.get_value",
-        //                     args: {
-        //                         doctype: "Item",
-        //                         filters: {
-        //                             name: item.item_code
-        //                         },
-        //                         fieldname: "custom_item_charge"
-        //                     },
-        //                     callback: function (response) {
-        //                         if (response && response.message) {
-        //                             let data = response.message;
-        //                             item.custom_item_charges_templte = data.custom_item_charge;
-        //                             frm.refresh_field("items");
-        //                         }
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     } else {
-        //         console.warn("No items found in frm.doc.items");
-        //     }
-
+    after_cancel: function (frm) {
+        frm.doc.items.forEach(item => {
+            if (item.material_request_item) {
+                frappe.call({
+                    method: "cn_exim.config.py.purchase_order.update_material_request_item",
+                    args: {
+                        name: item.material_request_item
+                    },
+                    callback: function (r) {
+                    }
+                });
+            }
+        });
     },
+    // on_trash:function(frm){
+    //     console.log("this callllllllllllll")
+    //     frm.doc.items.forEach(item => {
+    //         if (item.material_request_item) {
+    //             frappe.call({
+    //                 method: "cn_exim.config.py.purchase_order.update_material_request_item",
+    //                 args: {
+    //                     name: item.material_request_item
+    //                 },
+    //                 callback: function (r) {
+    //                 }
+    //             });
+    //         }
+    //     });
+    // }
 })
 
 
@@ -309,14 +298,9 @@ frappe.ui.form.on('Purchase Order Item', {
                 }
             }
         });
-
-        // Show dialog
         d.show();
     },
-    // item_code: function (frm, cdt, cdn) {
-    //     let row = locals[cdt][cdn]
-    //     update_charges_tax_table(frm, row)
-    // },
+
     custom_item_charges_templte: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn]
         set_extra_charges_in_table(frm, row)
@@ -352,40 +336,6 @@ function update_progress_bar(frm, stage_status) {
 
     frm.fields_dict.custom_progress_bar.$wrapper.html(progress_html);
 }
-
-
-// function update_charges_tax_table(frm, row) {
-//     if (row.custom_item_charges_templte != undefined) {
-//         frappe.call({
-//             method: "cn_exim.config.py.purchase_order.get_item_wise_charges",
-//             args: {
-//                 name: row.custom_item_charges_templte
-//             },
-//             callback: function (response) {
-//                 let data = response.message
-
-//                 data.forEach(element => {
-//                     let exists = frm.doc.taxes.some(tax =>
-//                         tax.charge_type === element.type &&
-//                         tax.account_head === element.account_head &&
-//                         tax.custom_item_code === row.item_code
-//                     );
-//                     if (!exists) {
-//                         let new_row = frm.add_child("taxes")
-//                         new_row.charge_type = element.type;
-//                         new_row.account_head = element.account_head;
-//                         new_row.tax_amount = element.amount;
-//                         new_row.custom_item_code = row.item_code;
-//                         new_row.description = element.description;
-//                     }
-//                 })
-//                 frm.refresh_field("taxes")
-//             }
-//         })
-//     }
-// }
-
-
 
 
 function set_print_format_base_on_field_value(frm) {

@@ -31,14 +31,15 @@ def get_stage_status(purchase_order_name):
 
     return status
 
-# @frappe.whitelist()
-# def get_item_wise_charges(name):
-#     data = frappe.db.sql(" select * from `tabItem Charges Template` where parent=%s ",(name), as_dict=True)
-    
-#     return data
 
 @frappe.whitelist()
 def get_extra_charge_template(name):
     data = frappe.db.sql(" select * from `tabItem Charges Template` where  parent=%s ",(name), as_dict=True)
     
     return data
+
+@frappe.whitelist()
+def update_material_request_item(name):
+    frappe.db.set_value("Material Request Item", name, "custom_po_created", 0)
+
+

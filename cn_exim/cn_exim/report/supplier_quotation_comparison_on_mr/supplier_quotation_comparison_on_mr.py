@@ -29,6 +29,7 @@ def get_columns():
         {"label": "Request For Quotation", "fieldname": "request_for_quotation", "fieldtype": "Link", "options": "Request for Quotation", "width": 150},
         {"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 150},
         {"label": "Remarks", "fieldname": "remarks", "fieldtype": "Data", "width": 200},
+        {"label": "Purchase Order", "fieldname": "purchase_order", "fieldtype": "Link", "options": "Purchase Order", "width": 150},
     ]
 
 def get_data(filters):
@@ -82,6 +83,12 @@ def get_data(filters):
             rfq_list = [rfq.strip() for rfq in rfq_list.split("-")]
         conditions.append("s_item.request_for_quotation in %(request_for_quotation)s")
         values["request_for_quotation"] = rfq_list
+        
+    if filters.get("po_created"):
+        conditions.append("mri.custom_po_created = 1")
+    else:
+        conditions.append("(mri.custom_po_created = 0 OR mri.custom_po_created IS NULL)")
+
 
     if not filters.get("include_expired"):
         conditions.append("sq.valid_till >= CURDATE()")
@@ -112,7 +119,7 @@ def get_data(filters):
                 SELECT poi.rate
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
-                WHERE poi.item_code = s_item.item_code AND po.docstatus = 1
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
             ), 0) AS previous_price,
@@ -121,7 +128,7 @@ def get_data(filters):
                 SELECT poi.base_rate
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
-                WHERE poi.item_code = s_item.item_code AND po.docstatus = 1
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
             ), 0) AS previous_price_inr,
@@ -131,14 +138,28 @@ def get_data(filters):
                 SELECT po.supplier
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
-                WHERE poi.item_code = s_item.item_code AND po.docstatus = 1
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
-            ), '-') AS previous_supplier
+            ), '-') AS previous_supplier,
+            
+            -- Subquery to get the purchase order
+            IFNULL((
+                SELECT po.name
+                FROM `tabPurchase Order` po
+                INNER JOIN `tabPurchase Order Item` poi ON po.name = poi.parent
+                WHERE poi.material_request = s_item.material_request
+                AND poi.item_code = s_item.item_code
+                AND po.docstatus != 2
+                LIMIT 1
+            ), '-') AS purchase_order
         FROM
             `tabSupplier Quotation` sq
         INNER JOIN
             `tabSupplier Quotation Item` s_item ON s_item.parent = sq.name
+        INNER JOIN
+            `tabMaterial Request Item` mri ON s_item.material_request_item = mri.name
+
         WHERE
             sq.docstatus = 1
             {condition_str}
@@ -168,6 +189,7 @@ def create_purchase_orders(items):
         po = frappe.new_doc("Purchase Order")
         po.supplier = supplier
 
+        mri_to_update = []
         for item in items_list:
             supplier_quotation = item["supplier_quotation"]
             item_code = item["item_code"]
@@ -199,7 +221,7 @@ def create_purchase_orders(items):
                         break
 
                 if is_duplicate:
-                    duplicate_items.append(f"{sq_item.item_code} - {sq_item.item_name}")
+                    duplicate_items.append(f"{sq_item.item_code} - {existing_po_items[0].parent}")
                     continue  # Skip this item
                 
                 # Get schedule date from RFQ
@@ -217,6 +239,8 @@ def create_purchase_orders(items):
                     "supplier_quotation": supplier_quotation,
                     "schedule_date": schedule_date,
                 })
+                
+                mri_to_update.append(sq_item.material_request_item)
 
         # If at least one item is added, save the PO
         if po.items:
@@ -224,9 +248,14 @@ def create_purchase_orders(items):
             po.save()
             # po.submit()
             po_names.append(po.name)
+            
+            for mri in mri_to_update:
+                frappe.db.set_value("Material Request Item", mri, {
+                    "custom_po_created": 1
+                })
 
     if duplicate_items:
-        frappe.msgprint(f"The following items already have Purchase Orders: <br><b>{'<br>'.join(duplicate_items)}</b>")
+        frappe.throw(f"The following items already have Purchase Orders: <br><b>{'<br>'.join(duplicate_items)}</b>")
 
     return po_names
 
@@ -243,4 +272,5 @@ def update_remarks(supplier_quotation, item_code, remarks):
     )
     frappe.db.commit()
     return "Success"
+
 
