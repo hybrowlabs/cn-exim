@@ -258,5 +258,11 @@ fixtures = [
         "filters": {
             "name": ["in", ["Exim Flow", "Pre Alert Approval Flow"]]
         }
+    },
+    {
+        "doctype": "Document Naming Rule",
+        "filters":{
+            "name": ["in", ["k4ao1ql2k0", "l8lst91s2u", "kr3kjtoctp", "n69trk242d"]]
+        }
     }
 ]

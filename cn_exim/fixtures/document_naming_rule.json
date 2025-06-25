@@ -1,0 +1,106 @@
+[
+ {
+  "conditions": [
+   {
+    "condition": "=",
+    "field": "country",
+    "parent": "k4ao1ql2k0",
+    "parentfield": "conditions",
+    "parenttype": "Document Naming Rule",
+    "value": "India"
+   }
+  ],
+  "counter": 2,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Document Naming Rule",
+  "document_type": "Supplier",
+  "modified": "2025-06-25 16:35:39.906349",
+  "name": "k4ao1ql2k0",
+  "prefix": "1",
+  "prefix_digits": 4,
+  "priority": 0
+ },
+ {
+  "conditions": [
+   {
+    "condition": "!=",
+    "field": "country",
+    "parent": "kr3kjtoctp",
+    "parentfield": "conditions",
+    "parenttype": "Document Naming Rule",
+    "value": "India"
+   }
+  ],
+  "counter": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Document Naming Rule",
+  "document_type": "Supplier",
+  "modified": "2025-06-25 16:30:00.536132",
+  "name": "kr3kjtoctp",
+  "prefix": "2",
+  "prefix_digits": 4,
+  "priority": 0
+ },
+ {
+  "conditions": [
+   {
+    "condition": "=",
+    "field": "supplier_group",
+    "parent": "l8lst91s2u",
+    "parentfield": "conditions",
+    "parenttype": "Document Naming Rule",
+    "value": "Service"
+   },
+   {
+    "condition": "=",
+    "field": "naming_series",
+    "parent": "l8lst91s2u",
+    "parentfield": "conditions",
+    "parenttype": "Document Naming Rule",
+    "value": "India"
+   }
+  ],
+  "counter": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Document Naming Rule",
+  "document_type": "Supplier",
+  "modified": "2025-06-25 16:30:09.612960",
+  "name": "l8lst91s2u",
+  "prefix": "3",
+  "prefix_digits": 4,
+  "priority": 0
+ },
+ {
+  "conditions": [
+   {
+    "condition": "=",
+    "field": "is_transporter",
+    "parent": "n69trk242d",
+    "parentfield": "conditions",
+    "parenttype": "Document Naming Rule",
+    "value": "1"
+   },
+   {
+    "condition": "=",
+    "field": "country",
+    "parent": "n69trk242d",
+    "parentfield": "conditions",
+    "parenttype": "Document Naming Rule",
+    "value": "India"
+   }
+  ],
+  "counter": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Document Naming Rule",
+  "document_type": "Supplier",
+  "modified": "2025-06-25 16:29:52.405922",
+  "name": "n69trk242d",
+  "prefix": "4",
+  "prefix_digits": 4,
+  "priority": 0
+ }
+]
