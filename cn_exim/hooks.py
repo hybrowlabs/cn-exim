@@ -157,7 +157,7 @@ doc_events = {
         "on_submit": "cn_exim.overrides.purchase_receipt.on_submit"
     },
     "Purchase Order": {
-        "on_trash": "cn_exim.cn_exim.doc_events.purchase_order.on_trash"
+        "on_trash": "cn_exim.cn_exim.doc_events.purchase_order.on_trash",
     },
 }
 

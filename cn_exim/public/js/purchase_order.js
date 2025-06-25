@@ -1,5 +1,8 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
+        setTimeout(() => {
+            frm.remove_custom_button('Material Request', 'Get Items From');
+        }, 300);
         if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{
@@ -154,9 +157,9 @@ frappe.ui.form.on("Purchase Order", {
             }, __("Create"))
         }
     },
-    validate:function(frm){
+    validate: function (frm) {
         frm.doc.items.forEach(item => {
-            if(item.rate <= 0){
+            if (item.rate <= 0) {
                 frappe.throw(`Item rate cannot be negative for item: ${item.item_code}`)
             }
         })
@@ -194,21 +197,23 @@ frappe.ui.form.on("Purchase Order", {
             }
         });
     },
-    // on_trash:function(frm){
-    //     console.log("this callllllllllllll")
-    //     frm.doc.items.forEach(item => {
-    //         if (item.material_request_item) {
-    //             frappe.call({
-    //                 method: "cn_exim.config.py.purchase_order.update_material_request_item",
-    //                 args: {
-    //                     name: item.material_request_item
-    //                 },
-    //                 callback: function (r) {
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
+
+    after_save: function (frm) {
+        if (frm._removed_items && frm._removed_items.length > 0) {
+            frm._removed_items.forEach(item => {
+                frappe.call({
+                    method: "frappe.client.set_value",
+                    args: {
+                        doctype: "Material Request Item",
+                        name: item,
+                        fieldname: "custom_po_created",
+                        value: 0
+                    }
+                });
+            });
+            frm._removed_items = []; // Clean up
+        }
+    }
 })
 
 
@@ -300,7 +305,15 @@ frappe.ui.form.on('Purchase Order Item', {
         });
         d.show();
     },
-
+    before_items_remove: function (frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        if (!frm._removed_items) {
+            frm._removed_items = [];
+        }
+        if (row.material_request_item) {
+            frm._removed_items.push(row.material_request_item);
+        }
+    },
     custom_item_charges_templte: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn]
         set_extra_charges_in_table(frm, row)
