@@ -18,10 +18,12 @@ def get_columns():
         {"label": "Quantity", "fieldname": "quantity", "fieldtype": "Float", "width": 100},
         {"label": "Stock UOM", "fieldname": "stock_uom", "fieldtype": "Link", "options": "UOM", "width": 100},
         {"label": "Currency", "fieldname": "currency", "fieldtype": "Link", "options": "Currency", "width": 100},
-        {"label": "Price", "fieldname": "price", "fieldtype": "Currency", "width": 100},
-        {"label": "Price (Inr)", "fieldname": "price_inr", "fieldtype": "Currency", "width": 100},
-        {"label": "Previous Price", "fieldname": "previous_price", "fieldtype": "Currency", "width": 100},
-        {"label": "Previous Price (Inr)", "fieldname": "previous_price_inr", "fieldtype": "Currency", "width": 100},
+        {"label": "Rate", "fieldname": "price", "fieldtype": "Currency", "width": 100},
+        {"label": "Rate (Inr)", "fieldname": "price_inr", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Rate", "fieldname": "previous_price", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Rate (Inr)", "fieldname": "previous_price_inr", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Po No", "fieldname": "previous_po_no", "fieldtype": "Link", "options": "Purchase Order", "width":100 },
+        {"label": "Previous Qty", "fieldname": "previous_qty", "fieldtype": "float", "width":100 },
         {"label": "Previous Supplier", "fieldname": "previous_supplier", "fieldtype": "Currency", "width": 100},
         {"label": "Supplier Quotation", "fieldname": "supplier_quotation", "fieldtype": "Link", "options": "Supplier Quotation", "width": 150},
         {"label": "Valid Till", "fieldname": "valid_till", "fieldtype": "Date", "width": 100},
@@ -32,13 +34,13 @@ def get_columns():
         {"label": "Remarks", "fieldname": "remarks", "fieldtype": "Data", "width": 200},
         {"label": "Purchase Order", "fieldname": "purchase_order", "fieldtype": "Link", "options": "Purchase Order", "width": 150},
     ]
-
+    
+    
 def get_data(filters):
     conditions = []
     values = {}
 
     if filters.get("material_request"):
-        # Handle both JSON list and comma-separated string
         mr_list = frappe.parse_json(filters.get("material_request"))
         if isinstance(mr_list, str):
             mr_list = [mr.strip() for mr in mr_list.split(",")]
@@ -90,7 +92,6 @@ def get_data(filters):
     else:
         conditions.append("(mri.custom_po_created = 0 OR mri.custom_po_created IS NULL)")
 
-
     if not filters.get("include_expired"):
         conditions.append("sq.valid_till >= CURDATE()")
 
@@ -115,9 +116,8 @@ def get_data(filters):
             s_item.request_for_quotation AS request_for_quotation,
             s_item.material_request AS material_request,
             s_item.custom_remark AS remarks,
-            
-            -- Subquery to get last purchase order rate
-            IFNull((
+
+            IFNULL((
                 SELECT poi.rate
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
@@ -125,8 +125,8 @@ def get_data(filters):
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
             ), 0) AS previous_price,
-            -- Previous Base Rate
-            IFNull ((
+
+            IFNULL((
                 SELECT poi.base_rate
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
@@ -134,9 +134,8 @@ def get_data(filters):
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
             ), 0) AS previous_price_inr,
-            
-            -- Subquery to get last purchase order supplier
-            IFNull((
+
+            IFNULL((
                 SELECT po.supplier
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
@@ -144,8 +143,25 @@ def get_data(filters):
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
             ), '-') AS previous_supplier,
-            
-            -- Subquery to get the purchase order
+
+            IFNULL((
+                SELECT po.name
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1
+            ), '-') AS previous_po_no,
+
+            IFNULL((
+                SELECT poi.qty
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1
+            ), '-') AS previous_qty,
+
             IFNULL((
                 SELECT po.name
                 FROM `tabPurchase Order` po
@@ -155,22 +171,36 @@ def get_data(filters):
                 AND po.docstatus != 2
                 LIMIT 1
             ), '-') AS purchase_order
+
         FROM
             `tabSupplier Quotation` sq
         INNER JOIN
             `tabSupplier Quotation Item` s_item ON s_item.parent = sq.name
         INNER JOIN
             `tabMaterial Request Item` mri ON s_item.material_request_item = mri.name
-
         WHERE
             sq.docstatus = 1
             {condition_str}
         ORDER BY
-            sq.supplier, s_item.item_code
+            s_item.material_request,
+            s_item.item_code
     """
 
     data = frappe.db.sql(query, values, as_dict=True)
+
+    # 🔍 Add is_lowest field
+    min_price_map = {}
+    for row in data:
+        key = (row["material_request"], row["item_code"])
+        if key not in min_price_map or row["price"] < min_price_map[key]:
+            min_price_map[key] = row["price"]
+
+    for row in data:
+        key = (row["material_request"], row["item_code"])
+        row["is_lowest"] = 1 if row["price"] == min_price_map[key] else 0
+
     return data
+
 
 @frappe.whitelist()
 def create_purchase_orders(items):

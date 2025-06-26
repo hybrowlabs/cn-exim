@@ -175,6 +175,12 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 
 			return `<a href="/app/${route}/${value}" target="_blank">${value}</a>`;
 		}
+		if (data && data.is_lowest === 1) {
+            // highlight only the 'Rate (Inr)' column or entire row if you want
+            if (column.fieldname === "price") {
+                return `<span style="color: green; font-weight: bold;">${value}</span>`;
+            }
+        }
 		
 		return value;
 	},
