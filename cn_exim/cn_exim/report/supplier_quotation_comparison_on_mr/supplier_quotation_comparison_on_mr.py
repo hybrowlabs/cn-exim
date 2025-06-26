@@ -154,7 +154,7 @@ def get_data(filters):
             ), '-') AS previous_po_no,
 
             IFNULL((
-                SELECT poi.qty
+                SELECT ROUND(poi.qty, 2)
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
                 WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
