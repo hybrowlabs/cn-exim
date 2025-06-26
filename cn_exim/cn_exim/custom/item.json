@@ -1910,7 +1910,7 @@
    "print_hide_if_no_value": 0,
    "print_width": null,
    "read_only": 0,
-   "read_only_depends_on": null,
+   "read_only_depends_on": "eval:doc.custom_shelf_life_uom == \"Day\"",
    "report_hide": 0,
    "reqd": 0,
    "search_index": 0,

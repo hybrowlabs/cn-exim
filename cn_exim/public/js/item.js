@@ -97,14 +97,14 @@ frappe.ui.form.on("Item", {
             }
         })
     },
-    custom_total_shelf_life_in_month:function(frm){
-        if (frm.doc.custom_shelf_life_uom == "Month"){
+    custom_total_shelf_life_in_month: function (frm) {
+        if (frm.doc.custom_shelf_life_uom == "Month") {
             shelf_life_in_day = parseInt(frm.doc.custom_total_shelf_life_in_month) * 30
             frm.set_value("shelf_life_in_days", shelf_life_in_day)
         }
     },
-    custom_minimum_shelf_life_in_month:function(frm){
-        if (frm.doc.custom_shelf_life_uom == "Month"){
+    custom_minimum_shelf_life_in_month: function (frm) {
+        if (frm.doc.custom_shelf_life_uom == "Month") {
             minimum_shelf_life_in_day = parseInt(frm.doc.custom_minimum_shelf_life_in_month) * 30
             frm.set_value("custom_minimum_shelf_life", minimum_shelf_life_in_day)
         }
@@ -116,26 +116,31 @@ frappe.ui.form.on("Item Default", {
         let row = locals[cdt][cdn];
         let material_type = frm.doc.item_group; // Properly declared
 
-        frappe.call({
-            method: "cn_exim.config.py.item.get_default_account_form_key_based_on_material_type",
-            args: {
-                name: material_type,
-                account_key: row.custom_key,
-                company: row.company
-            },
-            callback: function (response) {
-                if (response.message) {
-                    let data = response.message;
+        if (material_type) {
+            frappe.call({
+                method: "cn_exim.config.py.item.get_default_account_form_key_based_on_material_type",
+                args: {
+                    name: material_type,
+                    account_key: row.custom_key,
+                    company: row.company
+                },
+                callback: function (response) {
+                    if (response.message) {
+                        let data = response.message;
 
-                    data.forEach(obj => {
-                        row.custom_stock_received_but_not_billed = obj.stock_received_but_not_billed;
-                        row.custom_default_inventory_account = obj.default_inventory_account;
-                        row.expense_account = obj.default_expense_account;
-                    });
-                    frm.refresh_field("item_defaults");
+                        data.forEach(obj => {
+                            row.custom_stock_received_but_not_billed = obj.stock_received_but_not_billed;
+                            row.custom_default_inventory_account = obj.default_inventory_account;
+                            row.expense_account = obj.default_expense_account;
+                        });
+                        frm.refresh_field("item_defaults");
+                    }
                 }
-            }
-        });
+            });
+        }
+        else{
+            frappe.msgprint("Material type is not set!");
+        }
     }
 });
 

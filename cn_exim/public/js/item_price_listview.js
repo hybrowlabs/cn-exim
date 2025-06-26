@@ -1,5 +1,3 @@
-const { options } = require("superagent");
-
 frappe.listview_settings['Item Price'] = {
     onload: function (listview) {
         listview.page.add_menu_item(__("Bulk Price Approval"), function () {
