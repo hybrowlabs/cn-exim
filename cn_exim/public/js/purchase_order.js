@@ -280,6 +280,31 @@ frappe.ui.form.on("Purchase Order", {
                     }
                 }
             })
+            if (item.material_request_item) {
+                // Check if all 4 fields are empty or undefined before making the call
+                if (
+                    !item.custom_materil_po_text &&
+                    !item.custom_supplier_suggestion &&
+                    !item.custom_item_note &&
+                    !item.custom_other_remarks
+                ) {
+                    frappe.call({
+                        method: "cn_exim.config.py.purchase_order.get_mr_item_fields",
+                        args: {
+                            mr_item_name: item.material_request_item
+                        },
+                        callback: function (response) {
+                            if (response.message) {
+                                let d = response.message;
+                                frappe.model.set_value(item.doctype, item.name, "custom_materil_po_text", d.custom_materil_po_text || "");
+                                frappe.model.set_value(item.doctype, item.name, "custom_supplier_suggestion", d.custom_supplier_suggestion || "");
+                                frappe.model.set_value(item.doctype, item.name, "custom_item_note", d.custom_item_note || "");
+                                frappe.model.set_value(item.doctype, item.name, "custom_other_remarks", d.custom_other_remarks || "");
+                            }
+                        }
+                    });
+                }
+            }
         })
     },
 })
@@ -398,10 +423,6 @@ frappe.ui.form.on('Purchase Order Item', {
         // Show dialog
         d.show();
     },
-    // item_code: function (frm, cdt, cdn) {
-    //     let row = locals[cdt][cdn]
-    //     update_charges_tax_table(frm, row)
-    // },
     custom_item_charges_templte: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn]
         set_extra_charges_in_table(frm, row)
@@ -437,39 +458,6 @@ function update_progress_bar(frm, stage_status) {
 
     frm.fields_dict.custom_progress_bar.$wrapper.html(progress_html);
 }
-
-
-// function update_charges_tax_table(frm, row) {
-//     if (row.custom_item_charges_templte != undefined) {
-//         frappe.call({
-//             method: "cn_exim.config.py.purchase_order.get_item_wise_charges",
-//             args: {
-//                 name: row.custom_item_charges_templte
-//             },
-//             callback: function (response) {
-//                 let data = response.message
-
-//                 data.forEach(element => {
-//                     let exists = frm.doc.taxes.some(tax =>
-//                         tax.charge_type === element.type &&
-//                         tax.account_head === element.account_head &&
-//                         tax.custom_item_code === row.item_code
-//                     );
-//                     if (!exists) {
-//                         let new_row = frm.add_child("taxes")
-//                         new_row.charge_type = element.type;
-//                         new_row.account_head = element.account_head;
-//                         new_row.tax_amount = element.amount;
-//                         new_row.custom_item_code = row.item_code;
-//                         new_row.description = element.description;
-//                     }
-//                 })
-//                 frm.refresh_field("taxes")
-//             }
-//         })
-//     }
-// }
-
 
 
 

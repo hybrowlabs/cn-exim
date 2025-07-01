@@ -52,3 +52,14 @@ def update_total_amount(purchase_order_name, total_amount, total_taxes_and_charg
     frappe.db.set_value("Purchase Order", purchase_order_name, "grand_total", grand_total)
     rounded_total = float(grand_total) + float(rounding_adjustment)
     frappe.db.set_value("Purchase Order", purchase_order_name, "rounded_total", rounded_total)
+    
+    
+    
+@frappe.whitelist()
+def get_mr_item_fields(mr_item_name):
+    return frappe.db.get_value(
+        "Material Request Item",
+        mr_item_name,
+        ["custom_materil_po_text", "custom_supplier_suggestion", "custom_other_remarks", "custom_item_note"],
+        as_dict=True
+    )

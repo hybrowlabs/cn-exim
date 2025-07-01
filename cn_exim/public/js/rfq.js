@@ -35,26 +35,6 @@ frappe.ui.form.on("Request for Quotation", {
             }
         })
     },
-    // custom_select_service: function (frm) {
-    //     frappe.call({
-    //         method: "cn_exim.cn_exim.api.supplier_quotation",
-    //         args: {
-    //             service: frm.doc.custom_select_service
-    //         },
-    //         callback: function (r) {
-
-    //             if (r.message) {
-    //                 frm.set_query('supplier', 'suppliers', (doc, cdt, cdn) => {
-    //                     return {
-    //                         filters: [
-    //                             ['Supplier', 'name', 'in', r.message]
-    //                         ]
-    //                     };
-    //                 })
-    //             }
-    //         }
-    //     })
-    // },
     before_save: function (frm) {
         if (!frm.doc.custom_previously_data || frm.doc.custom_previously_data.length === 0) {
             let suppliers_list = [];
@@ -125,20 +105,20 @@ function add_data_in_child_table(frm, cdt, cdn, data) {
             // Check if a row with the same supplier and item_code already exists
             frm.doc.custom_previously_data.forEach(item => {
                 if (item.supplier === supplier && item.item_code === d.item_code) {
-                    supplier_exists = true; // Match found, don't add again
-                    return false; // Break out of the loop
+                    supplier_exists = true;
+                    return false;
                 }
             });
 
-            if (supplier_exists) continue; // Skip adding this supplier if already present
+            if (supplier_exists) continue;
 
             // Add new row if not already present
             let row = frm.add_child("custom_previously_data");
-            row.supplier = supplier; // Supplier name is the key
+            row.supplier = supplier;
             row.rate = item_data.rate;
             row.qty = item_data.qty;
             row.received_qty = item_data.received_qty;
-            row.item_code = d.item_code; // Store item code for reference
+            row.item_code = d.item_code;
         }
     }
     frm.refresh_field("custom_previously_data");
