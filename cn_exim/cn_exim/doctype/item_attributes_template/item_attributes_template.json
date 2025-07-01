@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:item_attributes_template_name",
+ "creation": "2025-01-10 12:59:18.506117",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "item_attributes_template_name",
+  "form_builder",
+  "custom_form_data",
+  "form_preview_tab",
+  "form_preview",
+  "sample_form_data"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_attributes_template_name",
+   "fieldtype": "Data",
+   "label": "Item Attributes Template Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "form_builder",
+   "fieldtype": "HTML",
+   "label": "Form Builder"
+  },
+  {
+   "fieldname": "custom_form_data",
+   "fieldtype": "JSON",
+   "label": "Form Data"
+  },
+  {
+   "fieldname": "form_preview_tab",
+   "fieldtype": "Tab Break",
+   "label": "Form Preview"
+  },
+  {
+   "fieldname": "form_preview",
+   "fieldtype": "HTML",
+   "label": "Form Preview"
+  },
+  {
+   "fieldname": "sample_form_data",
+   "fieldtype": "JSON",
+   "hidden": 1,
+   "label": "Sample Form Data"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-01 15:50:40.839248",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Item Attributes Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
