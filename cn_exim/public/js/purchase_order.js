@@ -1,3 +1,4 @@
+let removed_items_info = [];
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
         setTimeout(() => {
@@ -184,36 +185,46 @@ frappe.ui.form.on("Purchase Order", {
         })
     },
     after_cancel: function (frm) {
-        frm.doc.items.forEach(item => {
-            if (item.material_request_item) {
-                frappe.call({
-                    method: "cn_exim.config.py.purchase_order.update_material_request_item",
-                    args: {
-                        name: item.material_request_item
-                    },
-                    callback: function (r) {
-                    }
-                });
+        frappe.call({
+            method: "cn_exim.config.py.purchase_order.update_material_request_item",
+            args: {
+                doc: frm.doc
+            },
+            callback: function (r) {
             }
         });
     },
 
     after_save: function (frm) {
         if (frm._removed_items && frm._removed_items.length > 0) {
-            frm._removed_items.forEach(item => {
-                frappe.call({
-                    method: "frappe.client.set_value",
-                    args: {
-                        doctype: "Material Request Item",
-                        name: item,
-                        fieldname: "custom_po_created",
-                        value: 0
-                    }
-                });
+
+            frappe.call({
+                method: "cn_exim.config.py.purchase_order.update_material_request_qty",
+                args: {
+                    removed_items: frm._removed_items
+                },
+                callback: function (response) {
+                    console.log("Material Request Items updated successfully.");
+                }
             });
-            frm._removed_items = []; // Clean up
+
+            frm._removed_items = [];
         }
-    }
+
+
+        frappe.call({
+            method: "cn_exim.config.py.purchase_order.update_material_request_to_po_created",
+            args: {
+                doc: frm.doc
+            }
+        })
+        frappe.call({
+            method: "cn_exim.config.py.purchase_order.update_supplier_quotation_item",
+            args: {
+                doc: frm.doc
+            }
+        })
+    },
 })
 
 
@@ -307,11 +318,16 @@ frappe.ui.form.on('Purchase Order Item', {
     },
     before_items_remove: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn];
+
+
         if (!frm._removed_items) {
             frm._removed_items = [];
         }
         if (row.material_request_item) {
-            frm._removed_items.push(row.material_request_item);
+            frm._removed_items.push({
+                material_request_item: row.material_request_item,
+                qty: row.qty
+            });
         }
     },
     custom_item_charges_templte: function (frm, cdt, cdn) {

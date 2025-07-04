@@ -11,28 +11,36 @@ def execute(filters=None):
 
 def get_columns():
     return [
-        {"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 100},
+        {"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
         {"label": "Supplier", "fieldname": "supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
         {"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
-        {"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
+        {"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 50},
         {"label": "Quantity", "fieldname": "quantity", "fieldtype": "Float", "width": 100},
         {"label": "Stock UOM", "fieldname": "stock_uom", "fieldtype": "Link", "options": "UOM", "width": 100},
-        {"label": "Currency", "fieldname": "currency", "fieldtype": "Link", "options": "Currency", "width": 100},
+        {"label": "Currency", "fieldname": "currency", "fieldtype": "Link", "options": "Currency", "width": 50},
         {"label": "Rate", "fieldname": "price", "fieldtype": "Currency", "width": 100},
-        {"label": "Rate (Inr)", "fieldname": "price_inr", "fieldtype": "Currency", "width": 100},
-        {"label": "Previous Rate", "fieldname": "previous_price", "fieldtype": "Currency", "width": 100},
-        {"label": "Previous Rate (Inr)", "fieldname": "previous_price_inr", "fieldtype": "Currency", "width": 100},
-        {"label": "Previous Po No", "fieldname": "previous_po_no", "fieldtype": "Link", "options": "Purchase Order", "width":100 },
-        {"label": "Previous Qty", "fieldname": "previous_qty", "fieldtype": "float", "width":100 },
-        {"label": "Previous Supplier", "fieldname": "previous_supplier", "fieldtype": "Currency", "width": 100},
+        # {"label": "Rate (Inr)", "fieldname": "price_inr", "fieldtype": "Currency", "width": 100},
         {"label": "Supplier Quotation", "fieldname": "supplier_quotation", "fieldtype": "Link", "options": "Supplier Quotation", "width": 150},
         {"label": "Valid Till", "fieldname": "valid_till", "fieldtype": "Date", "width": 100},
-        {"label": "Lead Time", "fieldname": "lead_time", "fieldtype": "Data", "width": 100},
-        {"label": "MOQ", "fieldname": "moq", "fieldtype": "float", "with": 100},
+        {"label": "Lead Time", "fieldname": "lead_time", "fieldtype": "Data", "width": 50},
+        {"label": "MOQ", "fieldname": "moq", "fieldtype": "float", "width": 50},
         {"label": "Request For Quotation", "fieldname": "request_for_quotation", "fieldtype": "Link", "options": "Request for Quotation", "width": 150},
         {"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 150},
-        {"label": "Remarks", "fieldname": "remarks", "fieldtype": "Data", "width": 200},
+        {"label": "Previous Rate 1", "fieldname": "previous_price_1", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Rate 2", "fieldname": "previous_price_2", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Rate 3", "fieldname": "previous_price_3", "fieldtype": "Currency", "width": 100},
+        # {"label": "Previous Rate (Inr)", "fieldname": "previous_price_inr", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Po No 1", "fieldname": "previous_po_no_1", "fieldtype": "Link", "options": "Purchase Order", "width":100 },
+        {"label": "Previous Po No 2", "fieldname": "previous_po_no_2", "fieldtype": "Link", "options": "Purchase Order", "width":100 },
+        {"label": "Previous Po No 3", "fieldname": "previous_po_no_3", "fieldtype": "Link", "options": "Purchase Order", "width":100 },
+        {"label": "Previous Qty 1", "fieldname": "previous_qty_1", "fieldtype": "float", "width":100 },
+        {"label": "Previous Qty 2", "fieldname": "previous_qty_2", "fieldtype": "float", "width":100 },
+        {"label": "Previous Qty 3", "fieldname": "previous_qty_3", "fieldtype": "float", "width":100 },
+        {"label": "Previous Supplier 1", "fieldname": "previous_supplier_1", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Supplier 2", "fieldname": "previous_supplier_2", "fieldtype": "Currency", "width": 100},
+        {"label": "Previous Supplier 3", "fieldname": "previous_supplier_3", "fieldtype": "Currency", "width": 100},
         {"label": "Purchase Order", "fieldname": "purchase_order", "fieldtype": "Link", "options": "Purchase Order", "width": 150},
+        {"label": "Remarks", "fieldname": "remarks", "fieldtype": "Data", "width": 200},
     ]
     
     
@@ -104,13 +112,13 @@ def get_data(filters):
             sq.supplier AS supplier,
             s_item.item_code AS item_code,
             s_item.uom AS uom,
-            s_item.qty AS quantity,
+            (s_item.qty - IFNULL(s_item.custom_ordered_qty, 0)) AS quantity,
             s_item.stock_uom AS stock_uom,
             sq.currency AS currency,
             s_item.rate AS price,
             s_item.lead_time_days AS lead_time,
             s_item.custom_minimum_order_qty AS moq,
-            s_item.rate * IFNULL(sq.conversion_rate, 1) AS price_inr,
+            -- s_item.rate * IFNULL(sq.conversion_rate, 1) AS price_inr,
             sq.name AS supplier_quotation,
             sq.valid_till AS valid_till,
             s_item.request_for_quotation AS request_for_quotation,
@@ -124,16 +132,35 @@ def get_data(filters):
                 WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
-            ), 0) AS previous_price,
-
+            ), 0) AS previous_price_1,
+            
+            -- 2nd latest price
             IFNULL((
-                SELECT poi.base_rate
+                SELECT poi.rate
                 FROM `tabPurchase Order Item` poi
                 INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
                 WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
-                LIMIT 1
-            ), 0) AS previous_price_inr,
+                LIMIT 1 OFFSET 1
+            ), 0) AS previous_price_2,
+            
+            IFNULL((
+                SELECT poi.rate
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 2
+            ), 0) AS previous_price_3,
+
+            -- IFNULL((
+                -- SELECT poi.base_rate
+                -- FROM `tabPurchase Order Item` poi
+                -- INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                -- WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                -- ORDER BY po.transaction_date DESC, po.creation DESC
+                -- LIMIT 1
+            -- ), 0) AS previous_price_inr,
 
             IFNULL((
                 SELECT po.supplier
@@ -142,7 +169,25 @@ def get_data(filters):
                 WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
-            ), '-') AS previous_supplier,
+            ), '-') AS previous_supplier_1,
+            
+            IFNULL((
+                SELECT po.supplier
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 1
+            ), '-') AS previous_supplier_2,
+            
+            IFNULL((
+                SELECT po.supplier
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 2
+            ), '-') AS previous_supplier_3,
 
             IFNULL((
                 SELECT po.name
@@ -151,7 +196,25 @@ def get_data(filters):
                 WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
-            ), '-') AS previous_po_no,
+            ), '-') AS previous_po_no_1,
+            
+            IFNULL((
+                SELECT po.name
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 1
+            ), '-') AS previous_po_no_2,
+            
+            IFNULL((
+                SELECT po.name
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 2
+            ), '-') AS previous_po_no_3,
 
             IFNULL((
                 SELECT ROUND(poi.qty, 2)
@@ -160,7 +223,25 @@ def get_data(filters):
                 WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
                 ORDER BY po.transaction_date DESC, po.creation DESC
                 LIMIT 1
-            ), '-') AS previous_qty,
+            ), '-') AS previous_qty_1,
+            
+            IFNULL((
+                SELECT ROUND(poi.qty, 2)
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 1
+            ), '-') AS previous_qty_2,
+            
+            IFNULL((
+                SELECT ROUND(poi.qty, 2)
+                FROM `tabPurchase Order Item` poi
+                INNER JOIN `tabPurchase Order` po ON poi.parent = po.name
+                WHERE poi.item_code = s_item.item_code AND po.docstatus != 2
+                ORDER BY po.transaction_date DESC, po.creation DESC
+                LIMIT 1 OFFSET 2
+            ), '-') AS previous_qty_3,
 
             IFNULL((
                 SELECT po.name
@@ -215,79 +296,96 @@ def create_purchase_orders(items):
         supplier_items_map[supplier].append(item)
 
     po_names = []
-    duplicate_items = []
+    skipped_items = []
 
     for supplier, items_list in supplier_items_map.items():
         po = frappe.new_doc("Purchase Order")
         po.supplier = supplier
 
         mri_to_update = []
+
         for item in items_list:
             supplier_quotation = item["supplier_quotation"]
             item_code = item["item_code"]
-            qty = item["qty"]
-
+            qty = float(item["qty"])
+            
             # Get Supplier Quotation Item
             sq_items = frappe.get_all(
                 "Supplier Quotation Item",
                 filters={"parent": supplier_quotation, "item_code": item_code},
-                fields=["item_code", "item_name", "qty", "uom", "rate", "material_request", "material_request_item", "request_for_quotation"]
+                fields=["item_code", "item_name", "qty", "uom", "rate", "material_request", "material_request_item", "request_for_quotation", "name"]
             )
 
             for sq_item in sq_items:
-                # Check if this item with this material_request_item is already in another PO (Draft or Submitted)
-                existing_po_items = frappe.get_all(
-                    "Purchase Order Item",
-                    filters={
-                        "material_request_item": sq_item.material_request_item,
-                        "item_code": sq_item.item_code
-                    },
-                    fields=["name", "parent"]
-                )
-                
-                is_duplicate = False
-                for po_item in existing_po_items:
-                    po_docstatus = frappe.get_value("Purchase Order", po_item.parent, "docstatus")
-                    if po_docstatus in [0, 1]:  # Draft or Submitted
-                        is_duplicate = True
-                        break
+                if not sq_item.material_request_item or not sq_item.material_request:
+                    continue
 
-                if is_duplicate:
-                    duplicate_items.append(f"{sq_item.item_code} - {existing_po_items[0].parent}")
-                    continue  # Skip this item
-                
-                # Get schedule date from RFQ
+                # Step 1: Get MR Item record
+                mr_data = frappe.db.get_value(
+                    "Material Request Item",
+                    {"parent": sq_item.material_request, "item_code": item_code},
+                    ["name", "qty", "ordered_qty"],
+                    as_dict=True
+                )
+
+                if not mr_data:
+                    skipped_items.append(f"{item_code} not found in Material Request {sq_item.material_request}")
+                    continue
+
+                mri_name = mr_data.name
+                mr_qty = float(mr_data.qty or 0)
+                current_ordered_qty = float(mr_data.ordered_qty or 0)
+
+                # Step 2: Get existing PO qty from other Purchase Orders (docstatus 0, 1)
+                existing_po_qty = frappe.db.sql("""
+                    SELECT SUM(qty) AS total_qty
+                    FROM `tabPurchase Order Item`
+                    WHERE material_request_item = %s
+                    AND item_code = %s
+                    AND parent IN (
+                        SELECT name FROM `tabPurchase Order` WHERE docstatus IN (0, 1)
+                    )
+                """, (mri_name, item_code), as_dict=True)[0].total_qty or 0
+
+                total_qty = float(existing_po_qty) + qty
+
+                # Step 3: Validate total_qty <= Material Request qty
+                if total_qty > mr_qty:
+                    skipped_items.append(f"{item_code} exceeds MR quantity in MR {sq_item.material_request}")
+                    continue
+
+                # Step 4: Get schedule date from RFQ
                 schedule_date = frappe.get_value("Request for Quotation", sq_item.request_for_quotation, "schedule_date")
-                
-                # Append item to PO
+
+                # Step 5: Append to PO
                 po.append("items", {
                     "item_code": sq_item.item_code,
                     "item_name": sq_item.item_name,
-                    "qty": qty,  # Use selected qty from the checked row
+                    "qty": qty,
                     "uom": sq_item.uom,
                     "rate": sq_item.rate,
                     "material_request": sq_item.material_request,
                     "material_request_item": sq_item.material_request_item,
                     "supplier_quotation": supplier_quotation,
+                    "supplier_quotation_item": sq_item.name,
                     "schedule_date": schedule_date,
                 })
-                
-                mri_to_update.append(sq_item.material_request_item)
 
-        # If at least one item is added, save the PO
+                mri_to_update.append(mri_name)
+
+        # Save PO if any items were added
         if po.items:
             po.insert(ignore_permissions=True)
-            po.save()
-            # po.submit()
             po_names.append(po.name)
-            
+
             for mri in mri_to_update:
                 frappe.db.set_value("Material Request Item", mri, {
                     "custom_po_created": 1
                 })
 
-    if duplicate_items:
-        frappe.throw(f"The following items already have Purchase Orders: <br><b>{'<br>'.join(duplicate_items)}</b>")
+    # Show skipped items if any
+    if skipped_items:
+        frappe.throw(f"The following items could not be added to Purchase Orders:<br><b>{'<br>'.join(skipped_items)}</b>")
 
     return po_names
 
