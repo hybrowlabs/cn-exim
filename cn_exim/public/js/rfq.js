@@ -91,5 +91,43 @@ frappe.ui.form.on("Request for Quotation", {
                 });
             }
         });
+    },
+    after_save: function (frm) {
+
+        if (frm._removed_items && frm._removed_items.length > 0) {
+
+            frappe.call({
+                method: "cn_exim.config.py.rfq.update_material_request_qty",
+                args: {
+                    removed_items: frm._removed_items
+                },
+                callback: function (response) {
+                }
+            });
+
+            frm._removed_items = [];
+        }
+        frappe.call({
+            method: "cn_exim.config.py.rfq.update_material_request_item",
+            args: {
+                doc: frm.doc
+            }
+        })
     }
 })
+
+frappe.ui.form.on("Request for Quotation Item", {
+    before_items_remove: function (frm, cdt, cdn) {
+        var row = locals[cdt][cdn];
+
+        if (!frm._removed_items) {
+            frm._removed_items = [];
+        }
+        if (row.material_request_item) {
+            frm._removed_items.push({
+                material_request_item: row.material_request_item,
+                qty: row.qty
+            });
+        }
+    }
+});

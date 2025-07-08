@@ -44,7 +44,7 @@ def get_data(filters):
             mr.name AS material_request,
             mr_item.item_code AS item_code,
             mr_item.uom AS uom,
-            mr_item.qty AS quantity
+            (mr_item.qty - (IFNULL(mr_item.ordered_qty, 0) + IFNULL(mr_item.custom_rfq_qty))) AS quantity
         FROM
             `tabMaterial Request Item` AS mr_item
         INNER JOIN
@@ -116,6 +116,8 @@ def create_rfqs_from_simple_data(items):
 
             if supplier_name not in supplier_items_map:
                 supplier_items_map[supplier_name] = []
+                
+                
 
             supplier_items_map[supplier_name].append({
                 "item_code": item_code,
@@ -162,6 +164,14 @@ def create_rfqs_from_simple_data(items):
         rfq = frappe.new_doc("Request for Quotation")
         rfq.append("suppliers", {"supplier": supplier})
         rfq.message_for_supplier = "Kindly quote your best rates for the following items."
+        rfq.custom_type = "Material"
+        rfq.custom_validity_start_date = frappe.utils.nowdate()
+        rfq.custom_validity_end_date = frappe.utils.add_days(frappe.utils.nowdate(), 7)
+        rfq.custom_quotation_deadline = frappe.utils.add_days(frappe.utils.nowdate(), 7)
+        user = frappe.session.user
+        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+        if employee:
+            rfq.custom_requestor_name = employee
 
         for item in item_list:
             rfq.append("items", {
@@ -196,7 +206,7 @@ def create_pos_from_simple_data(items):
         mr_data =  frappe.db.get_value(
 			"Material Request Item",
 			{"parent": item.get("material_request"), "item_code": item.get("item_code")},
-			["name", "uom", "item_code", "item_name", "schedule_date", "description", "item_group", "brand", "stock_uom", "conversion_factor", "warehouse", "qty", "rate", "parent"],
+			["name", "uom", "item_code", "item_name", "schedule_date", "description", "item_group", "brand", "stock_uom", "conversion_factor", "warehouse", "qty", "rate", "parent", "ordered_qty"],
 			as_dict=True
 		) or {}
         

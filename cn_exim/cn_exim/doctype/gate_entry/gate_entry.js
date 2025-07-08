@@ -373,6 +373,7 @@ frappe.ui.form.on("Gate Entry", {
                         let received_qty = server_row['received_qty'] || 0;
                         let gate_entry_qty = server_row['custom_gate_entry_qty'] || 0;
                         let po_qty = server_row['qty'] || 0;
+                        let remaining_qty = po_qty - (received_qty + gate_entry_qty);
 
                         if (received_qty >= po_qty) {
                             reject("This Purchase Order is already received.");

@@ -159,6 +159,9 @@ doc_events = {
     "Purchase Order": {
         "on_trash": "cn_exim.cn_exim.doc_events.purchase_order.on_trash",
     },
+    "Request for Quotation": {
+        "on_trash": "cn_exim.cn_exim.doc_events.rfq_event.on_trash",
+    },
 }
 
 # Scheduled Tasks
