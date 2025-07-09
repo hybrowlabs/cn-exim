@@ -334,6 +334,17 @@ frappe.ui.form.on("Gate Entry", {
                         d.dialog.hide();
                     }
                 });
+                 const observer = new MutationObserver(() => {
+                const $btn = $('button:contains("Make Purchase Order")');
+                if ($btn.length) {
+                    $btn.hide();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
             }
         }, __('Get Items From'));
 
