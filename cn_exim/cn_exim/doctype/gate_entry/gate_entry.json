@@ -3,6 +3,7 @@
  "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2024-09-30 12:22:04.410771",
+ "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -68,6 +69,7 @@
   {
    "fieldname": "material_short_description",
    "fieldtype": "Small Text",
+   "hidden": 1,
    "label": "Material Short Description"
   },
   {
@@ -275,7 +277,8 @@
    "default": "0",
    "fieldname": "edit_posting_date_and_time",
    "fieldtype": "Check",
-   "label": " Edit Posting Date and Time"
+   "label": " Edit Posting Date and Time",
+   "permlevel": 9
   },
   {
    "default": "Now",
@@ -312,7 +315,7 @@
    "link_fieldname": "custom_gate_entry"
   }
  ],
- "modified": "2025-06-20 14:36:06.238940",
+ "modified": "2025-07-09 12:58:41.767432",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
@@ -335,5 +338,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

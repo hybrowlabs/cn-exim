@@ -29,7 +29,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Purchase Order",
-   "options": "Purchase Order"
+   "options": "Purchase Order",
+   "read_only": 1
   },
   {
    "fetch_from": "item.item_name",
@@ -37,7 +38,8 @@
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Item Name"
+   "label": "Item Name",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_orny",
@@ -48,7 +50,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Item",
-   "options": "Item"
+   "options": "Item",
+   "read_only": 1
   },
   {
    "fetch_from": "item.stock_uom",
@@ -57,12 +60,14 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Uom",
-   "options": "UOM"
+   "options": "UOM",
+   "read_only": 1
   },
   {
    "fieldname": "rate",
    "fieldtype": "Currency",
-   "label": "Rate"
+   "label": "Rate",
+   "read_only": 1
   },
   {
    "fieldname": "qty",
@@ -73,7 +78,8 @@
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
-   "label": "Amount"
+   "label": "Amount",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_rjqn",
@@ -82,7 +88,8 @@
   {
    "fieldname": "rate_inr",
    "fieldtype": "Currency",
-   "label": "Rate (INR)"
+   "label": "Rate (INR)",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_kjbr",
@@ -91,22 +98,26 @@
   {
    "fieldname": "amount_inr",
    "fieldtype": "Currency",
-   "label": "Amount (INR)"
+   "label": "Amount (INR)",
+   "read_only": 1
   },
   {
    "fieldname": "po_qty",
    "fieldtype": "Float",
-   "label": "PO Qty"
+   "label": "PO Qty",
+   "read_only": 1
   },
   {
    "fieldname": "po_pending_qty",
    "fieldtype": "Float",
-   "label": "PO Pending Qty"
+   "label": "PO Pending Qty",
+   "read_only": 1
   },
   {
    "fieldname": "grn_panding_qty",
    "fieldtype": "Float",
-   "label": "GRN Pending Qty"
+   "label": "GRN Pending Qty",
+   "read_only": 1
   },
   {
    "fetch_from": "purchase_order.project",
@@ -114,14 +125,15 @@
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
-   "options": "Project"
+   "options": "Project",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-03 17:06:18.668439",
+ "modified": "2025-07-09 12:26:53.190047",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry Details",
