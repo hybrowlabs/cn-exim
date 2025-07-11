@@ -124,6 +124,7 @@
    "fieldname": "gate_entry_no",
    "fieldtype": "Data",
    "label": "Gate Entry No (Manual)",
+   "read_only": 1,
    "unique": 1
   },
   {
@@ -315,7 +316,7 @@
    "link_fieldname": "custom_gate_entry"
   }
  ],
- "modified": "2025-07-09 12:58:41.767432",
+ "modified": "2025-07-10 16:20:08.265744",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
