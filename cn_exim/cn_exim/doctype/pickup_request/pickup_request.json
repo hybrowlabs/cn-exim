@@ -300,20 +300,18 @@
   },
   {
    "link_doctype": "Pre Alert",
-   "link_fieldname": "po_no",
-   "table_fieldname": "item_details"
+   "link_fieldname": "pickup_request"
   },
   {
    "link_doctype": "Pre-Alert Check List",
-   "link_fieldname": "po_no",
-   "table_fieldname": "item_details"
+   "link_fieldname": "pickup_request"
   },
   {
    "link_doctype": "BOE Entry",
    "link_fieldname": "pickup_request"
   }
  ],
- "modified": "2025-04-23 16:08:04.266712",
+ "modified": "2025-07-15 16:22:56.753810",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
@@ -334,6 +332,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

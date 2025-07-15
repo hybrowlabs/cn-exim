@@ -279,6 +279,7 @@ frappe.ui.form.on("Gate Entry", {
                                 status: ["not in", ["Closed", "On Hold"]],
                                 per_received: ["<", 99.99],
                                 company: frm.doc.company,
+                                custom_purchase_sub_type: "Import",
                             }
                         };
                     },
