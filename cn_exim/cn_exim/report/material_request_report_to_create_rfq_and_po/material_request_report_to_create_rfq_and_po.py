@@ -165,6 +165,8 @@ def create_rfqs_from_simple_data(items):
         rfq.append("suppliers", {"supplier": supplier})
         rfq.message_for_supplier = "Kindly quote your best rates for the following items."
         rfq.custom_type = "Material"
+        rfq.custom_plant = frappe.db.get_value("Material Request", material_request, "custom_plant")
+        rfq.schedule_date = frappe.db.get_value("Material Request", material_request, "schedule_date")
         rfq.custom_validity_start_date = frappe.utils.nowdate()
         rfq.custom_validity_end_date = frappe.utils.add_days(frappe.utils.nowdate(), 7)
         rfq.custom_quotation_deadline = frappe.utils.add_days(frappe.utils.nowdate(), 7)
@@ -188,6 +190,7 @@ def create_rfqs_from_simple_data(items):
                 "stock_uom": item["stock_uom"],
                 "conversion_factor": item["conversion_factor"],
                 "warehouse": item["warehouse"],
+                "custom_plant_code":rfq.custom_plant,
             })
 		
         rfq.insert()

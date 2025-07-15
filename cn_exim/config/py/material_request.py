@@ -74,6 +74,8 @@ def create_rfqs(doc):
         rfq = frappe.new_doc("Request for Quotation")
         rfq.schedule_date = doc.get("schedule_date")
         rfq.custom_requestor_name = doc.get("custom_requisitioner")
+        rfq.custom_type = doc.get("custom_purchase_types")
+        rfq.custom_plant = doc.get("custom_plant")
 
         rfq.append(
             "suppliers",
