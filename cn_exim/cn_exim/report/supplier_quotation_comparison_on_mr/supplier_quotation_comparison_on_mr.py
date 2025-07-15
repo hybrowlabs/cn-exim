@@ -355,7 +355,8 @@ def create_purchase_orders(items):
                     continue
 
                 # Step 4: Get schedule date from RFQ
-                schedule_date = frappe.get_value("Request for Quotation", sq_item.request_for_quotation, "schedule_date")
+                schedule_date = frappe.get_value("Material Request Item", sq_item.material_request_item, "schedule_date")
+                custom_purchase_sub_type = frappe.get_value("Material Request", sq_item.material_request, "custom_purchase_sub_type")
 
                 # Step 5: Append to PO
                 po.append("items", {
@@ -369,6 +370,7 @@ def create_purchase_orders(items):
                     "supplier_quotation": supplier_quotation,
                     "supplier_quotation_item": sq_item.name,
                     "schedule_date": schedule_date,
+                    "custom_purchase_sub_type": custom_purchase_sub_type,
                 })
 
                 mri_to_update.append(mri_name)

@@ -24,7 +24,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 	],
 
 	onload: function (report) {
-		report.page.add_inner_button(__('Request for Quotation'), function () {
+		report.page.add_inner_button(__('Create RFQ'), function () {
 			frappe.confirm('Are you sure you want to proceed to create RFQ?',
 				function () {
 					// When button is clicked, collect selected checkboxes
@@ -65,7 +65,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 				}
 			);
 		});
-		report.page.add_inner_button(__('Purchase Order'), function () {
+		report.page.add_inner_button(__('Create Purchase Order'), function () {
 			frappe.confirm('Are you sure you want to proceed to create Purchase Order?',
 				function () {
 					// When button is clicked, collect selected checkboxes
