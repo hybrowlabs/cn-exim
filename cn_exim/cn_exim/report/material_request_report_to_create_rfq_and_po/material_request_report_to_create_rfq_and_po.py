@@ -37,6 +37,11 @@ def get_data(filters):
         conditions.append("mr_item.item_code IN %(item_code)s")
         values["item_code"] = mr_list
 
+    if filters.get("transaction_date"):
+        conditions.append("mr.transaction_date = %(transaction_date)s")
+        values["transaction_date"] = filters.get("transaction_date")
+
+
     condition_str = " AND " + " AND ".join(conditions) if conditions else ""
 
     query = f"""
@@ -53,6 +58,7 @@ def get_data(filters):
             mr.docstatus = 1 AND
             mr_item.custom_rfq_created = 0
             {condition_str}
+        ORDER BY mr.transaction_date DESC
     """
 
     data = frappe.db.sql(query, values, as_dict=True)

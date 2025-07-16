@@ -20,7 +20,13 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			"get_data": function (txt) {
 				return frappe.db.get_link_options('Item', txt, { docstatus: 1 });
 			}
+		},
+		{
+			"fieldname": "transaction_date",
+			"label": "Transaction Date",
+			"fieldtype": "Date"
 		}
+
 	],
 
 	onload: function (report) {
