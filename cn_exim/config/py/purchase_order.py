@@ -45,13 +45,21 @@ def get_extra_charge_template(name):
 
 
 @frappe.whitelist()
-def update_total_amount(purchase_order_name, total_amount, total_taxes_and_charges, rounding_adjustment):
+def update_total_amount(purchase_order_name, total_amount, total_taxes_and_charges, rounding_adjustment, doc):
     frappe.db.set_value("Purchase Order", purchase_order_name, "total", total_amount)
     frappe.db.set_value("Purchase Order", purchase_order_name, "net_total", total_amount)
     grand_total = float(total_amount) + float(total_taxes_and_charges)
     frappe.db.set_value("Purchase Order", purchase_order_name, "grand_total", grand_total)
     rounded_total = float(grand_total) + float(rounding_adjustment)
     frappe.db.set_value("Purchase Order", purchase_order_name, "rounded_total", rounded_total)
+    
+    # doc = frappe.json.loads(doc)
+    
+    # for item in doc.get("items"):
+    #     amount = (float(item.get("qty")) * float(item.get("rate"))) + float(item.get("custom_freight")) + float(item.get("custom_packaging")) + float(item.get("custom_development")) + float(item.get("custom_miscellaneous"))
+    #     frappe.db.set_value(item.get("doctype"), item.get("name"), "net_amount", amount)
+    #     frappe.db.set_value(item.get("doctype"), item.get("name"), "base_net_amount", amount)
+    #     frappe.db.set_value(item.get("doctype"), item.get("name"), "taxable_value", amount)
     
     
     
@@ -63,3 +71,20 @@ def get_mr_item_fields(mr_item_name):
         ["custom_materil_po_text", "custom_supplier_suggestion", "custom_other_remarks", "custom_item_note"],
         as_dict=True
     )
+
+
+@frappe.whitelist()
+def get_item_rate_from_item_group_to(item_group, row_name):
+    rate, valid_upto = None, None
+    if item_group:
+        rate, valid_upto = frappe.db.get_value(
+            "Item Group Price",
+            {"item_group": item_group},
+            ["rate", "valid_upto"]
+        ) or (None, None)
+
+    return {
+        "item_group": item_group,
+        "rate": rate,
+        "valid_upto": valid_upto
+    }

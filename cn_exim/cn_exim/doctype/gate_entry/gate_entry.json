@@ -224,8 +224,7 @@
   },
   {
    "fieldname": "section_break_mpbl",
-   "fieldtype": "Section Break",
-   "hidden": 1
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "purchase_order_in_gate_entry",
@@ -284,8 +283,7 @@
    "link_fieldname": "custom_gate_entry_no"
   }
  ],
-
- "modified": "2025-05-19 11:39:50.392554",
+ "modified": "2025-07-16 14:57:45.128141",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Gate Entry",
@@ -305,7 +303,6 @@
    "write": 1
   }
  ],
- "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

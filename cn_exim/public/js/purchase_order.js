@@ -186,6 +186,7 @@ frappe.ui.form.on("Purchase Order", {
                 });
             })
         }
+        set_readonly_chid_table_field_base_on_condition(frm)
     },
     supplier: function (frm) {
         frappe.call({
@@ -207,20 +208,14 @@ frappe.ui.form.on("Purchase Order", {
                     // set_filter_item_supplier_group_wise(type, frm)
                     // }, 500);
                 }
-
                 //fetching delivery terms template from supplier master
 
                 if (response.message['custom_default_delivery_terms_template']) {
                     frm.set_value("custom_delivery_term", response.message['custom_default_delivery_terms_template'])
                     frm.set_value("custom_delivery_terms", response.message['custom_delivery_terms'])
                 }
-
-
             }
         })
-
-
-
     },
     custom_freight: function (frm) {
         freight_amt_calculation(frm);
@@ -235,77 +230,12 @@ frappe.ui.form.on("Purchase Order", {
         miscellaneous_amt_calculation(frm);
     },
     after_save: function (frm) {
-        let freight_amount = isNaN(frm.doc.custom_freight) ? 0 : frm.doc.custom_freight
-        let packaging_amount = isNaN(frm.doc.custom_packaging) ? 0 : frm.doc.custom_packaging
-        let development_amount = isNaN(frm.doc.custom_development) ? 0 : frm.doc.custom_development
-        let miscellaneous_amount = isNaN(frm.doc.custom_miscellaneous) ? 0 : frm.doc.custom_miscellaneous
-        let amount = 0
-        frm.doc.items.forEach(row => {
-            if (row.amount) {
-                amount += isNaN(row.amount) ? 0 : row.amount
-            }
-        })
-        let total = freight_amount + packaging_amount + development_amount + miscellaneous_amount + amount
-        frappe.call({
-            method: "cn_exim.config.py.purchase_order.update_total_amount",
-            args: {
-                purchase_order_name: frm.doc.name,
-                total_amount: total,
-                total_taxes_and_charges: frm.doc.total_taxes_and_charges,
-                rounding_adjustment: frm.doc.rounding_adjustment,
-            },
-            callback: function (response) {
-                if (!response.exc) {
-                    frm.refresh_field("total");
-                    frm.refresh_field("net_total")
-                }
-            }
-        })
+        if (frm.doc.custom_purchase_sub_type == "Domestic") {
+            total_amount_calculate(frm)
+        }
     },
     onload: function (frm) {
-        frm.doc.items.forEach(item => {
-            frappe.call({
-                method: "frappe.client.get_value",
-                args: {
-                    doctype: "Item",
-                    filters: {
-                        name: item.item_code
-                    },
-                    fieldname: "item_group"
-                },
-                callback: function (response) {
-                    let item_group = response.message.item_group;
-                    if (item_group == "Raw Material") {
-                        frm.fields_dict['items'].grid.grid_rows_by_docname[item.name].toggle_editable('rate', false)
-                    }
-                }
-            })
-            if (item.material_request_item) {
-                // Check if all 4 fields are empty or undefined before making the call
-                if (
-                    !item.custom_materil_po_text &&
-                    !item.custom_supplier_suggestion &&
-                    !item.custom_item_note &&
-                    !item.custom_other_remarks
-                ) {
-                    frappe.call({
-                        method: "cn_exim.config.py.purchase_order.get_mr_item_fields",
-                        args: {
-                            mr_item_name: item.material_request_item
-                        },
-                        callback: function (response) {
-                            if (response.message) {
-                                let d = response.message;
-                                frappe.model.set_value(item.doctype, item.name, "custom_materil_po_text", d.custom_materil_po_text || "");
-                                frappe.model.set_value(item.doctype, item.name, "custom_supplier_suggestion", d.custom_supplier_suggestion || "");
-                                frappe.model.set_value(item.doctype, item.name, "custom_item_note", d.custom_item_note || "");
-                                frappe.model.set_value(item.doctype, item.name, "custom_other_remarks", d.custom_other_remarks || "");
-                            }
-                        }
-                    });
-                }
-            }
-        })
+        set_readonly_chid_table_field_base_on_condition(frm)
     },
 })
 
@@ -313,6 +243,7 @@ frappe.ui.form.on("Purchase Order", {
 frappe.ui.form.on('Purchase Order Item', {
     item_code: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn];
+
         // Fetch item group to determine if it is a material or service
         frappe.call({
             method: "frappe.client.get_value",
@@ -324,12 +255,30 @@ frappe.ui.form.on('Purchase Order Item', {
             callback: function (response) {
                 if (response.message) {
                     let item_group = response.message.item_group;
-                    console.log(item_group)
+
+                    // Toggle editable based on item group
                     if (item_group === "Raw Material") {
                         frm.fields_dict['items'].grid.grid_rows_by_docname[row.name].toggle_editable('rate', false);
                     } else {
-                        frm.fields_dict['items'].grid.grid_rows_by_docname[row.name].toggle_editable('rate', true);
+                        frm.fields_dict["items"].grid.grid_rows_by_docname[row.name].toggle_editable("rate", true);
                     }
+
+                    // Now fetch the rate based on item_group
+                    frappe.call({
+                        method: "cn_exim.config.py.purchase_order.get_item_rate_from_item_group_to",
+                        args: {
+                            item_group: item_group,
+                            row_name: row.name
+                        },
+                        callback: function (value) {
+                            if (value.message) {
+                                setTimeout(() => {
+                                    frappe.model.set_value(row.doctype, row.name, "rate", value.message['rate']);
+                                    frm.refresh_field("items");
+                                }, 100);
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -419,8 +368,6 @@ frappe.ui.form.on('Purchase Order Item', {
                 }
             }
         });
-
-        // Show dialog
         d.show();
     },
     custom_item_charges_templte: function (frm, cdt, cdn) {
@@ -533,7 +480,10 @@ function freight_amt_calculation(frm) {
 
     frm.doc.items.forEach(row => {
         let freight_per_item = (row.amount / total) * freight_amount;
+        let amount = (row.qty * row.rate) + freight_amount
         frappe.model.set_value(row.doctype, row.name, "custom_freight", freight_per_item)
+        frappe.model.set_value(row.doctype, row.name, "amount", amount)
+        frappe.model.set_value(row.doctype, row.name, "base_amount", amount)
     })
     frm.refresh_field("items");
 }
@@ -583,4 +533,83 @@ function miscellaneous_amt_calculation(frm) {
         frappe.model.set_value(row.doctype, row.name, "custom_miscellaneous", miscellaneous_per_item)
     })
     frm.refresh_field("items");
+}
+
+
+function set_readonly_chid_table_field_base_on_condition(frm) {
+    frm.doc.items.forEach(item => {
+        frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+                doctype: "Item",
+                filters: {
+                    name: item.item_code
+                },
+                fieldname: "item_group"
+            },
+            callback: function (response) {
+                let item_group = response.message.item_group;
+                if (item_group == "Raw Material") {
+                    frm.fields_dict['items'].grid.grid_rows_by_docname[item.name].toggle_editable('rate', false)
+                }
+            }
+        })
+        if (item.material_request_item) {
+            // Check if all 4 fields are empty or undefined before making the call
+            if (
+                !item.custom_materil_po_text &&
+                !item.custom_supplier_suggestion &&
+                !item.custom_item_note &&
+                !item.custom_other_remarks
+            ) {
+                frappe.call({
+                    method: "cn_exim.config.py.purchase_order.get_mr_item_fields",
+                    args: {
+                        mr_item_name: item.material_request_item
+                    },
+                    callback: function (response) {
+                        if (response.message) {
+                            let d = response.message;
+                            frappe.model.set_value(item.doctype, item.name, "custom_materil_po_text", d.custom_materil_po_text || "");
+                            frappe.model.set_value(item.doctype, item.name, "custom_supplier_suggestion", d.custom_supplier_suggestion || "");
+                            frappe.model.set_value(item.doctype, item.name, "custom_item_note", d.custom_item_note || "");
+                            frappe.model.set_value(item.doctype, item.name, "custom_other_remarks", d.custom_other_remarks || "");
+                        }
+                    }
+                });
+            }
+        }
+    })
+}
+
+function total_amount_calculate(frm) {
+    if (frm.doc.custom_purchase_sub_type == "Domestic") {
+        let freight_amount = isNaN(frm.doc.custom_freight) ? 0 : frm.doc.custom_freight
+        let packaging_amount = isNaN(frm.doc.custom_packaging) ? 0 : frm.doc.custom_packaging
+        let development_amount = isNaN(frm.doc.custom_development) ? 0 : frm.doc.custom_development
+        let miscellaneous_amount = isNaN(frm.doc.custom_miscellaneous) ? 0 : frm.doc.custom_miscellaneous
+        let amount = 0
+        frm.doc.items.forEach(row => {
+            if (row.amount) {
+                amount += isNaN(row.amount) ? 0 : row.amount
+            }
+        })
+        let total = freight_amount + packaging_amount + development_amount + miscellaneous_amount + amount
+        frappe.call({
+            method: "cn_exim.config.py.purchase_order.update_total_amount",
+            args: {
+                purchase_order_name: frm.doc.name,
+                total_amount: total,
+                total_taxes_and_charges: frm.doc.total_taxes_and_charges,
+                rounding_adjustment: frm.doc.rounding_adjustment,
+                doc: frm.doc,
+            },
+            callback: function (response) {
+                if (!response.exc) {
+                    frm.refresh_field("total");
+                    frm.refresh_field("net_total")
+                }
+            }
+        })
+    }
 }
