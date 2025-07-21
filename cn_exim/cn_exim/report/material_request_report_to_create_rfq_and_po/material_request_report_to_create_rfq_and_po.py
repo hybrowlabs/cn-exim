@@ -56,6 +56,7 @@ def get_data(filters):
             `tabMaterial Request` AS mr ON mr.name = mr_item.parent
         WHERE
             mr.docstatus = 1 AND
+            mr.material_request_type != 'Material Transfer' AND
             mr_item.custom_rfq_created = 0
             {condition_str}
         ORDER BY mr.transaction_date DESC
@@ -115,6 +116,12 @@ def create_rfqs_from_simple_data(items):
                 as_dict=True
             ) or {}
 
+        if not suppliers:
+            if "missing_suppliers" not in frappe.local.flags:
+                frappe.local.flags.missing_suppliers = []
+            frappe.local.flags.missing_suppliers.append(f"{item_code} in {material_request}")
+            continue
+
         for supplier in suppliers:
             supplier_name = supplier.get("supplier")
             if not supplier_name:
@@ -122,8 +129,6 @@ def create_rfqs_from_simple_data(items):
 
             if supplier_name not in supplier_items_map:
                 supplier_items_map[supplier_name] = []
-                
-                
 
             supplier_items_map[supplier_name].append({
                 "item_code": item_code,
@@ -140,6 +145,7 @@ def create_rfqs_from_simple_data(items):
                 "conversion_factor": item.get("conversion_factor") or mri_data.get("conversion_factor"),
                 "warehouse": item.get("warehouse") or mri_data.get("warehouse"),
             })
+
 
     rfq_names = []
 
@@ -201,6 +207,9 @@ def create_rfqs_from_simple_data(items):
 		
         rfq.insert()
         rfq_names.append(rfq.name)
+    if hasattr(frappe.local.flags, "missing_suppliers") and frappe.local.flags.missing_suppliers:
+        msg = "<br>".join(frappe.local.flags.missing_suppliers)
+        frappe.msgprint(f"RFQ skipped for the following due to missing supplier:<br><br>{msg}")
 
     return {"rfqs": rfq_names}
 
