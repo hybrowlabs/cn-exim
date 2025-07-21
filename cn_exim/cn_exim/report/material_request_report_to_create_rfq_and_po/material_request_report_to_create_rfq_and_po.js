@@ -18,7 +18,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			"fieldtype": "MultiSelectList",
 			"options": "Item",
 			"get_data": function (txt) {
-				return frappe.db.get_link_options('Item', txt, { docstatus: 1 });
+				return frappe.db.get_link_options('Item', txt, { docstatus: 0 });
 			}
 		},
 		{
@@ -30,6 +30,25 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 	],
 
 	onload: function (report) {
+		let select_all_btn = report.page.add_inner_button(__('Select All'), function () {
+		const checkboxes = $('.create-po-checkbox');
+		let allChecked = true;
+
+		checkboxes.each(function () {
+			if (!$(this).prop('checked')) {
+				allChecked = false;
+			}
+		});
+
+		if (allChecked) {
+			checkboxes.prop('checked', false);
+			select_all_btn.html("Select All");
+		} else {
+			checkboxes.prop('checked', true);
+			select_all_btn.html("Unselect All");
+		}
+	});
+
 		report.page.add_inner_button(__('Create RFQ'), function () {
 			frappe.confirm('Are you sure you want to proceed to create RFQ?',
 				function () {
@@ -132,6 +151,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			);
 		})
 	},
+	
 
 	formatter: function (value, row, column, data, default_formatter) {
 		if (column.fieldname === "create_po") {
