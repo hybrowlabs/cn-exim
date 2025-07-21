@@ -1,10 +1,8 @@
-# Copyright (c) 2024, Prathamesh Jadhav and contributors
-# For license information, please see license.txt
 import os
 import datetime
 import pytz
 import frappe
-from india_compliance.gst_india.api_classes.e_waybill import EWaybillAPI
+from india_compliance.gst_india.api_classes.nic.e_waybill import EWaybillAPI
 from frappe.model.document import Document
 
 
