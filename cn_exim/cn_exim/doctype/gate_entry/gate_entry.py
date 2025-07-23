@@ -10,7 +10,16 @@ from frappe.utils import flt
 
 
 class GateEntry(Document):
-    pass
+    def on_submit(self):
+        temp_wh = frappe.db.get_value("Company", self.company, "custom_default_temporary_warehouse")
+
+        if not temp_wh:
+            frappe.throw("Temporary Warehouse not found for this Company!")
+
+        create_stock_entry_for_stock_received(self.as_dict(), temp_wh)
+
+        for row in self.gate_entry_details:
+            update_po_qty(row.purchase_order, row.item, row.qty)
 
 @frappe.whitelist()
 def get_purchase_order_details(po_name):
@@ -28,31 +37,34 @@ def get_po_item_name(po_name, item_code):
 
 @frappe.whitelist()
 def create_stock_entry_for_stock_received(doc, warehouse):
-    doc = frappe.json.loads(doc)
-    
+    if isinstance(doc, str):
+        doc = frappe.parse_json(doc)
+    elif not isinstance(doc, dict) and hasattr(doc, "as_dict"):
+        doc = doc.as_dict()
+
     stock_entry = frappe.get_doc({
         "doctype": "Stock Entry",
         "stock_entry_type": "Material Receipt",
-        "custom_gate_entry": doc['name'],
-        "items":[]
+        "custom_gate_entry": doc["name"],
+        "items": []
     })
-    
+
     shelf = frappe.db.get_value("Warehouse", warehouse, "custom_shelf")
-    
-    for item in doc["gate_entry_details"]:
-        account = frappe.db.get_value("Item Default", {"parent": item['item']}, "custom_difference_account")
-        
-        stock_entry.append("items",{
-            "item_code" : item['item'],
-            "item_name" : item['item_name'],
-            "qty": item['qty'],
-            "uom": item['uom'],
+
+    for item in doc.get("gate_entry_details", []):
+        account = frappe.db.get_value("Item Default", {"parent": item["item"]}, "custom_difference_account")
+
+        stock_entry.append("items", {
+            "item_code": item["item"],
+            "item_name": item["item_name"],
+            "qty": item["qty"],
+            "uom": item["uom"],
             "t_warehouse": warehouse,
             "expense_account": account,
             "allow_zero_valuation_rate": 1,
             "to_shelf": shelf
         })
-    
+
     stock_entry.insert()
     stock_entry.submit()
     

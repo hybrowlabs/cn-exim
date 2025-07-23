@@ -430,48 +430,6 @@ frappe.ui.form.on("Gate Entry", {
         });
     },
 
-    on_submit: function (frm) {
-        frappe.call({
-            method: "frappe.client.get_value",
-            args: {
-                doctype: "Company",
-                filters: {
-                    name: frm.doc.company
-                },
-                fieldname: "custom_default_temporary_warehouse"
-            },
-            callback: function (r) {
-                if (r.message && r.message.custom_default_temporary_warehouse) {
-                    frappe.call({
-                        method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.create_stock_entry_for_stock_received",
-                        args: {
-                            doc: frm.doc,
-                            warehouse: r.message.custom_default_temporary_warehouse
-                        },
-                        callback: function (response) {
-                        }
-                    });
-                } else {
-                    frappe.msgprint("Temporary Warehouse not found for this Company!");
-                }
-            }
-        });
-        frm.doc.gate_entry_details.forEach(function (row) {
-            frappe.call({
-                method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.update_po_qty",
-                args: {
-                    po_name: row.purchase_order,
-                    item_code: row.item,
-                    qty: row.qty
-                },
-                callback: function (r) {
-                    if (r.message) {
-                        // Handle success
-                    }
-                }
-            })
-        })
-    },
     after_cancel: function (frm) {
         frm.doc.gate_entry_details.forEach(row => {
             frappe.call({

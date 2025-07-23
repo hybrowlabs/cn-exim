@@ -1,27 +1,52 @@
 # Copyright (c) 2025, Prathamesh Jadhav and contributors
 # For license information, please see license.txt
-
+#DOnt show items where the rfq is created and in draft or submitted
 import frappe
-
+from frappe import _
+from cn_exim.utils import get_last_purchase_details_with_supplier
 
 def execute(filters=None):
-	columns, data = get_columns(), get_data(filters)
+	columns, data = get_columns(filters), get_data(filters)
 	return columns, data
 
 
-def get_columns():
-        return [
+def get_columns(filters=None):
+	if filters and filters.get("docstatus") == "0":
+		return [
 			{"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
-			{"label": "Quantity", "fieldname": "quantity", "fieldtype": "Float", "width": 100},
+			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
+			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 120},
+			{"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
+			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
+	else:
+		return [
+			{"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
+			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
+			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
+			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
+			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
+			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 120},
+			{"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
+			{"label": "RFQ Qty", "fieldname": "total_rfq_qty", "fieldtype": "Float", "width": 100},
+			{"label": "Qty Difference", "fieldname": "quantity", "fieldtype": "Float", "width": 120},
+			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
+		]
+
+
         
         
 def get_data(filters):
     conditions = []
     values = {}
+    docstatus = filters.get("docstatus")
+    if docstatus in ["0", "1"]:  
+        conditions.append("mr.docstatus = %(docstatus)s")
+        values["docstatus"] = int(docstatus)
+
 
     if filters.get("material_request"):
         mr_list = frappe.parse_json(filters.get("material_request"))
@@ -29,42 +54,79 @@ def get_data(filters):
             mr_list = [mr.strip() for mr in mr_list.split(",")]
         conditions.append("mr.name IN %(material_request)s")
         values["material_request"] = mr_list
-        
+
     if filters.get("item_code"):
-        mr_list = frappe.parse_json(filters.get("item_code"))
-        if isinstance(mr_list, str):
-            mr_list = [mr.strip() for mr in mr_list.split(",")]
+        item_list = frappe.parse_json(filters.get("item_code"))
+        if isinstance(item_list, str):
+            item_list = [mr.strip() for mr in item_list.split(",")]
         conditions.append("mr_item.item_code IN %(item_code)s")
-        values["item_code"] = mr_list
+        values["item_code"] = item_list
 
     if filters.get("transaction_date"):
         conditions.append("mr.transaction_date = %(transaction_date)s")
         values["transaction_date"] = filters.get("transaction_date")
 
-
     condition_str = " AND " + " AND ".join(conditions) if conditions else ""
+    
+    if docstatus == "1":
+        query = f"""
+            SELECT
+                mr_item.name AS mr_item_name,
+                mr.name AS material_request,
+                mr_item.item_code AS item_code,
+                mr_item.uom AS uom,
+                mr_item.qty AS mr_qty,
+                IFNULL(rfq_item.total_rfq_qty, 0) AS total_rfq_qty,
+                (IFNULL(rfq_item.total_rfq_qty, 0) - mr_item.qty) AS quantity
+            FROM
+                `tabMaterial Request Item` AS mr_item
+            INNER JOIN
+                `tabMaterial Request` AS mr ON mr.name = mr_item.parent
+            LEFT JOIN (
+                SELECT
+                    material_request_item,
+                    SUM(qty) AS total_rfq_qty
+                FROM (
+                    SELECT DISTINCT parent, material_request_item, qty
+                    FROM `tabRequest for Quotation Item`
+                ) AS unique_rfq
+                GROUP BY material_request_item
+            ) AS rfq_item ON rfq_item.material_request_item = mr_item.name
+            WHERE
+                mr.docstatus = 1
+                AND mr.material_request_type != 'Material Transfer'
+                {condition_str}
+            ORDER BY mr.transaction_date DESC
+        """
+    else:
+         query = f"""
+            SELECT
+                mr_item.name AS mr_item_name,
+                mr.name AS material_request,
+                mr_item.item_code AS item_code,
+                mr_item.uom AS uom,
+                mr_item.qty AS mr_qty
+            FROM
+                `tabMaterial Request Item` AS mr_item
+            INNER JOIN
+                `tabMaterial Request` AS mr ON mr.name = mr_item.parent
+            WHERE
+                mr.material_request_type != 'Material Transfer'
+                {condition_str}
+            ORDER BY mr.transaction_date DESC
+        """
 
-    query = f"""
-        SELECT
-            mr.name AS material_request,
-            mr_item.item_code AS item_code,
-            mr_item.uom AS uom,
-            (mr_item.qty - (IFNULL(mr_item.ordered_qty, 0) + IFNULL(mr_item.custom_rfq_qty))) AS quantity
-        FROM
-            `tabMaterial Request Item` AS mr_item
-        INNER JOIN
-            `tabMaterial Request` AS mr ON mr.name = mr_item.parent
-        WHERE
-            mr.docstatus = 1 AND
-            mr.material_request_type != 'Material Transfer' AND
-            mr_item.custom_rfq_created = 0
-            {condition_str}
-        ORDER BY mr.transaction_date DESC
-    """
+    raw_data = frappe.db.sql(query, values, as_dict=True)
 
-    data = frappe.db.sql(query, values, as_dict=True)
-    return data
+    for row in raw_data:
+        row["item_info"] = f"<button class='btn btn-sm btn-info item-info-btn' data-item='{row.get('item_code')}'>i</button>"
+        last_info = get_last_purchase_details_with_supplier(row.get("item_code"))
+        row["last_supplier"] = last_info.get("supplier") or ""
+        row["last_purchase_rate"] = last_info.get("rate") or 0
+        
 
+
+    return raw_data
 
 
 
@@ -232,3 +294,23 @@ def create_pos_from_simple_data(items):
         mr_item_list.append(mr_data)
     company = frappe.get_value("Material Request", item.get("material_request"), "company")
     return mr_item_list, company
+
+@frappe.whitelist()
+def get_supplier_item_details(item_code):
+	if not item_code:
+		return {"message": "Item Code is required"}
+
+	item = frappe.get_doc("Item", item_code)
+	supplier_items = item.get("supplier_items")
+
+	if not supplier_items:
+		return {"message": "Please update Item Master. No supplier items found."}
+
+	data = []
+	for row in supplier_items:
+		data.append({
+			"supplier": row.supplier,
+			"custom_minimum_order_qty": row.custom_minimum_order_qty or 0
+		})
+
+	return {"data": data}
