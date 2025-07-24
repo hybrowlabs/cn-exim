@@ -356,7 +356,7 @@ def create_purchase_orders(items):
 
                 # Step 4: Get schedule date from RFQ
                 schedule_date = frappe.get_value("Material Request Item", sq_item.material_request_item, "schedule_date")
-                custom_purchase_sub_type = frappe.get_value("Material Request", sq_item.material_request, "custom_purchase_sub_type")
+                custom_purchase_sub_type = frappe.get_value("Supplier", supplier, "custom_purchase_sub_type") or "Import"
 
                 # Step 5: Append to PO
                 po.append("items", {

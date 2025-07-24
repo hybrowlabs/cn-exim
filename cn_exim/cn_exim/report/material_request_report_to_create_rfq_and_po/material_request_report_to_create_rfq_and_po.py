@@ -16,6 +16,7 @@ def get_columns(filters=None):
 			{"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
+            {"label": "Item Description", "fieldname": "description", "fieldtype": "Small Text","width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
             {"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
 			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Data", "width": 150},
@@ -29,6 +30,7 @@ def get_columns(filters=None):
 			{"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
+            {"label": "Item Description", "fieldname": "description", "fieldtype": "Small Text","width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
             {"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
 			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Data", "width": 150},
@@ -145,9 +147,8 @@ def get_data(filters):
         row["lead_time"] = sii.get("custom_lead_time") or 0
         row["moq"] = sii.get("custom_minimum_order_qty") or 0
         row["mr_item_name"] = row.get("mr_item_name")
+        row["description"] = frappe.db.get_value("Item", row.get("item_code"), "description") or ""
         
-
-
     return raw_data
 
 
