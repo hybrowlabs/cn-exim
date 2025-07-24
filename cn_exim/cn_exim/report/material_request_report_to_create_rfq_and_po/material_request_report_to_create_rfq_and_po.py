@@ -17,9 +17,11 @@ def get_columns(filters=None):
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
+            {"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
 			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Data", "width": 150},
-			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 120},
-			{"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
+            {"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 150},
+            {"label": "Lead Time", "fieldname": "lead_time", "fieldtype": "Int", "width": 100},
+            {"label": "MOQ", "fieldname": "moq", "fieldtype": "Float", "width": 100},
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
 	else:
@@ -28,11 +30,13 @@ def get_columns(filters=None):
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
+            {"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
 			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Data", "width": 150},
-			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 120},
-			{"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
-			{"label": "RFQ Qty", "fieldname": "total_rfq_qty", "fieldtype": "Float", "width": 100},
-			{"label": "Qty Difference", "fieldname": "quantity", "fieldtype": "Float", "width": 120},
+			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 150},
+            {"label": "Lead Time", "fieldname": "lead_time", "fieldtype": "Int", "width": 100},
+            {"label": "MOQ", "fieldname": "moq", "fieldtype": "Float", "width": 100},
+			# {"label": "RFQ Qty", "fieldname": "total_rfq_qty", "fieldtype": "Float", "width": 100},
+			# {"label": "Qty Difference", "fieldname": "quantity", "fieldtype": "Float", "width": 120},
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
 
@@ -130,6 +134,17 @@ def get_data(filters):
         last_info = get_last_purchase_details_with_supplier(row.get("item_code"))
         row["last_supplier"] = frappe.db.get_value("Supplier",last_info.get("supplier"),"supplier_name") or ""
         row["last_purchase_rate"] = last_info.get("rate") or 0
+        last_supplier = last_info.get("supplier")
+        sii = frappe.db.get_value(
+            "Item Supplier",
+            {"parent": row.get("item_code"), "supplier": last_supplier},
+            ["custom_lead_time", "custom_minimum_order_qty"],
+            as_dict=True
+        ) or {}
+
+        row["lead_time"] = sii.get("custom_lead_time") or 0
+        row["moq"] = sii.get("custom_minimum_order_qty") or 0
+        row["mr_item_name"] = row.get("mr_item_name")
         
 
 
@@ -304,20 +319,112 @@ def create_pos_from_simple_data(items):
 
 @frappe.whitelist()
 def get_supplier_item_details(item_code):
-	if not item_code:
-		return {"message": "Item Code is required"}
+    if not item_code:
+        return {"message": "Item Code is required"}
 
-	item = frappe.get_doc("Item", item_code)
-	supplier_items = item.get("supplier_items")
+    item = frappe.get_doc("Item", item_code)
+    supplier_items = item.get("supplier_items")
 
-	if not supplier_items:
-		return {"message": "Please update Item Master. No supplier items found."}
+    if not supplier_items:
+        return {"message": "Please update Item Master. No supplier items found."}
 
-	data = []
-	for row in supplier_items:
-		data.append({
-			"supplier": row.supplier,
-			"custom_minimum_order_qty": row.custom_minimum_order_qty or 0
-		})
+    data = []
+    for row in supplier_items:
+        supplier_name = frappe.db.get_value("Supplier", row.supplier, "supplier_name") or ""
+        data.append({
+            "supplier": row.supplier,
+            "supplier_name": supplier_name,
+            "custom_minimum_order_qty": row.custom_minimum_order_qty or 0
+        })
 
-	return {"data": data}
+    return {"data": data}
+
+@frappe.whitelist()
+def update_material_request_qty(material_request, item_code, qty):
+    mri = frappe.db.get_value(
+        "Material Request Item",
+        {"parent": material_request, "item_code": item_code},
+        "name"
+    )
+    if not mri:
+        frappe.throw("Material Request Item not found.")
+ 
+    mri_doc = frappe.get_doc("Material Request Item", mri)
+    mri_doc.qty = qty
+    mri_doc.save()
+
+    mr_doc = frappe.get_doc("Material Request", material_request)
+    mr_doc.save() 
+
+    frappe.db.commit()
+    return True
+
+import frappe
+
+@frappe.whitelist()
+def submit_selected_material_requests(mr_selections):
+    """Receives a dict: { 'MR-XXXXX': [mr_item_name1, mr_item_name2, ...], ... }
+    Shows both selected and missing items (with code & name) if MR is incomplete."""
+    mr_selections = frappe.parse_json(mr_selections)
+    success_mrs = []
+    incomplete_mrs = []
+
+    for mr, selected_mr_item_names in mr_selections.items():
+        # All item rows for this MR
+        all_mr_items = frappe.get_all(
+            "Material Request Item",
+            filters={"parent": mr},
+            fields=["name", "item_code", "item_name"],
+        )
+        all_items_by_name = {i["name"]: i for i in all_mr_items}
+        all_names_set = set(all_items_by_name.keys())
+        selected_names_set = set(selected_mr_item_names)
+
+        # Selected/missing ke lists bana lo
+        selected_list = [all_items_by_name[n] for n in selected_names_set if n in all_items_by_name]
+        missing_list = [all_items_by_name[n] for n in all_names_set - selected_names_set]
+
+        if selected_names_set == all_names_set:
+            # All rows selected, submit
+            try:
+                mr_doc = frappe.get_doc("Material Request", mr)
+                if mr_doc.docstatus == 0:
+                    mr_doc.submit()
+                    success_mrs.append(mr)
+            except Exception as e:
+                incomplete_mrs.append(
+                    f"<b>{mr} submit failed:</b> {frappe.utils.cstr(e)}"
+                )
+        else:
+            # Selected Items Block
+            selected_html = (
+                "<b>Selected Items:</b>"
+                "<ul>"
+                + "".join(
+                    f"<li><b>{i['item_code'] or ''}</b>: {i['item_name'] or ''}</li>"
+                    for i in selected_list
+                )
+                + "</ul>"
+            )
+            # Missing Items Block
+            missing_html = (
+                "<b>Missing Items:</b>"
+                "<ul>"
+                + "".join(
+                    f"<li><b>{i['item_code'] or ''}</b>: {i['item_name'] or ''}</li>"
+                    for i in missing_list
+                )
+                + "</ul>"
+            )
+            incomplete_mrs.append(
+                f"""<b>Material Request 
+                <a href='/app/material-request/{mr}' target='_blank'>{mr}</a> not submitted.</b>
+                <br>Select all items before submission.<br><br>
+                {selected_html}
+                {missing_html}"""
+            )
+
+    return {
+        "success_mrs": success_mrs,
+        "incomplete_mrs": incomplete_mrs
+    }

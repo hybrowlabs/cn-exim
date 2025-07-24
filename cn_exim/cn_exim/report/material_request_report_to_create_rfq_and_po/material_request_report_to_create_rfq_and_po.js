@@ -57,6 +57,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 					if (r.message && r.message.data) {
 						let suppliers = r.message.data.map(row => `
 							<b>Supplier:</b> ${row.supplier}<br>
+							<b>Supplier Name:</b> ${row.supplier_name || ""}<br>
 							<b>Min Order Qty:</b> ${row.custom_minimum_order_qty}<hr>
 						`).join('');
 						frappe.msgprint({
@@ -74,6 +75,37 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 				}
 			});
 		});
+		$(document).on('click', '.editable-mr-qty', function (e) {
+        e.preventDefault();
+        const mr = $(this).data('mr');
+        const item_code = $(this).data('item');
+        frappe.prompt(
+            [
+                {
+                    fieldtype: 'Float',
+                    label: 'Update Qty',
+                    fieldname: 'update_qty',
+                    reqd: 1,
+                }
+            ],
+            function (values) {
+                frappe.call({
+                    method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.update_material_request_qty",
+                    args: {
+                        material_request: mr,
+                        item_code: item_code,
+                        qty: values.update_qty
+                    },
+                    callback: function (r) {
+                        frappe.msgprint("Qty updated!");
+                        frappe.query_report.refresh();
+                    }
+                });
+            },
+            'Write update qty',
+            'Update'
+        );
+    });
 	},
 
 	formatter: function (value, row, column, data, default_formatter) {
@@ -95,8 +127,12 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			value = `<input type="checkbox" class="create-po-checkbox" 
 				data-mr="${data.material_request}" 
 				data-item-code="${data.item_code}"
+				data-mr-item-name="${data.mr_item_name}" 
 				data-qty="${data.mr_qty}"
 				>`;
+		}
+		if (frappe.query_report.get_filter_value("docstatus") === "0" && column.fieldname === "mr_qty") {
+			return `<a href="#" class="editable-mr-qty" data-mr="${data.material_request}" data-item="${data.item_code}">${value}</a>`;
 		}
 		if (["item_code", "material_request"].includes(column.fieldname) && value) {
 			let route_map = {
@@ -203,31 +239,52 @@ function setup_buttons(report) {
 				});
 			});
 		});
-	} else if (docstatus === "0") {
-		report.page.add_inner_button(__('Submit Material Req'), function () {
-			let checked_items = [];
-			$('.create-po-checkbox:checked').each(function () {
-				checked_items.push($(this).data('mr'));
-			});
-			if (checked_items.length === 0) {
-				frappe.msgprint(__('Please select at least one Material Request.'));
-				return;
-			}
-			// Deduplicate list
-			let unique_mrs = [...new Set(checked_items)];
-			frappe.call({
-				method: "frappe.client.submit",
-				args: {
-					doc: {
-						doctype: "Material Request",
-						name: unique_mrs[0]
-					}
-				},
-				callback: function () {
-					frappe.msgprint("Material Request submitted successfully.");
-					frappe.query_report.refresh();
-				}
-			});
-		});
-	}
+	}else if (docstatus === "0") {
+        // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
+        report.page.add_inner_button(__('Submit Material Req'), function () {
+            let checked_items = [];
+            $('.create-po-checkbox:checked').each(function () {
+                checked_items.push({
+                    material_request: $(this).data('mr'),
+                    mr_item_name: $(this).data('mr-item-name')
+                });
+            });
+
+            if (checked_items.length === 0) {
+                frappe.msgprint(__('Please select at least one Material Request.'));
+                return;
+            }
+
+            let mr_map = {};
+            checked_items.forEach(function(row){
+                if (!mr_map[row.material_request]) mr_map[row.material_request] = [];
+                mr_map[row.material_request].push(row.mr_item_name);
+            });
+
+            // Debug: See what’s being passed
+            console.log("Passing material requests for submit:", mr_map);
+
+            frappe.call({
+                method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.submit_selected_material_requests",
+                args: { mr_selections: mr_map },
+                callback: function (r) {
+                    if (r.message && r.message.success_mrs && r.message.success_mrs.length) {
+                        frappe.msgprint({
+                            title: __("Material Requests Submitted"),
+                            message: "Submitted: " + r.message.success_mrs.join(", "),
+                            indicator: "green"
+                        });
+                    }
+                    if (r.message && r.message.incomplete_mrs && r.message.incomplete_mrs.length) {
+                        frappe.msgprint({
+                            title: __("Could Not Submit"),
+                            message: r.message.incomplete_mrs.join("<br>"),
+                            indicator: "red"
+                        });
+                    }
+                    frappe.query_report.refresh();
+                }
+            });
+        });
+    }
 }
