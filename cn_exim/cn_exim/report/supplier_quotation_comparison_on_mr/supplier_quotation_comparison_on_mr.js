@@ -76,7 +76,8 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 			"fieldname": "include_expired",
 			"label": "Include Expired",
 			"fieldtype": "Check",
-			"default": 0,
+			"default": 1,
+			"hidden": 1,
 		}
 	],
 
