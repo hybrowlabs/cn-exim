@@ -17,7 +17,7 @@ def get_columns(filters=None):
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
-			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
+			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Data", "width": 150},
 			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 120},
 			{"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
@@ -28,7 +28,7 @@ def get_columns(filters=None):
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
 			{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 100},
-			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
+			{"label": "Last Supplier", "fieldname": "last_supplier", "fieldtype": "Data", "width": 150},
 			{"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 120},
 			{"label": "MR Qty", "fieldname": "mr_qty", "fieldtype": "Float", "width": 100},
 			{"label": "RFQ Qty", "fieldname": "total_rfq_qty", "fieldtype": "Float", "width": 100},
@@ -95,6 +95,13 @@ def get_data(filters):
             WHERE
                 mr.docstatus = 1
                 AND mr.material_request_type != 'Material Transfer'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM `tabRequest for Quotation Item` rfq_item
+                    INNER JOIN `tabRequest for Quotation` rfq ON rfq.name = rfq_item.parent
+                    WHERE rfq.docstatus IN (0, 1)
+                    AND rfq_item.material_request_item = mr_item.name
+                )
                 {condition_str}
             ORDER BY mr.transaction_date DESC
         """
@@ -121,7 +128,7 @@ def get_data(filters):
     for row in raw_data:
         row["item_info"] = f"<button class='btn btn-sm btn-info item-info-btn' data-item='{row.get('item_code')}'>i</button>"
         last_info = get_last_purchase_details_with_supplier(row.get("item_code"))
-        row["last_supplier"] = last_info.get("supplier") or ""
+        row["last_supplier"] = frappe.db.get_value("Supplier",last_info.get("supplier"),"supplier_name") or ""
         row["last_purchase_rate"] = last_info.get("rate") or 0
         
 
@@ -213,25 +220,25 @@ def create_rfqs_from_simple_data(items):
 
     for supplier, item_list in supplier_items_map.items():
         material_request = item_list[0]["material_request"]
+        # Check if RFQ already exists for the specific supplier + item
+        skip_supplier = True
+        for item in item_list:
+            exists = frappe.db.exists(
+                "Request for Quotation Item",
+                {
+                    "supplier": supplier,
+                    "material_request_item": item["material_request_item"],
+                    "docstatus": ["!=", 2]
+                }
+            )
+            if not exists:
+                skip_supplier = False
+                break
 
-        # Check if RFQ already exists
-        existing_rfq = frappe.db.sql(
-            """
-            SELECT DISTINCT rfq_supplier.parent 
-            FROM `tabRequest for Quotation Supplier` rfq_supplier
-            INNER JOIN `tabRequest for Quotation Item` rfq_item ON rfq_supplier.parent = rfq_item.parent
-            INNER JOIN `tabRequest for Quotation` rfq ON rfq.name = rfq_supplier.parent
-            WHERE rfq_supplier.supplier = %s AND rfq_item.material_request = %s AND rfq.docstatus != 2 AND rfq_supplier.parenttype = 'Request for Quotation'
-            """,
-            (supplier, material_request),
-            as_dict=True,
-        )
-        
-
-        if existing_rfq:
+        if skip_supplier:
             frappe.msgprint(
-				f"RFQ already exists for supplier {supplier} and material request {material_request}. Skipping RFQ creation."
-			)
+                f"RFQ already exists for all items of supplier {supplier} in material request {material_request}. Skipping RFQ creation."
+            )
             continue
 
         # Create RFQ
