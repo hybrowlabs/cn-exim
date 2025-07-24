@@ -49,20 +49,36 @@ def create_stock_entry_for_stock_received(doc, warehouse):
         "items": []
     })
 
-    shelf = frappe.db.get_value("Warehouse", warehouse, "custom_shelf")
-
     for item in doc.get("gate_entry_details", []):
         account = frappe.db.get_value("Item Default", {"parent": item["item"]}, "custom_difference_account")
+        # if not account:
+        #     frappe.throw(f"Custom Difference Account not set in Item Default for Item: {item['item']}")
+
+        po_item_name = item.get("po_item")
+        if not po_item_name:
+            frappe.throw(f"PO Item reference missing in Gate Entry for Item: {item['item']}")
+
+        warehouse_name = frappe.db.get_value("Purchase Order Item", po_item_name, "warehouse")
+        if not warehouse_name:
+            frappe.throw(f"Warehouse not set for PO Item: {po_item_name}")
+
+        quality_warehouse = frappe.db.get_value("Warehouse", warehouse_name, "custom_quality_warehouse")
+        if not quality_warehouse:
+            frappe.throw(f"Quality Warehouse  not set in Warehouse: {warehouse_name}")
+
+        shelf = frappe.db.get_value("Warehouse", quality_warehouse, "custom_shelf")
+        if not shelf:
+            frappe.throw(f"Shelf  not set in Quality Warehouse: {quality_warehouse}")
 
         stock_entry.append("items", {
             "item_code": item["item"],
             "item_name": item["item_name"],
             "qty": item["qty"],
             "uom": item["uom"],
-            "t_warehouse": warehouse,
+            "t_warehouse": quality_warehouse,
             "expense_account": account,
             "allow_zero_valuation_rate": 1,
-            "to_shelf": shelf
+            "to_shelf": shelf,
         })
 
     stock_entry.insert()
@@ -116,6 +132,7 @@ def get_multiple_purchase_order(po_name):
                 "amount_inr": item.get("base_amount"),
                 "received_qty": item.get("received_qty"),
                 "custom_gate_entry_qty": item.get("custom_gate_entry_qty"),
+                "name": item.get("name")
             })
 
             # Handling total quantity PO-wise

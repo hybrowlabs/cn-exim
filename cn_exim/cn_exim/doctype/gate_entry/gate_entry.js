@@ -311,6 +311,7 @@ frappe.ui.form.on("Gate Entry", {
                                     row.po_qty = obj.qty;
                                     row.po_pending_qty = (obj.qty ?? 0) - ((obj.received_qty ?? 0) + (obj.custom_gate_entry_qty ?? 0))
                                     row.grn_panding_qty = obj.qty - obj.received_qty;
+                                    row.po_item = obj.name;
                                 })
                                 frm.refresh_field("gate_entry_details")
 
