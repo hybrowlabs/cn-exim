@@ -146,6 +146,9 @@ override_doctype_class = {
 doc_events = {
     "Supplier Quotation": {
         "validate": "cn_exim.cn_exim.api.validate_date",
+        "before_insert": "cn_exim.config.py.supplier_quotation.update_rfq_status",
+        "on_submit": "cn_exim.config.py.supplier_quotation.update_rfq_status",
+        "on_cancel": "cn_exim.config.py.supplier_quotation.update_rfq_status"
     },
     "Journal Entry": {
         "on_cancel": "cn_exim.cn_exim.doc_events.journal_entry.on_cancel"
