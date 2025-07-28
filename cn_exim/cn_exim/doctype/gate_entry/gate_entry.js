@@ -259,96 +259,105 @@ frappe.ui.form.on("Gate Entry", {
 
 
         frm.add_custom_button(__('Get PO Items'), function () {
-            if (frm.doc.supplier == undefined || frm.doc.supplier == "") {
-                frappe.msgprint("Please select supplier first");
-                return;
-            }
-            else {
-                let d = new frappe.ui.form.MultiSelectDialog({
-                    doctype: "Purchase Order",
-                    target: frm,
-                    setters: {
-                        supplier: frm.doc.supplier,
-                        supplier_name: null
-                    },
-                    columns: ["name", "transaction_date", "supplier_name"],
-                    get_query: function () {
-                        return {
-                            filters: {
-                                docstatus: 1,
-                                status: ["not in", ["Closed", "On Hold"]],
-                                per_received: ["<", 99.99],
-                                company: frm.doc.company,
-                                custom_purchase_sub_type: "Import",
-                            }
-                        };
-                    },
-                    action(selections) {
-                        frappe.call({
-                            method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_multiple_purchase_order",
-                            args: {
-                                po_name: JSON.stringify(selections)
-                            },
-                            callback: function (r) {
-                                let po_items_list = r.message['po_items_list']
-                                let purchase_order = r.message['po_total_qty']
-                                let po_details = r.message['po_details']
+        if (frm.doc.supplier == undefined || frm.doc.supplier == "") {
+            frappe.msgprint("Please select supplier first");
+            return;
+        } else {
+            frappe.call({
+                method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_valid_purchase_orders",
+                args: {
+                    supplier: frm.doc.supplier,
+                    company: frm.doc.company
+                },
+                callback: function (r) {
+                    const valid_pos = r.message || [];
 
-
-                                frm.clear_table("gate_entry_details")
-
-                                po_items_list.forEach(obj => {
-                                    let row = frm.add_child("gate_entry_details")
-                                    row.purchase_order = obj.purchase_order;
-                                    row.item = obj.item;
-                                    row.item_name = obj.item_name;
-                                    row.uom = obj.uom;
-                                    row.rate = obj.rate;
-                                    // row.qty = obj.qty;
-                                    row.amount = obj.amount;
-                                    row.rate_inr = obj.rate_inr;
-                                    row.amount_inr = obj.amount_inr;
-                                    row.po_qty = obj.qty;
-                                    row.po_pending_qty = (obj.qty ?? 0) - ((obj.received_qty ?? 0) + (obj.custom_gate_entry_qty ?? 0))
-                                    row.grn_panding_qty = obj.qty - obj.received_qty;
-                                    row.po_item = obj.name;
-                                })
-                                frm.refresh_field("gate_entry_details")
-
-                                frm.clear_table("purchase_order_in_gate_entry");
-
-                                purchase_order.forEach(obj => {
-                                    let po_row = frm.add_child("purchase_order_in_gate_entry");
-                                    po_row.purchase_order = obj.purchase_order;
-                                    po_row.incoming_quantity = obj.incoming_quantity;
-                                })
-                                frm.refresh_field("purchase_order_in_gate_entry")
-
-
-                                frm.set_value("supplier", po_details.supplier)
-                                frm.set_value("supplier_name", po_details.supplier_name)
-                                frm.set_value("currency", po_details.currency)
-                                frm.set_value("currency_rate", po_details.conversion_rate)
-                                frm.set_value("cost_center", po_details.cost_center)
-                            }
-                        });
-
-                        d.dialog.hide();
+                    if (valid_pos.length === 0) {
+                        frappe.msgprint("No valid POs found with pending items.");
+                        return;
                     }
-                });
-                 const observer = new MutationObserver(() => {
-                const $btn = $('button:contains("Make Purchase Order")');
-                if ($btn.length) {
-                    $btn.hide();
-                    observer.disconnect();
+
+                    let d = new frappe.ui.form.MultiSelectDialog({
+                        doctype: "Purchase Order",
+                        target: frm,
+                        setters: {
+                            supplier: frm.doc.supplier,
+                            supplier_name: null
+                        },
+                        columns: ["name", "transaction_date", "supplier_name"],
+                        get_query: function () {
+                            return {
+                                filters: {
+                                    name: ["in", valid_pos]
+                                }
+                            };
+                        },
+                        action(selections) {
+                            frappe.call({
+                                method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.get_multiple_purchase_order",
+                                args: {
+                                    po_name: JSON.stringify(selections)
+                                },
+                                callback: function (r) {
+                                    let po_items_list = r.message['po_items_list']
+                                    let purchase_order = r.message['po_total_qty']
+                                    let po_details = r.message['po_details']
+
+                                    frm.clear_table("gate_entry_details");
+
+                                    po_items_list.forEach(obj => {
+                                        let row = frm.add_child("gate_entry_details")
+                                        row.purchase_order = obj.purchase_order;
+                                        row.item = obj.item;
+                                        row.item_name = obj.item_name;
+                                        row.uom = obj.uom;
+                                        row.rate = obj.rate;
+                                        row.amount = obj.amount;
+                                        row.rate_inr = obj.rate_inr;
+                                        row.amount_inr = obj.amount_inr;
+                                        row.po_qty = obj.qty;
+                                        row.po_pending_qty = (obj.qty ?? 0) - ((obj.received_qty ?? 0) + (obj.custom_gate_entry_qty ?? 0))
+                                        row.grn_panding_qty = obj.qty - obj.received_qty;
+                                        row.po_item = obj.name;
+                                    });
+                                    frm.refresh_field("gate_entry_details");
+
+                                    frm.clear_table("purchase_order_in_gate_entry");
+
+                                    purchase_order.forEach(obj => {
+                                        let po_row = frm.add_child("purchase_order_in_gate_entry");
+                                        po_row.purchase_order = obj.purchase_order;
+                                        po_row.incoming_quantity = obj.incoming_quantity;
+                                    });
+                                    frm.refresh_field("purchase_order_in_gate_entry");
+
+                                    frm.set_value("supplier", po_details.supplier);
+                                    frm.set_value("supplier_name", po_details.supplier_name);
+                                    frm.set_value("currency", po_details.currency);
+                                    frm.set_value("currency_rate", po_details.conversion_rate);
+                                    frm.set_value("cost_center", po_details.cost_center);
+                                }
+                            });
+
+                            d.dialog.hide();
+                        }
+                    });
+
+                    const observer = new MutationObserver(() => {
+                        const $btn = $('button:contains("Make Purchase Order")');
+                        if ($btn.length) {
+                            $btn.hide();
+                            observer.disconnect();
+                        }
+                    });
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
                 }
             });
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-            }
-        }, __('Get Items From'));
+        }
+    }, __('Get Items From'));
 
         frm.set_query("service_name", function () {
             return {
