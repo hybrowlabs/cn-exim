@@ -58,24 +58,32 @@ def create_stock_entry_for_stock_received(doc, warehouse):
         if not po_item_name:
             frappe.throw(f"PO Item reference missing in Gate Entry for Item: {item['item']}")
 
-        warehouse_name = frappe.db.get_value("Purchase Order Item", po_item_name, "warehouse")
-        if not warehouse_name:
+        po_warehouse = frappe.db.get_value("Purchase Order Item", po_item_name, "warehouse")
+        if not po_warehouse:
             frappe.throw(f"Warehouse not set for PO Item: {po_item_name}")
 
-        quality_warehouse = frappe.db.get_value("Warehouse", warehouse_name, "custom_quality_warehouse")
-        if not quality_warehouse:
-            frappe.throw(f"Quality Warehouse  not set in Warehouse: {warehouse_name}")
+        inspection_required = frappe.db.get_value("Item", item["item"], "inspection_required_before_purchase")
+        target_warehouse = po_warehouse
 
-        shelf = frappe.db.get_value("Warehouse", quality_warehouse, "custom_shelf")
-        if not shelf:
-            frappe.throw(f"Shelf  not set in Quality Warehouse: {quality_warehouse}")
+        if inspection_required:
+            quality_warehouse = frappe.db.get_value("Warehouse", po_warehouse, "custom_quality_warehouse")
+            if not quality_warehouse:
+                frappe.throw(f"Quality Warehouse not set in Warehouse: {po_warehouse}")
+            shelf = frappe.db.get_value("Warehouse", quality_warehouse, "custom_shelf")
+            if not shelf:
+                frappe.throw(f"Shelf not set in Quality Warehouse: {quality_warehouse}")
+            target_warehouse = quality_warehouse
+        else:
+            shelf = frappe.db.get_value("Warehouse", po_warehouse, "custom_shelf")
+            if not shelf:
+                frappe.throw(f"Shelf not set in Warehouse: {po_warehouse}")
 
         stock_entry.append("items", {
             "item_code": item["item"],
             "item_name": item["item_name"],
             "qty": item["qty"],
             "uom": item["uom"],
-            "t_warehouse": quality_warehouse,
+            "t_warehouse": target_warehouse,
             "expense_account": account,
             "allow_zero_valuation_rate": 1,
             "to_shelf": shelf,
@@ -83,7 +91,6 @@ def create_stock_entry_for_stock_received(doc, warehouse):
 
     stock_entry.insert()
     stock_entry.submit()
-    
     
 @frappe.whitelist()
 def get_update_po_details(e_waybill):
