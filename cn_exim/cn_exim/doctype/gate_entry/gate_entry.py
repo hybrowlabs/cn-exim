@@ -115,10 +115,11 @@ def get_multiple_purchase_order(po_name):
             "Purchase Order", {"name": i}, ["name", "supplier", "supplier_name", "currency", "conversion_rate", "cost_center"], as_dict=True
         )
         
-        po_item_details = frappe.db.sql(
-            "SELECT * FROM `tabPurchase Order Item` WHERE parent=%s", (po_details.get("name")), as_dict=True
-        )
-        
+        po_item_details = frappe.db.sql("""
+            SELECT * FROM `tabPurchase Order Item` 
+            WHERE parent = %s AND (qty - received_qty - IFNULL(custom_gate_entry_qty, 0)) > 0
+        """, (po_details.get("name")), as_dict=True)
+
         for item in po_item_details:
             po_items_list.append({
                 "purchase_order": item.get("parent"),
@@ -192,3 +193,19 @@ def get_row_wise_qty(po_name, item_code):
         return []  # Always return a valid JSON-serializable object
 
     return data_qty
+
+@frappe.whitelist()
+def get_valid_purchase_orders(supplier, company):
+    po_names = frappe.db.sql("""
+        SELECT po.name
+        FROM `tabPurchase Order` po
+        JOIN `tabPurchase Order Item` poi ON poi.parent = po.name
+        WHERE po.docstatus = 1
+        AND po.status NOT IN ('Closed', 'On Hold')
+        AND po.supplier = %s
+        AND po.company = %s
+        AND (poi.qty - IFNULL(poi.received_qty, 0) - IFNULL(poi.custom_gate_entry_qty, 0)) > 0
+        GROUP BY po.name
+    """, (supplier, company), as_dict=True)
+
+    return [po.name for po in po_names]
