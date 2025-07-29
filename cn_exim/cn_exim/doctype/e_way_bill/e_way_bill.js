@@ -38,62 +38,62 @@ frappe.ui.form.on("E-way Bill", {
         }
 
         if (frm.doc.docstatus == 1) {
-            frm.add_custom_button("Update Po", function () {
+            // frm.add_custom_button("Update Po", function () {
 
-                frappe.call({
-                    method: 'cn_exim.cn_exim.doctype.e_way_bill.e_way_bill.get_all_details',
-                    args: {
-                        name: frm.doc.pre_alert_check_list
-                    },
-                    callback: function (r) {
-                        let data = r.message[0]
-                        let item_list = []
-                        frm.doc.items.forEach(item => {
-                            item_list.push({
-                                purchase_order: item.purchase_order,
-                                item_code: item.item_code,
-                                item_name: item.item_name,
-                                order_quantity: item.qty,
-                                currency: data.currency,
-                                total_inr_value: item.total_inr_value
-                            })
-                        })
-                        frappe.call({
-                            method: "frappe.client.insert",
-                            args: {
-                                doc: {
-                                    doctype: "Update Po",
-                                    pre_alert_check_list: frm.doc.pre_alert_check_list,
-                                    pickup_request: data.pickup_request,
-                                    rfq_no: data.rfq_no,
-                                    vendor: data.vendor,
-                                    currency: data.currency,
-                                    exchange_rate: data.exchange_rate,
-                                    bcd_amount: data.bcd_amount,
-                                    hcs_amount: data.hcs_amount,
-                                    sws_amount: data.swl_amount,
-                                    igst_amount: data.igst_amount,
-                                    total_duty: data.total_duty,
-                                    freight_amount: data.freight_amount,
-                                    ex_works: data.ex_works,
-                                    other_charges: data.other_charges,
-                                    insurance_amount: data.insurance_amount,
-                                    insurance_: data.insurance_,
-                                    house_number: data.house_number,
-                                    master_number: data.master_number,
-                                    total_inr_value: data.total_inr_value,
-                                    accessible_value: data.accessible_value,
-                                    update_po_details: item_list,
-                                    e_way_bill: frm.doc.name
-                                }
-                            },
-                            callback: function (r) {
-                                frappe.set_route("Form", "Update Po", r.message['name'])
-                            }
-                        })
-                    }
-                })
-            }, __("Create"))
+            //     frappe.call({
+            //         method: 'cn_exim.cn_exim.doctype.e_way_bill.e_way_bill.get_all_details',
+            //         args: {
+            //             name: frm.doc.pre_alert_check_list
+            //         },
+            //         callback: function (r) {
+            //             let data = r.message[0]
+            //             let item_list = []
+            //             frm.doc.items.forEach(item => {
+            //                 item_list.push({
+            //                     purchase_order: item.purchase_order,
+            //                     item_code: item.item_code,
+            //                     item_name: item.item_name,
+            //                     order_quantity: item.qty,
+            //                     currency: data.currency,
+            //                     total_inr_value: item.total_inr_value
+            //                 })
+            //             })
+            //             frappe.call({
+            //                 method: "frappe.client.insert",
+            //                 args: {
+            //                     doc: {
+            //                         doctype: "Update Po",
+            //                         pre_alert_check_list: frm.doc.pre_alert_check_list,
+            //                         pickup_request: data.pickup_request,
+            //                         rfq_no: data.rfq_no,
+            //                         vendor: data.vendor,
+            //                         currency: data.currency,
+            //                         exchange_rate: data.exchange_rate,
+            //                         bcd_amount: data.bcd_amount,
+            //                         hcs_amount: data.hcs_amount,
+            //                         sws_amount: data.swl_amount,
+            //                         igst_amount: data.igst_amount,
+            //                         total_duty: data.total_duty,
+            //                         freight_amount: data.freight_amount,
+            //                         ex_works: data.ex_works,
+            //                         other_charges: data.other_charges,
+            //                         insurance_amount: data.insurance_amount,
+            //                         insurance_: data.insurance_,
+            //                         house_number: data.house_number,
+            //                         master_number: data.master_number,
+            //                         total_inr_value: data.total_inr_value,
+            //                         accessible_value: data.accessible_value,
+            //                         update_po_details: item_list,
+            //                         e_way_bill: frm.doc.name
+            //                     }
+            //                 },
+            //                 callback: function (r) {
+            //                     frappe.set_route("Form", "Update Po", r.message['name'])
+            //                 }
+            //             })
+            //         }
+            //     })
+            // }, __("Create"))
 
             frm.add_custom_button("Gate Entry", function () {
                 let item_list = []

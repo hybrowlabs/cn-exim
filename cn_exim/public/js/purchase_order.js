@@ -235,8 +235,35 @@ frappe.ui.form.on("Purchase Order", {
         }
     },
     onload: function (frm) {
-        set_readonly_chid_table_field_base_on_condition(frm)
-    },
+        set_readonly_chid_table_field_base_on_condition(frm);
+        setTimeout(function(){
+            frm.set_query("item_code", "items", function (doc, cdt, cdn) {
+                let filters = {
+                    is_stock_item: 1,
+                    is_purchase_item: 1
+                };
+                
+                if (frm.doc.custom_purchase_type === "Material") {
+                    filters.item_group = "Raw Material";
+                    filters.is_stock_item = 1;
+                    filters.is_fixed_asset = 0;
+                } else if (frm.doc.custom_purchase_type === "Service") {
+                    filters.item_group = "Services";
+                    filters.is_stock_item = 0;
+                    filters.is_fixed_asset = 0;
+                } else if (frm.doc.custom_purchase_type === "Capex") {
+                    filters.item_group = "Services";
+                    filters.is_stock_item = 0;
+                    filters.is_fixed_asset = 1;
+                }
+                
+                return {
+                    filters: filters
+                };
+            });
+        }, 100)
+    }
+
 })
 
 

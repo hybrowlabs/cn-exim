@@ -376,9 +376,13 @@
   {
    "link_doctype": "E-way Bill",
    "link_fieldname": "doctype_id"
+  },
+  {
+   "link_doctype": "Payment Entry",
+   "link_fieldname": "custom_boe_entry"
   }
  ],
- "modified": "2025-04-28 15:08:38.110958",
+ "modified": "2025-07-29 12:11:08.024708",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "BOE Entry",

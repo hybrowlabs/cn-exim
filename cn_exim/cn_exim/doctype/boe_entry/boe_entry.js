@@ -57,6 +57,7 @@ frappe.ui.form.on("BOE Entry", {
                 frappe.model.with_doctype("Payment Entry", function() {
                     let doc = frappe.model.get_new_doc("Payment Entry");
                 
+                    doc.custom_boe_entry = frm.doc.name;
                     doc.payment_type = "Pay";
                     doc.party_type = "Supplier";
                     doc.paid_from = frm.doc.company;

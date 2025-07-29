@@ -300,12 +300,12 @@
   },
   {
    "link_doctype": "Pre Alert",
-   "link_fieldname": "po_no",
+   "link_fieldname": "pickup_request",
    "table_fieldname": "item_details"
   },
   {
    "link_doctype": "Pre-Alert Check List",
-   "link_fieldname": "po_no",
+   "link_fieldname": "pickup_request",
    "table_fieldname": "item_details"
   },
   {
@@ -313,7 +313,7 @@
    "link_fieldname": "pickup_request"
   }
  ],
- "modified": "2025-06-21 00:19:17.029499",
+ "modified": "2025-07-29 12:06:51.932794",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Pickup Request",
