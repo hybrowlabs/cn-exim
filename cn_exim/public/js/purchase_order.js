@@ -92,6 +92,7 @@ frappe.ui.form.on("Purchase Order", {
                     row.po_qty = element.qty;
                     row.po_pending_qty = pending_qty;
                     row.grn_panding_qty = element.qty - (element.received_qty ?? 0);
+                    row.po_item = element.name;
                 });
 
                 frm.doc.items.forEach(obj => {
