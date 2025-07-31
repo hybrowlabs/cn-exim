@@ -24,4 +24,37 @@ def update_purchase_receipt(parent, item_code, accepted_qty, rejected_qty):
         frappe.db.set_value("Purchase Receipt Item", data[0].name, "rejected_qty", rejected_qty)
     
     return True
+
+@frappe.whitelist()
+def get_gate_entry_received_qty(gate_entry_child, item_code):
+    """
+    Get the received quantity from Gate Entry Details for a specific item
+    """
+    try:
+        # Get the received quantity from Gate Entry Details
+        data = frappe.db.sql("""
+            SELECT qty as received_qty 
+            FROM `tabGate Entry Details` 
+            WHERE name = %s AND item = %s
+        """, (gate_entry_child, item_code), as_dict=True)
+        
+        if data:
+            return {
+                "received_qty": data[0].received_qty,
+                "success": True
+            }
+        else:
+            return {
+                "received_qty": 0,
+                "success": False,
+                "message": "No Gate Entry Details found for this item"
+            }
+            
+    except Exception as e:
+        frappe.log_error(f"Error getting Gate Entry received quantity: {str(e)}")
+        return {
+            "received_qty": 0,
+            "success": False,
+            "message": f"Error: {str(e)}"
+        }
     

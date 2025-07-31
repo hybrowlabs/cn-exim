@@ -255,6 +255,33 @@ frappe.ui.form.on("Gate Entry", {
                 })
 
             }, __("Create"));
+            
+            frm.add_custom_button('Quality Inspection', function () {
+                frappe.call({
+                    method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.create_quality_inspection_from_gate_entry",
+                    args: { gate_entry_name: frm.doc.name },
+                    callback: function(r) {
+                        let created = (r.message && r.message.created) || [];
+                        let existing = (r.message && r.message.existing) || [];
+                        let html = "";
+                
+                        if(created.length > 0) {
+                            html += `<b>Quality Inspection Created for:</b><br>`;
+                            html += created
+                                .map(qi => `<a href="/app/quality-inspection/${qi.inspection_name}" target="_blank">${qi.item} (${qi.inspection_name})</a>`)
+                                .join("<br>") + "<br><br>";
+                        }
+                        if(existing.length > 0) {
+                            html += `<b>Already Exists:</b><br>`;
+                            html += existing
+                                .map(qi => `<a href="/app/quality-inspection/${qi.inspection_name}" target="_blank">${qi.item} (${qi.inspection_name})</a>`)
+                                .join("<br>");
+                        }
+                        if(!html) html = "No items require Quality Inspection before purchase.";
+                        frappe.msgprint(html);
+                    }
+                });                
+            }, __("Create"));
         }
 
 
