@@ -165,6 +165,9 @@ doc_events = {
     "Request for Quotation": {
         "on_trash": "cn_exim.cn_exim.doc_events.rfq_event.on_trash",
     },
+    "Quality Inspection": {
+        "on_submit": "cn_exim.config.py.quality_inspection.on_submit",
+    },
 }
 
 # Scheduled Tasks

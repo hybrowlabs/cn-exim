@@ -57,4 +57,21 @@ def get_gate_entry_received_qty(gate_entry_child, item_code):
             "success": False,
             "message": f"Error: {str(e)}"
         }
+
+def on_submit(doc, method):
+    """
+    Validate Quality Inspection before submission
+    """
+    if doc.status == "Under Inspection":
+        frappe.throw("Status must be 'Accepted' or 'Rejected' before submitting.")
+    
+    # Additional validation for Gate Entry reference type
+    if doc.reference_type == "Gate Entry":
+        if not doc.custom_gate_entry_child:
+            frappe.throw("Gate Entry Child reference is required for Gate Entry type Quality Inspection.")
+        
+        # Validate quantities
+        total_qty = (doc.custom_accepted_quantity or 0) + (doc.custom_rejected_quantity or 0)
+        if total_qty <= 0:
+            frappe.throw("Total quantity (Accepted + Rejected) must be greater than 0.")
     
