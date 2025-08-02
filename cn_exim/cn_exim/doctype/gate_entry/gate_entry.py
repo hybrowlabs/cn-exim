@@ -10,6 +10,25 @@ from frappe.utils import flt
 
 
 class GateEntry(Document):
+    def validate(self):
+        """Validate document before save"""
+        self.validate_bill_number_uniqueness()
+    
+    def validate_bill_number_uniqueness(self):
+        """Validate that bill_number is unique across all Gate Entry documents"""
+        if self.bill_number:
+            # Check for existing Gate Entry with same bill_number
+            existing_gate_entry = frappe.db.exists("Gate Entry", {
+                "bill_number": self.bill_number,
+                "name": ("!=", self.name),  # Exclude current document
+                "docstatus": ("!=", 2)  # Exclude cancelled documents
+            })
+            
+            if existing_gate_entry:
+                frappe.throw(_("Bill Number '{0}' is already used in Gate Entry '{1}'. Please use a unique bill number.").format(
+                    self.bill_number, existing_gate_entry
+                ))
+    
     def on_submit(self):
         temp_wh = frappe.db.get_value("Company", self.company, "custom_default_temporary_warehouse")
 
