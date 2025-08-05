@@ -4,7 +4,7 @@ import os
 import datetime
 import pytz
 import frappe
-from india_compliance.gst_india.api_classes.e_waybill import EWaybillAPI
+# from india_compliance.gst_india.api_classes.e_waybill import EWaybillAPI
 from frappe.model.document import Document
 
 
