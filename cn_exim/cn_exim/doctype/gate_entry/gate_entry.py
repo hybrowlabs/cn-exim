@@ -10,6 +10,25 @@ from frappe.utils import flt
 
 
 class GateEntry(Document):
+    def validate(self):
+        """Validate document before save"""
+        self.validate_bill_number_uniqueness()
+    
+    def validate_bill_number_uniqueness(self):
+        """Validate that bill_number is unique across all Gate Entry documents"""
+        if self.bill_number:
+            # Check for existing Gate Entry with same bill_number
+            existing_gate_entry = frappe.db.exists("Gate Entry", {
+                "bill_number": self.bill_number,
+                "name": ("!=", self.name),  # Exclude current document
+                "docstatus": ("!=", 2)  # Exclude cancelled documents
+            })
+            
+            if existing_gate_entry:
+                frappe.throw(_("Bill Number '{0}' is already used in Gate Entry '{1}'. Please use a unique bill number.").format(
+                    self.bill_number, existing_gate_entry
+                ))
+    
     def on_submit(self):
         temp_wh = frappe.db.get_value("Company", self.company, "custom_default_temporary_warehouse")
 
@@ -216,3 +235,70 @@ def get_valid_purchase_orders(supplier, company):
     """, (supplier, company), as_dict=True)
 
     return [po.name for po in po_names]
+
+@frappe.whitelist()
+def create_quality_inspection_from_gate_entry(gate_entry_name):
+    created_list = []
+    already_exists = []
+
+    gate_entry = frappe.get_doc("Gate Entry", gate_entry_name)
+    if not gate_entry:
+        frappe.throw(_("Gate Entry {0} not found.").format(gate_entry_name))
+
+    # Get settings for items needing inspection
+    item_codes = list({row.item for row in gate_entry.gate_entry_details if row.item})
+    if not item_codes:
+        return []
+
+    item_settings = frappe.get_all(
+        "Item",
+        filters={"name": ["in", item_codes], "inspection_required_before_purchase": 1},
+        fields=["name"]
+    )
+    required_items = set([row["name"] for row in item_settings])
+
+    for row in gate_entry.gate_entry_details:
+        if row.item and row.item in required_items:
+            # Check for existing QI on these two fields
+            existing = frappe.db.get_value(
+                "Quality Inspection",
+                {
+                    "custom_gate_entry": gate_entry.name,
+                    "custom_gate_entry_child": row.name,
+                    "item_code": row.item,
+                    # Optionally: "docstatus": ["<", 2]  # Ignore cancelled
+                },
+                "name"
+            )
+            if existing:
+                already_exists.append({
+                    "item": row.item,
+                    "inspection_name": existing
+                })
+                continue
+
+            # Otherwise, create new
+            qi_doc = frappe.new_doc("Quality Inspection")
+            qi_doc.status = "Under Inspection"
+            qi_doc.inspection_type = "Incoming"
+            qi_doc.reference_type = "Gate Entry"
+            qi_doc.reference_name = gate_entry.name
+            qi_doc.custom_gate_entry = gate_entry.name
+            qi_doc.custom_gate_entry_child = row.name
+            qi_doc.item_code = row.item
+            qi_doc.inspected_by = frappe.session.user
+            qi_doc.sample_size = 0
+            qi_doc.custom_rejected_quantity = row.qty
+
+            qi_doc.save(ignore_permissions=True)
+            frappe.db.commit()
+            created_list.append({
+                "item": row.item,
+                "inspection_name": qi_doc.name
+            })
+
+    # Return both lists for UI message
+    return {
+        "created": created_list,
+        "existing": already_exists
+    }

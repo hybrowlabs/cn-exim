@@ -1,6 +1,38 @@
 frappe.ui.form.on('Quality Inspection', {
+    refresh: function(frm) {
+        frm.set_query("item_code", function (doc) {
+            let doctype = doc.reference_type;
+
+            // Naya condition yahan add karo
+            if (doc.reference_type === "Gate Entry") {
+                doctype = "Gate Entry Details";
+            } else if (doc.reference_type !== "Job Card") {
+                doctype = doc.reference_type == "Stock Entry"
+                    ? "Stock Entry Detail"
+                    : doc.reference_type + " Item";
+            }
+
+            if (doc.reference_type && doc.reference_name) {
+                let filters = {
+                    from: doctype,
+                    inspection_type: doc.inspection_type,
+                };
+
+                if (doc.reference_type == doctype)
+                    filters["reference_name"] = doc.reference_name;
+                else
+                    filters["parent"] = doc.reference_name;
+
+                return {
+                    query: "erpnext.stock.doctype.quality_inspection.quality_inspection.item_query",
+                    filters: filters,
+                };
+            }
+        });
+    },
+    
     onload: function (frm) {
-        console.log(frm.doc.custom_accepted_quantity)
+        if(frm.doc.reference_type !== "Gate Entry"){
         if (frm.doc.custom_accepted_quantity == undefined || frm.doc.custom_accepted_quantity == 0) {
             frappe.call({
                 method: "cn_exim.config.py.quality_inspection.set_value_in_qc_base_on_pr",
@@ -13,8 +45,10 @@ frappe.ui.form.on('Quality Inspection', {
                 }
             })
         }
+    }
     },
     custom_rejected_quantity: function (frm) {
+        if(frm.doc.reference_type !== "Gate Entry"){
         frappe.call({
             method: "cn_exim.config.py.quality_inspection.get_qty_from_purchase_receipt",
             args: {
@@ -34,8 +68,72 @@ frappe.ui.form.on('Quality Inspection', {
                 }
             }
         })
+    } else {
+        // For Gate Entry reference type
+        if (frm.doc.custom_gate_entry_child && frm.doc.custom_rejected_quantity !== undefined && frm.doc.custom_rejected_quantity !== null) {
+            frappe.call({
+                method: "cn_exim.config.py.quality_inspection.get_gate_entry_received_qty",
+                args: {
+                    "gate_entry_child": frm.doc.custom_gate_entry_child,
+                    "item_code": frm.doc.item_code,
+                },
+                callback: function (r) {
+                    if (r.message) {
+                        let received_qty = r.message.received_qty || 0;
+                        let rejected_qty = frm.doc.custom_rejected_quantity || 0;
+                        
+                        if (rejected_qty > received_qty) {
+                            frappe.throw(__("Rejected quantity ({0}) cannot be greater than received quantity ({1}) from Gate Entry.", 
+                                [rejected_qty, received_qty]));
+                            frm.set_value("custom_rejected_quantity", 0);
+                            frm.set_value("custom_accepted_quantity", received_qty);
+                        } else {
+                            let accepted_qty = received_qty - rejected_qty;
+                            frm.set_value("custom_accepted_quantity", accepted_qty);
+                            
+                            frappe.msgprint({
+                                title: __("Quantity Calculated"),
+                                message: __("Received Quantity: {0}<br>Rejected Quantity: {1}<br>Accepted Quantity: {2}", 
+                                    [received_qty, rejected_qty, accepted_qty]),
+                                indicator: 'green'
+                            });
+                        }
+                    } else {
+                        frappe.throw(__("Could not find received quantity for this item in Gate Entry."));
+                    }
+                }
+            });
+        }
+    }},
+    custom_accepted_quantity: function (frm) {
+        // Additional validation for accepted quantity
+        if (frm.doc.custom_accepted_quantity && frm.doc.custom_rejected_quantity && frm.doc.reference_type === "Gate Entry") {
+            let total_qty = frm.doc.custom_accepted_quantity + frm.doc.custom_rejected_quantity;
+            
+            // Get received quantity to validate
+            if (frm.doc.custom_gate_entry_child) {
+                frappe.call({
+                    method: "cn_exim.config.py.quality_inspection.get_gate_entry_received_qty",
+                    args: {
+                        "gate_entry_child": frm.doc.custom_gate_entry_child,
+                        "item_code": frm.doc.item_code,
+                    },
+                    callback: function (r) {
+                        if (r.message && r.message.received_qty) {
+                            let received_qty = r.message.received_qty;
+                            
+                            if (total_qty > received_qty) {
+                                frappe.throw(__("Total quantity (Accepted: {0} + Rejected: {1} = {2}) cannot exceed received quantity ({3}) from Gate Entry.", 
+                                    [frm.doc.custom_accepted_quantity, frm.doc.custom_rejected_quantity, total_qty, received_qty]));
+                            }
+                        }
+                    }
+                });
+            }
+        }
     },
     before_save: function (frm) {
+        if(frm.doc.reference_type !== "Gate Entry"){
         return new Promise((resolve, reject) => {
             frappe.call({
                 method: "cn_exim.config.py.quality_inspection.get_qty_from_purchase_receipt",
@@ -58,8 +156,9 @@ frappe.ui.form.on('Quality Inspection', {
                 }
             });
         });
-    },
+    }},
     on_submit: function (frm) {
+        if(frm.doc.reference_type !== "Gate Entry"){
         frappe.call({
             method: "cn_exim.config.py.quality_inspection.update_purchase_receipt",
             args: {
@@ -74,5 +173,6 @@ frappe.ui.form.on('Quality Inspection', {
                 }
             }
         });
+    }
     }
 });
