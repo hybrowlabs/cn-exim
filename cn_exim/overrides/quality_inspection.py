@@ -140,9 +140,9 @@ def create_stock_entry_for_quality_inspection(doc):
                 else:
                     # Throw error with link to warehouse
                     warehouse_link = f'<a href="/app/warehouse/{purchase_order_item.warehouse}" target="_blank">{purchase_order_item.warehouse}</a>'
-                    frappe.throw(f"❌ Rejected Warehouse not set for warehouse {warehouse_link}. Please set the Rejected Warehouse in the warehouse master.")
+                    frappe.throw(f"Rejected Warehouse not set for warehouse {warehouse_link}. Please set the Rejected Warehouse in the warehouse master.")
             else:
-                frappe.throw("❌ Purchase Order Item warehouse not found. Cannot determine rejected warehouse.")
+                frappe.throw("Purchase Order Item warehouse not found. Cannot determine rejected warehouse.")
         
         # Save and submit Stock Entry if items exist
         if stock_entry.items:
@@ -161,7 +161,7 @@ def create_stock_entry_for_quality_inspection(doc):
             # Store the Stock Entry name in Quality Inspection for later reference
             frappe.db.set_value("Quality Inspection", doc.name, "custom_stock_entry", stock_entry.name)
         else:
-            frappe.throw("❌ Please enter Accepted Quantity or Rejected Quantity before submitting Quality Inspection. No quantities found to transfer.")
+            frappe.throw("Please enter Accepted Quantity or Rejected Quantity before submitting Quality Inspection. No quantities found to transfer.")
             
     except Exception as e:
         frappe.log_error(f"Error creating Stock Entry for Quality Inspection {doc.name}: {str(e)}", "Quality Inspection Stock Entry Error")
