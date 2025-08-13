@@ -168,6 +168,7 @@ doc_events = {
     "Quality Inspection": {
         "on_submit": "cn_exim.overrides.quality_inspection.on_submit",
         "after_insert": "cn_exim.overrides.quality_inspection.after_insert",
+        "on_cancel": "cn_exim.overrides.quality_inspection.on_cancel",
     },
 }
 

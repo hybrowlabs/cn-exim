@@ -200,3 +200,51 @@ def update_purchase_receipt_item(doc, purchase_order_item):
     except Exception as e:
         frappe.log_error(f"Error updating Purchase Receipt Item {doc.child_row_reference}: {str(e)}", "Purchase Receipt Item Update Error")
         frappe.throw(f"Error updating Purchase Receipt Item: {str(e)}")
+
+def on_cancel(doc, method):
+    """
+    Handle cancellation of Quality Inspection - revert Purchase Receipt Item changes
+    """
+    try:
+        if doc.reference_type == "Purchase Receipt":
+            # Revert Purchase Receipt Item changes
+            revert_purchase_receipt_item_changes(doc)
+            
+    except Exception as e:
+        frappe.log_error(f"Error in Quality Inspection on_cancel: {str(e)}", "Quality Inspection Cancel Error")
+        frappe.throw(f"Error cancelling Quality Inspection: {str(e)}")
+
+def revert_purchase_receipt_item_changes(doc):
+    """
+    Revert Purchase Receipt Item changes back to original state
+    """
+    try:
+        if not doc.child_row_reference:
+            return
+            
+        # Get original Purchase Receipt Item data
+        purchase_receipt_item = frappe.get_doc("Purchase Receipt Item", doc.child_row_reference)
+        
+        # Revert quantities back to original received quantity
+        original_qty = purchase_receipt_item.qty + (doc.custom_accepted_quantity or 0) + (doc.custom_rejected_quantity or 0)
+        
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "qty", original_qty)
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_qty", 0)
+        
+        # Revert warehouses back to original quality warehouse
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "warehouse", doc.custom_quality_warehouse)
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "shelf", doc.custom_quality_shelf)
+        
+        # Clear rejected warehouse fields
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_warehouse", "")
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_shelf", "")
+        
+        frappe.msgprint(
+            f"Purchase Receipt Item {doc.child_row_reference} has been reverted to original state.",
+            title="Purchase Receipt Item Reverted",
+            indicator='orange'
+        )
+        
+    except Exception as e:
+        frappe.log_error(f"Error reverting Purchase Receipt Item {doc.child_row_reference}: {str(e)}", "Purchase Receipt Item Revert Error")
+        frappe.throw(f"Error reverting Purchase Receipt Item: {str(e)}")
