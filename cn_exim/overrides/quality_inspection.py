@@ -54,8 +54,8 @@ def on_submit(doc, method):
     if doc.status == "Under Inspection":
         frappe.throw("Status must be 'Accepted' or 'Rejected' before submitting.")
     
-    # Additional validation for Purchase Receipt reference type
-    if doc.reference_type == "Purchase Receipt":
+    # Additional validation for Purchase Receipt reference type with Incoming inspection
+    if doc.reference_type == "Purchase Receipt" and doc.inspection_type == "Incoming":
         if not doc.child_row_reference:
             frappe.throw("Child Row Reference is required for Purchase Receipt type Quality Inspection.")
         
@@ -206,7 +206,7 @@ def on_cancel(doc, method):
     Handle cancellation of Quality Inspection - revert Purchase Receipt Item changes
     """
     try:
-        if doc.reference_type == "Purchase Receipt":
+        if doc.reference_type == "Purchase Receipt" and doc.inspection_type == "Incoming":
             # Revert Purchase Receipt Item changes
             revert_purchase_receipt_item_changes(doc)
             

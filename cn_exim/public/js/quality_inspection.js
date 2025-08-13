@@ -56,6 +56,16 @@ frappe.ui.form.on('Quality Inspection', {
         }
     }
     },
+    
+    // Expiry date calculation functions
+    custom_manufacturing_date: function(frm) {
+        calculate_expiry_date(frm);
+    },
+    
+    custom_expiry_in_months: function(frm) {
+        calculate_expiry_date(frm);
+    },
+    
     custom_rejected_quantity: function (frm) {
         if(frm.doc.reference_type === "Purchase Receipt"){
             // For Purchase Receipt reference type
@@ -155,7 +165,7 @@ frappe.ui.form.on('Quality Inspection', {
                 callback: function (r) {
                     if (r.message) {
                         if (r.message[0]['qty'] < frm.doc.custom_rejected_quantity) {
-                            frappe.msgprint("❌ Rejected quantity cannot be greater than Purchase Receipt quantity.");
+                            frappe.msgprint("Rejected quantity cannot be greater than Purchase Receipt quantity.");
                             frm.set_value("custom_rejected_quantity", 0);
                             reject(); // Cancel save
                         } else {
@@ -180,10 +190,68 @@ frappe.ui.form.on('Quality Inspection', {
             },
             callback: function (r) {
                 if (r.message) {
-                    frappe.msgprint("✅ Purchase Receipt updated successfully.");
+                    frappe.msgprint("Purchase Receipt updated successfully.");
                 }
             }
         });
     }
     }
 });
+
+// Helper function to calculate expiry date
+function calculate_expiry_date(frm) {
+    // Check if both manufacturing date and expiry months are provided
+    if (frm.doc.custom_manufacturing_date && frm.doc.custom_expiry_in_months) {
+        
+        // Validate expiry months
+        if (frm.doc.custom_expiry_in_months <= 0) {
+            frappe.throw(__("Expiry in months must be greater than 0."));
+            frm.set_value("custom_expiry_in_months", "");
+            return;
+        }
+        
+        if (frm.doc.custom_expiry_in_months > 120) { // 10 years max
+            frappe.throw(__("Expiry in months cannot be more than 120 months (10 years)."));
+            frm.set_value("custom_expiry_in_months", "");
+            return;
+        }
+        
+        // Validate manufacturing date
+        let manufacturing_date = new Date(frm.doc.custom_manufacturing_date);
+        let current_date = new Date();
+        
+        // Manufacturing date should not be in future
+        if (manufacturing_date > current_date) {
+            frappe.throw(__("Manufacturing date cannot be in the future."));
+            frm.set_value("custom_manufacturing_date", "");
+            return;
+        }
+        
+        // Calculate expiry date
+        let expiry_date = new Date(manufacturing_date);
+        expiry_date.setMonth(expiry_date.getMonth() + parseInt(frm.doc.custom_expiry_in_months));
+        
+        // Format date to YYYY-MM-DD
+        let formatted_expiry_date = expiry_date.toISOString().split('T')[0];
+        
+        // Set the calculated expiry date
+        frm.set_value("custom_expiry_date", formatted_expiry_date);
+        
+        // Show success message
+        frappe.msgprint({
+            title: __("Expiry Date Calculated"),
+            message: __("Expiry Date: {0}<br>Manufacturing Date: {1}<br>Expiry Period: {2} months", 
+                [formatted_expiry_date, frm.doc.custom_manufacturing_date, frm.doc.custom_expiry_in_months]),
+            indicator: 'green'
+        });
+        
+    } else if (frm.doc.custom_manufacturing_date && !frm.doc.custom_expiry_in_months) {
+        // Clear expiry date if manufacturing date is set but months are not
+        frm.set_value("custom_expiry_date", "");
+        
+    } else if (!frm.doc.custom_manufacturing_date && frm.doc.custom_expiry_in_months) {
+        // Clear expiry date if months are set but manufacturing date is not
+        frm.set_value("custom_expiry_date", "");
+        frappe.msgprint(__("Please enter Manufacturing Date to calculate Expiry Date."), __("Info"));
+    }
+}
