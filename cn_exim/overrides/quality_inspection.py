@@ -157,6 +157,9 @@ def create_stock_entry_for_quality_inspection(doc):
                 title="Stock Entry Created",
                 indicator='green'
             )
+            
+            # Store the Stock Entry name in Quality Inspection for later reference
+            frappe.db.set_value("Quality Inspection", doc.name, "custom_stock_entry", stock_entry.name)
         else:
             frappe.throw("❌ Please enter Accepted Quantity or Rejected Quantity before submitting Quality Inspection. No quantities found to transfer.")
             

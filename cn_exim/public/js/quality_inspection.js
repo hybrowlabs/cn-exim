@@ -29,6 +29,15 @@ frappe.ui.form.on('Quality Inspection', {
                 };
             }
         });
+        
+        // Add View Stock Ledger button if Quality Inspection is submitted and has Stock Entry
+        if (frm.doc.docstatus === 1 && frm.doc.custom_stock_entry) {
+            frm.add_custom_button(__('View Stock Ledger'), function() {
+                // Open Stock Ledger report filtered by the Stock Entry with Segregate Serial/Batch Bundle checked
+                let url = `/app/query-report/Stock%20Ledger?voucher_no=${frm.doc.custom_stock_entry}&company=${frm.doc.company}&segregate_serial_batch_bundle=1`;
+                window.open(url, '_blank');
+            }, __('View')).addClass('btn-primary');
+        }
     },
     
     onload: function (frm) {
