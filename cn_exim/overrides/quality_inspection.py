@@ -1,0 +1,199 @@
+import frappe
+
+def after_insert(doc, method):
+    """
+    After insert hook for Quality Inspection
+    If reference_type is Purchase Receipt, get warehouse and shelf from child table
+    """
+    try:
+        # Check if reference_type is Purchase Receipt
+        if doc.reference_type == "Purchase Receipt" and doc.reference_name:
+            # Get the Purchase Receipt document
+            purchase_receipt = frappe.get_doc("Purchase Receipt", doc.reference_name)
+            
+            # Check if child_row_reference is provided
+            if doc.child_row_reference:
+                # Find the specific item in Purchase Receipt items
+                for item in purchase_receipt.items:
+                    if item.name == doc.child_row_reference:
+                        # Update custom_quality_warehouse
+                        if item.warehouse:
+                            doc.custom_quality_warehouse = item.warehouse
+                        
+                        # Update custom_quality_shelf
+                        if hasattr(item, 'shelf') and item.shelf:
+                            doc.custom_quality_shelf = item.shelf
+                        
+                        # Save the document
+                        doc.save()
+                        break
+            else:
+                # If no child_row_reference, try to get from first item or main warehouse
+                if purchase_receipt.items:
+                    first_item = purchase_receipt.items[0]
+                    if first_item.warehouse:
+                        doc.custom_quality_warehouse = first_item.warehouse
+                    
+                    if hasattr(first_item, 'shelf') and first_item.shelf:
+                        doc.custom_quality_shelf = first_item.shelf
+                    
+                    doc.save()
+                elif purchase_receipt.set_warehouse:
+                    # Fallback to main warehouse if no items
+                    doc.custom_quality_warehouse = purchase_receipt.set_warehouse
+                    doc.save()
+                    
+    except Exception as e:
+        # Log error but don't throw exception to avoid breaking the insert process
+        frappe.log_error(f"Error in Quality Inspection after_insert: {str(e)}", "Quality Inspection After Insert Error")
+
+def on_submit(doc, method):
+    """
+    Validate Quality Inspection before submission and create Stock Entry for material movement
+    """
+    if doc.status == "Under Inspection":
+        frappe.throw("Status must be 'Accepted' or 'Rejected' before submitting.")
+    
+    # Additional validation for Purchase Receipt reference type
+    if doc.reference_type == "Purchase Receipt":
+        if not doc.child_row_reference:
+            frappe.throw("Child Row Reference is required for Purchase Receipt type Quality Inspection.")
+        
+        # Validate quantities
+        total_qty = (doc.custom_accepted_quantity or 0) + (doc.custom_rejected_quantity or 0)
+        if total_qty <= 0:
+            frappe.throw("Total quantity (Accepted + Rejected) must be greater than 0.")
+        
+        # Create Stock Entry for material movement
+        create_stock_entry_for_quality_inspection(doc)
+
+def create_stock_entry_for_quality_inspection(doc):
+    """
+    Create Stock Entry for material movement after Quality Inspection
+    """
+    try:
+        # Get Purchase Receipt Item details
+        purchase_receipt_item = frappe.get_doc("Purchase Receipt Item", doc.child_row_reference)
+        
+        # Get Purchase Order Item to find target warehouse
+        purchase_order_item = None
+        if purchase_receipt_item.purchase_order_item:
+            purchase_order_item = frappe.get_doc("Purchase Order Item", purchase_receipt_item.purchase_order_item)
+        
+        # Create Stock Entry
+        stock_entry = frappe.get_doc({
+            "doctype": "Stock Entry",
+            "stock_entry_type": "Material Transfer",
+            "company": doc.company,
+            "posting_date": frappe.utils.today(),
+            "posting_time": frappe.utils.nowtime(),
+            "reference_doctype": "Quality Inspection",
+            "reference_docname": doc.name,
+            "custom_quality_inspection": doc.name,
+            "items": []
+        })
+        
+        # Add accepted quantity item
+        if doc.custom_accepted_quantity and doc.custom_accepted_quantity > 0:
+            if purchase_order_item and purchase_order_item.warehouse:
+                # Get target warehouse shelf
+                target_shelf = frappe.db.get_value("Warehouse", purchase_order_item.warehouse, "custom_shelf")
+                
+                # Get item details to check serial/batch fields
+                item_details = frappe.db.get_value("Item", doc.item_code, ["has_serial_no", "has_batch_no"], as_dict=True)
+                use_serial_batch_fields = (item_details.has_serial_no or item_details.has_batch_no) if item_details else False
+                
+                stock_entry.append("items", {
+                    "item_code": doc.item_code,
+                    "item_name": doc.item_name,
+                    "qty": doc.custom_accepted_quantity,
+                    "uom": purchase_receipt_item.uom,
+                    "s_warehouse": doc.custom_quality_warehouse,
+                    "shelf": doc.custom_quality_shelf,
+                    "t_warehouse": purchase_order_item.warehouse,
+                    "to_shelf": target_shelf,
+                    "allow_zero_valuation_rate": 1,
+                    "use_serial_batch_fields": use_serial_batch_fields
+                })
+        
+        # Add rejected quantity item
+        if doc.custom_rejected_quantity and doc.custom_rejected_quantity > 0:
+            if purchase_order_item and purchase_order_item.warehouse:
+                # Get rejected warehouse from Purchase Order Item warehouse
+                rejected_warehouse = frappe.db.get_value("Warehouse", purchase_order_item.warehouse, "custom_rejected_warehouse")
+                if rejected_warehouse:
+                    # Get rejected warehouse shelf
+                    rejected_shelf = frappe.db.get_value("Warehouse", rejected_warehouse, "custom_shelf")
+                    
+                    stock_entry.append("items", {
+                        "item_code": doc.item_code,
+                        "item_name": doc.item_name,
+                        "qty": doc.custom_rejected_quantity,
+                        "uom": purchase_receipt_item.uom,
+                        "s_warehouse": doc.custom_quality_warehouse,
+                        "shelf": doc.custom_quality_shelf,
+                        "t_warehouse": rejected_warehouse,
+                        "to_shelf": rejected_shelf,
+                        "allow_zero_valuation_rate": 1,
+                        "use_serial_batch_fields": use_serial_batch_fields
+                    })
+                else:
+                    # Throw error with link to warehouse
+                    warehouse_link = f'<a href="/app/warehouse/{purchase_order_item.warehouse}" target="_blank">{purchase_order_item.warehouse}</a>'
+                    frappe.throw(f"❌ Rejected Warehouse not set for warehouse {warehouse_link}. Please set the Rejected Warehouse in the warehouse master.")
+            else:
+                frappe.throw("❌ Purchase Order Item warehouse not found. Cannot determine rejected warehouse.")
+        
+        # Save and submit Stock Entry if items exist
+        if stock_entry.items:
+            stock_entry.insert()
+            stock_entry.submit()
+            
+            # Update Purchase Receipt Item with quantities and warehouses
+            update_purchase_receipt_item(doc, purchase_order_item)
+            
+            frappe.msgprint(
+                f"Stock Entry {stock_entry.name} has been created and submitted successfully.",
+                title="Stock Entry Created",
+                indicator='green'
+            )
+        else:
+            frappe.throw("❌ Please enter Accepted Quantity or Rejected Quantity before submitting Quality Inspection. No quantities found to transfer.")
+            
+    except Exception as e:
+        frappe.log_error(f"Error creating Stock Entry for Quality Inspection {doc.name}: {str(e)}", "Quality Inspection Stock Entry Error")
+        frappe.throw(f"Error creating Stock Entry: {str(e)}")
+
+def update_purchase_receipt_item(doc, purchase_order_item):
+    """
+    Update Purchase Receipt Item with quantities and warehouses after Stock Entry submission
+    """
+    try:
+        # Update quantities using frappe.db.set_value
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "qty", doc.custom_accepted_quantity or 0)
+        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_qty", doc.custom_rejected_quantity or 0)
+        
+        # Update warehouses and shelves for accepted quantity
+        if doc.custom_accepted_quantity and doc.custom_accepted_quantity > 0:
+            if purchase_order_item and purchase_order_item.warehouse:
+                frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "warehouse", purchase_order_item.warehouse)
+                # Get shelf from warehouse master
+                target_shelf = frappe.db.get_value("Warehouse", purchase_order_item.warehouse, "custom_shelf")
+                if target_shelf:
+                    frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "shelf", target_shelf)
+        
+        # Update warehouses and shelves for rejected quantity
+        if doc.custom_rejected_quantity and doc.custom_rejected_quantity > 0:
+            if purchase_order_item and purchase_order_item.warehouse:
+                # Get rejected warehouse from Purchase Order Item warehouse
+                rejected_warehouse = frappe.db.get_value("Warehouse", purchase_order_item.warehouse, "custom_rejected_warehouse")
+                if rejected_warehouse:
+                    frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_warehouse", rejected_warehouse)
+                    # Get rejected shelf from warehouse master
+                    rejected_shelf = frappe.db.get_value("Warehouse", rejected_warehouse, "custom_shelf")
+                    if rejected_shelf:
+                        frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_shelf", rejected_shelf)
+        
+    except Exception as e:
+        frappe.log_error(f"Error updating Purchase Receipt Item {doc.child_row_reference}: {str(e)}", "Purchase Receipt Item Update Error")
+        frappe.throw(f"Error updating Purchase Receipt Item: {str(e)}")

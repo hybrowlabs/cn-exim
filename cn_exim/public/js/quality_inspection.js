@@ -48,63 +48,65 @@ frappe.ui.form.on('Quality Inspection', {
     }
     },
     custom_rejected_quantity: function (frm) {
-        if(frm.doc.reference_type !== "Gate Entry"){
-        frappe.call({
-            method: "cn_exim.config.py.quality_inspection.get_qty_from_purchase_receipt",
-            args: {
-                "parent": frm.doc.reference_name,
-                "item_code": frm.doc.item_code,
-            },
-            callback: function (r) {
-                if (r.message) {
-                    if (r.message[0]['qty'] < frm.doc.custom_rejected_quantity) {
-                        frappe.throw(__("Rejected quantity cannot be greater than Purchase Receipt quantity."))
-                        frm.set_value("custom_rejected_quantity", 0);
+        if(frm.doc.reference_type === "Purchase Receipt"){
+            // For Purchase Receipt reference type
+            if (frm.doc.child_row_reference && frm.doc.custom_rejected_quantity !== undefined && frm.doc.custom_rejected_quantity !== null) {
+                frappe.call({
+                    method: "cn_exim.config.py.quality_inspection.get_purchase_receipt_item_qty",
+                    args: {
+                        "child_row_reference": frm.doc.child_row_reference,
+                        "item_code": frm.doc.item_code,
+                    },
+                    callback: function (r) {
+                        if (r.message && r.message.qty !== undefined) {
+                            let received_qty = r.message.qty || 0;
+                            let rejected_qty = frm.doc.custom_rejected_quantity || 0;
+                            
+                            if (rejected_qty > received_qty) {
+                                frappe.throw(__("Rejected quantity ({0}) cannot be greater than received quantity ({1}) from Purchase Receipt.", 
+                                    [rejected_qty, received_qty]));
+                                frm.set_value("custom_rejected_quantity", 0);
+                                frm.set_value("custom_accepted_quantity", received_qty);
+                            } else {
+                                let accepted_qty = received_qty - rejected_qty;
+                                frm.set_value("custom_accepted_quantity", accepted_qty);
+                                
+                                frappe.msgprint({
+                                    title: __("Quantity Calculated"),
+                                    message: __("Received Quantity: {0}<br>Rejected Quantity: {1}<br>Accepted Quantity: {2}", 
+                                        [received_qty, rejected_qty, accepted_qty]),
+                                    indicator: 'green'
+                                });
+                            }
+                        } else {
+                            frappe.throw(__("Could not find received quantity for this item in Purchase Receipt."));
+                        }
                     }
-                    else {
-                        let accepted_qty = r.message[0]['qty'] - frm.doc.custom_rejected_quantity;
-                        frm.set_value("custom_accepted_quantity", accepted_qty)
-                    }
-                }
+                });
             }
-        })
-    } else {
-        // For Gate Entry reference type
-        if (frm.doc.custom_gate_entry_child && frm.doc.custom_rejected_quantity !== undefined && frm.doc.custom_rejected_quantity !== null) {
+        } else {
+            // For other reference types (original logic)
             frappe.call({
-                method: "cn_exim.config.py.quality_inspection.get_gate_entry_received_qty",
+                method: "cn_exim.config.py.quality_inspection.get_qty_from_purchase_receipt",
                 args: {
-                    "gate_entry_child": frm.doc.custom_gate_entry_child,
+                    "parent": frm.doc.reference_name,
                     "item_code": frm.doc.item_code,
                 },
                 callback: function (r) {
                     if (r.message) {
-                        let received_qty = r.message.received_qty || 0;
-                        let rejected_qty = frm.doc.custom_rejected_quantity || 0;
-                        
-                        if (rejected_qty > received_qty) {
-                            frappe.throw(__("Rejected quantity ({0}) cannot be greater than received quantity ({1}) from Gate Entry.", 
-                                [rejected_qty, received_qty]));
+                        if (r.message[0]['qty'] < frm.doc.custom_rejected_quantity) {
+                            frappe.throw(__("Rejected quantity cannot be greater than Purchase Receipt quantity."))
                             frm.set_value("custom_rejected_quantity", 0);
-                            frm.set_value("custom_accepted_quantity", received_qty);
-                        } else {
-                            let accepted_qty = received_qty - rejected_qty;
-                            frm.set_value("custom_accepted_quantity", accepted_qty);
-                            
-                            frappe.msgprint({
-                                title: __("Quantity Calculated"),
-                                message: __("Received Quantity: {0}<br>Rejected Quantity: {1}<br>Accepted Quantity: {2}", 
-                                    [received_qty, rejected_qty, accepted_qty]),
-                                indicator: 'green'
-                            });
                         }
-                    } else {
-                        frappe.throw(__("Could not find received quantity for this item in Gate Entry."));
+                        else {
+                            let accepted_qty = r.message[0]['qty'] - frm.doc.custom_rejected_quantity;
+                            frm.set_value("custom_accepted_quantity", accepted_qty)
+                        }
                     }
                 }
-            });
+            })
         }
-    }},
+    },
     custom_accepted_quantity: function (frm) {
         // Additional validation for accepted quantity
         if (frm.doc.custom_accepted_quantity && frm.doc.custom_rejected_quantity && frm.doc.reference_type === "Gate Entry") {
