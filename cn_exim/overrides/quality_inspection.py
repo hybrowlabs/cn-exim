@@ -61,6 +61,21 @@ def after_insert(doc, method):
                         if hasattr(item, 'shelf') and item.shelf:
                             doc.custom_quality_shelf = item.shelf
                         
+                        # Copy serial_and_batch_bundle from Purchase Receipt Item to Quality Inspection
+                        if hasattr(item, 'serial_and_batch_bundle') and item.serial_and_batch_bundle:
+                            doc.custom_serial_and_batch_bundle = item.serial_and_batch_bundle
+                            
+                            # Get batch number from Serial and Batch Bundle
+                            try:
+                                bundle_doc = frappe.get_doc("Serial and Batch Bundle", item.serial_and_batch_bundle)
+                                if bundle_doc.entries:
+                                    # Get the first entry's batch number
+                                    first_entry = bundle_doc.entries[0]
+                                    if first_entry.batch_no:
+                                        doc.batch_no = first_entry.batch_no
+                            except Exception as bundle_error:
+                                frappe.log_error(f"Error getting batch number from bundle {item.serial_and_batch_bundle}: {str(bundle_error)}", "Quality Inspection Batch Number Error")
+                        
                         # Save the document
                         doc.save()
                         break
@@ -103,6 +118,9 @@ def on_submit(doc, method):
         
         # Create Stock Entry for material movement
         create_stock_entry_for_quality_inspection(doc)
+        
+        # Update batch expiry date if batch number and expiry date are available
+        update_batch_expiry_date(doc)
 
 def create_stock_entry_for_quality_inspection(doc):
     """
@@ -204,6 +222,44 @@ def create_stock_entry_for_quality_inspection(doc):
         frappe.log_error(f"Error creating Stock Entry for Quality Inspection {doc.name}: {str(e)}", "Quality Inspection Stock Entry Error")
         frappe.throw(f"Error creating Stock Entry: {str(e)}")
 
+def update_batch_expiry_date(doc):
+    """
+    Update batch expiry date with Quality Inspection expiry date
+    """
+    try:
+        # Check if batch number and expiry date are available
+        if not doc.batch_no:
+            frappe.log_error(f"No batch number found in Quality Inspection {doc.name}", "Quality Inspection Batch Update Error")
+            return
+            
+        if not doc.custom_expiry_date:
+            frappe.log_error(f"No expiry date found in Quality Inspection {doc.name}", "Quality Inspection Batch Update Error")
+            return
+        
+        # Check if batch exists
+        if not frappe.db.exists("Batch", doc.batch_no):
+            frappe.log_error(f"Batch {doc.batch_no} not found", "Quality Inspection Batch Update Error")
+            return
+        
+        # Update batch expiry date
+        frappe.db.set_value("Batch", doc.batch_no, "expiry_date", doc.custom_expiry_date)
+        
+        frappe.msgprint(
+            f"Batch {doc.batch_no} expiry date has been updated to {doc.custom_expiry_date}.",
+            title="Batch Expiry Date Updated",
+            indicator='green'
+        )
+        
+        # Log the update
+        frappe.log_error(
+            f"Batch {doc.batch_no} expiry date updated to {doc.custom_expiry_date} from Quality Inspection {doc.name}",
+            "Quality Inspection Batch Expiry Update"
+        )
+        
+    except Exception as e:
+        frappe.log_error(f"Error updating batch expiry date for batch {doc.batch_no}: {str(e)}", "Quality Inspection Batch Update Error")
+        frappe.throw(f"Error updating batch expiry date: {str(e)}")
+
 def update_purchase_receipt_item(doc, purchase_order_item):
     """
     Update Purchase Receipt Item with quantities and warehouses after Stock Entry submission
@@ -285,3 +341,39 @@ def revert_purchase_receipt_item_changes(doc):
     except Exception as e:
         frappe.log_error(f"Error reverting Purchase Receipt Item {doc.child_row_reference}: {str(e)}", "Purchase Receipt Item Revert Error")
         frappe.throw(f"Error reverting Purchase Receipt Item: {str(e)}")
+
+@frappe.whitelist()
+def fetch_serial_batch_bundle_data(child_row_reference, reference_name):
+    """
+    Fetch Serial and Batch Bundle data from Purchase Receipt Item
+    """
+    try:
+        # Get the Purchase Receipt Item
+        purchase_receipt_item = frappe.get_doc("Purchase Receipt Item", child_row_reference)
+        
+        if not purchase_receipt_item:
+            return {"success": False, "message": "Purchase Receipt Item not found"}
+        
+        # Check if serial_and_batch_bundle exists
+        if not purchase_receipt_item.serial_and_batch_bundle:
+            return {"success": False, "message": "No Serial and Batch Bundle found for this item"}
+        
+        # Get the Serial and Batch Bundle document
+        bundle_doc = frappe.get_doc("Serial and Batch Bundle", purchase_receipt_item.serial_and_batch_bundle)
+        
+        batch_no = None
+        if bundle_doc.entries:
+            # Get the first entry's batch number
+            first_entry = bundle_doc.entries[0]
+            if first_entry.batch_no:
+                batch_no = first_entry.batch_no
+        
+        return {
+            "success": True,
+            "serial_and_batch_bundle": purchase_receipt_item.serial_and_batch_bundle,
+            "batch_no": batch_no
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error fetching Serial and Batch Bundle data: {str(e)}", "Quality Inspection Fetch Bundle Error")
+        return {"success": False, "message": f"Error: {str(e)}"}

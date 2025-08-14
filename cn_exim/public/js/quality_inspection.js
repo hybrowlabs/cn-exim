@@ -38,6 +38,13 @@ frappe.ui.form.on('Quality Inspection', {
                 window.open(url, '_blank');
             }, __('View')).addClass('btn-primary');
         }
+        
+        // Add Fetch Serial and Batch Bundle button for Purchase Receipt reference type
+        if (frm.doc.reference_type === "Purchase Receipt" && frm.doc.child_row_reference && frm.doc.docstatus === 0) {
+            frm.add_custom_button(__('Fetch Serial & Batch Bundle'), function() {
+                fetch_serial_batch_bundle_data(frm);
+            }, __('Actions')).addClass('btn-info');
+        }
     },
     
     onload: function (frm) {
@@ -231,4 +238,44 @@ function calculate_expiry_date(frm) {
         frm.set_value("custom_expiry_date", "");
         frappe.msgprint(__("Please enter Manufacturing Date to calculate Expiry Date."), __("Info"));
     }
+}
+
+// Function to fetch Serial and Batch Bundle data
+function fetch_serial_batch_bundle_data(frm) {
+    if (!frm.doc.child_row_reference) {
+        frappe.msgprint(__("Please select a Child Row Reference first."), __("Info"));
+        return;
+    }
+    
+    frappe.call({
+        method: "cn_exim.overrides.quality_inspection.fetch_serial_batch_bundle_data",
+        args: {
+            "child_row_reference": frm.doc.child_row_reference,
+            "reference_name": frm.doc.reference_name
+        },
+        callback: function (r) {
+            if (r.message && r.message.success) {
+                // Update the fields with fetched data
+                if (r.message.serial_and_batch_bundle) {
+                    frm.set_value("custom_serial_and_batch_bundle", r.message.serial_and_batch_bundle);
+                }
+                if (r.message.batch_no) {
+                    frm.set_value("batch_no", r.message.batch_no);
+                }
+                
+                frappe.msgprint({
+                    title: __("Data Fetched Successfully"),
+                    message: __("Serial and Batch Bundle: {0}<br>Batch Number: {1}", 
+                        [r.message.serial_and_batch_bundle || "Not found", r.message.batch_no || "Not found"]),
+                    indicator: 'green'
+                });
+            } else {
+                frappe.msgprint({
+                    title: __("No Data Found"),
+                    message: __("No Serial and Batch Bundle data found for this item."),
+                    indicator: 'orange'
+                });
+            }
+        }
+    });
 }
