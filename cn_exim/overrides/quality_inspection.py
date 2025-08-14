@@ -1,4 +1,41 @@
 import frappe
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
+def before_save(doc, method):
+    """
+    Before save hook for Quality Inspection
+    Auto-calculate expiry date if manufacturing date and expiry months are provided but expiry date is empty
+    """
+    try:
+        # Check if both manufacturing date and expiry months are provided but expiry date is empty
+        if (doc.custom_manufacturing_date and 
+            doc.custom_expiry_in_months and 
+            not doc.custom_expiry_date):
+            
+            try:
+                manufacturing_date = datetime.strptime(str(doc.custom_manufacturing_date), '%Y-%m-%d')
+                
+                # Calculate expiry date using relativedelta for proper month handling
+                expiry_date = manufacturing_date + relativedelta(months=doc.custom_expiry_in_months)
+                
+                # Format date to YYYY-MM-DD
+                formatted_expiry_date = expiry_date.strftime('%Y-%m-%d')
+                
+                # Set the calculated expiry date
+                doc.custom_expiry_date = formatted_expiry_date
+                
+                frappe.log_error(
+                    f"Auto-calculated expiry date for Quality Inspection {doc.name}: {formatted_expiry_date} "
+                    f"(Manufacturing: {doc.custom_manufacturing_date}, Months: {doc.custom_expiry_in_months})", 
+                    "Quality Inspection Expiry Auto-Calculation"
+                )
+                
+            except Exception as date_error:
+                frappe.log_error(f"Error calculating expiry date: {str(date_error)}", "Quality Inspection Expiry Calculation Error")
+                
+    except Exception as e:
+        frappe.log_error(f"Error in Quality Inspection before_save: {str(e)}", "Quality Inspection Before Save Error")
 
 def after_insert(doc, method):
     """

@@ -203,31 +203,8 @@ function calculate_expiry_date(frm) {
     // Check if both manufacturing date and expiry months are provided
     if (frm.doc.custom_manufacturing_date && frm.doc.custom_expiry_in_months) {
         
-        // Validate expiry months
-        if (frm.doc.custom_expiry_in_months <= 0) {
-            frappe.throw(__("Expiry in months must be greater than 0."));
-            frm.set_value("custom_expiry_in_months", "");
-            return;
-        }
-        
-        if (frm.doc.custom_expiry_in_months > 120) { // 10 years max
-            frappe.throw(__("Expiry in months cannot be more than 120 months (10 years)."));
-            frm.set_value("custom_expiry_in_months", "");
-            return;
-        }
-        
-        // Validate manufacturing date
-        let manufacturing_date = new Date(frm.doc.custom_manufacturing_date);
-        let current_date = new Date();
-        
-        // Manufacturing date should not be in future
-        if (manufacturing_date > current_date) {
-            frappe.throw(__("Manufacturing date cannot be in the future."));
-            frm.set_value("custom_manufacturing_date", "");
-            return;
-        }
-        
         // Calculate expiry date
+        let manufacturing_date = new Date(frm.doc.custom_manufacturing_date);
         let expiry_date = new Date(manufacturing_date);
         expiry_date.setMonth(expiry_date.getMonth() + parseInt(frm.doc.custom_expiry_in_months));
         
