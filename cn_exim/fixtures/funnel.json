@@ -710,20 +710,6 @@
   "funnel_access": [],
   "funnel_definition": [
    {
-    "data": "{\"selectDoctype\":\"Material Request\",\"change_submit_button_label\":false,\"submit\":true}",
-    "element_type": "Trigger",
-    "id": "fHSlEVV2D0OMqrVPzG4Xu",
-    "parent": "Exim Flow",
-    "parentfield": "funnel_definition",
-    "parenttype": "Funnel",
-    "position": "{\"x\":435,\"y\":-210}",
-    "source": null,
-    "sourcehandle": null,
-    "target": null,
-    "targethandle": null,
-    "type": "on_submit_assistant_trigger"
-   },
-   {
     "data": "{\"node_label\":\"Check Purpose\",\"use_python_expression\":true,\"submit\":true,\"expression\":\"return variables[\\\"doc\\\"][\\\"material_request_type\\\"] == \\\"Purchase\\\"\",\"variable_path_for_output\":\"\",\"filters\":[]}",
     "element_type": "Action",
     "id": "C38eD9lj4KxI1K5b6q44b",
@@ -764,20 +750,6 @@
     "target": null,
     "targethandle": null,
     "type": "chatnext_assistant_message"
-   },
-   {
-    "data": null,
-    "element_type": "edge",
-    "id": "reactflow__edge-fHSlEVV2D0OMqrVPzG4Xuoutput-C38eD9lj4KxI1K5b6q44binput",
-    "parent": "Exim Flow",
-    "parentfield": "funnel_definition",
-    "parenttype": "Funnel",
-    "position": null,
-    "source": "fHSlEVV2D0OMqrVPzG4Xu",
-    "sourcehandle": "output",
-    "target": "C38eD9lj4KxI1K5b6q44b",
-    "targethandle": "input",
-    "type": "smoothstep"
    },
    {
     "data": "{\"doctype\":\"Material Request\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"Purchase Hod\",\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"info_required\":false,\"container\":{}}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"do_not_assign\":false}",
@@ -1972,11 +1944,11 @@
   ],
   "funnel_name": "Exim Flow",
   "funnel_type": "Private",
-  "modified": "2025-06-21 00:01:02.430388",
+  "modified": "2025-08-18 11:43:58.489777",
   "module": null,
   "name": "Exim Flow",
-  "status": "published",
+  "status": "updated",
   "variable_list": "[]",
-  "viewport": "{\"x\":-1511.292021276602,\"y\":388.9232101413473,\"zoom\":0.9090514432391891}"
+  "viewport": "{\"x\":-97.29202127660233,\"y\":333.9232101413473,\"zoom\":0.9090514432391891}"
  }
 ]
