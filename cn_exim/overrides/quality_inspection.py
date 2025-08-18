@@ -148,15 +148,15 @@ def create_stock_entry_for_quality_inspection(doc):
             "items": []
         })
         
+        # Get item details to check serial/batch fields (moved to beginning for both sections)
+        item_details = frappe.db.get_value("Item", doc.item_code, ["has_serial_no", "has_batch_no"], as_dict=True)
+        use_serial_batch_fields = (item_details.has_serial_no or item_details.has_batch_no) if item_details else False
+        
         # Add accepted quantity item
         if doc.custom_accepted_quantity and doc.custom_accepted_quantity > 0:
             if purchase_order_item and purchase_order_item.warehouse:
                 # Get target warehouse shelf
                 target_shelf = frappe.db.get_value("Warehouse", purchase_order_item.warehouse, "custom_shelf")
-                
-                # Get item details to check serial/batch fields
-                item_details = frappe.db.get_value("Item", doc.item_code, ["has_serial_no", "has_batch_no"], as_dict=True)
-                use_serial_batch_fields = (item_details.has_serial_no or item_details.has_batch_no) if item_details else False
                 
                 stock_entry.append("items", {
                     "item_code": doc.item_code,
