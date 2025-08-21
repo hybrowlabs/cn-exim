@@ -1,3 +1,80 @@
+frappe.provide("erpnext.stock");
+
+// Preserve original refresh and override to rename Make Stock Entry → Bin Posting
+if (erpnext.stock && erpnext.stock.PurchaseReceiptController && erpnext.stock.PurchaseReceiptController.prototype.refresh) {
+    const __origRefreshPR = erpnext.stock.PurchaseReceiptController.prototype.refresh;
+
+    erpnext.stock.PurchaseReceiptController.prototype.refresh = function () {
+        // Call core behaviour first so default buttons are added
+        __origRefreshPR.call(this);
+
+        // Replace Make Stock Entry with Bin Posting
+        if (this.frm.doc.docstatus === 1 && this.frm.doc.status !== "Closed") {
+            // Remove default button under Create
+            this.frm.remove_custom_button(__("Make Stock Entry"), __("Create"));
+
+            // Add our Bin Posting button which filters by Accepted QI
+            this.frm.add_custom_button(
+                __("Bin Posting"),
+                () => {
+                    // Show Quality Inspection status summary before proceeding
+                    frappe.call({
+                        method: "cn_exim.config.py.purchase_receipt.get_quality_inspection_status",
+                        args: { source_name: this.frm.doc.name },
+                        callback: (r) => {
+                            const status_info = r.message || [];
+                            const accepted = status_info.filter((x) => x.status === "Accepted");
+                            const pending  = status_info.filter((x) => x.has_quality_inspection && x.status !== "Accepted");
+                            const no_qi    = status_info.filter((x) => !x.has_quality_inspection);
+
+                            let message = "Quality Inspection Status:\n\n";
+                            if (accepted.length) message += `✅ Accepted (${accepted.length}): ${accepted.map(i=>i.item_code).join(', ')}\n\n`;
+                            if (pending.length)  message += `⏳ Pending/Rejected (${pending.length}): ${pending.map(i=>i.item_code).join(', ')}\n\n`;
+                            if (no_qi.length)     message += `❌ No Quality Inspection (${no_qi.length}): ${no_qi.map(i=>i.item_code).join(', ')}\n\n`;
+                            message += "Only items with 'Accepted' status will be included in the Bin Posting.";
+
+                            frappe.confirm(
+                                message,
+                                () => {
+                                    frappe.model.open_mapped_doc({
+                                        method: "cn_exim.config.py.purchase_receipt.custom_make_stock_entry",
+                                        frm: this.frm,
+                                    });
+                                },
+                                () => frappe.show_alert("Bin Posting creation cancelled.", "orange")
+                            );
+                        },
+                    });
+                },
+                __("Create")
+            );
+            
+            // Add Reset Bin Posting Status button - Commented for future use
+            /*
+            this.frm.add_custom_button(
+                __("Reset Bin Posting Status"),
+                () => {
+                    frappe.confirm(
+                        "This will reset the bin posting status for all items in this Purchase Receipt, allowing you to reprocess them. Are you sure?",
+                        () => {
+                            frappe.call({
+                                method: "cn_exim.config.py.purchase_receipt.reset_bin_posting_status",
+                                args: { purchase_receipt_name: this.frm.doc.name },
+                                callback: (r) => {
+                                    this.frm.reload_doc();
+                                }
+                            });
+                        },
+                        () => frappe.show_alert("Reset cancelled.", "orange")
+                    );
+                },
+                __("Create")
+            );
+            */
+        }
+    };
+}
+
 frappe.ui.form.on("Purchase Receipt", {
     refresh: function (frm) {
         frm.remove_custom_button("Landed Cost Voucher", "Create")
