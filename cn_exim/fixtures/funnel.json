@@ -698,7 +698,7 @@
   "modified": "2025-03-06 16:01:06.674971",
   "module": null,
   "name": "Pre Alert Approval Flow",
-  "status": "published",
+  "status": "updated",
   "variable_list": "[]",
   "viewport": "{\"x\":45.16553179779021,\"y\":196.2126576688978,\"zoom\":0.8699980582254351}"
  },
@@ -1004,7 +1004,7 @@
     "type": "chatnext_assistant_message"
    },
    {
-    "data": "{\"doctype\":\"Request for Quotation\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"Purchase Hod\",\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"container\":{},\"info_required\":false}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"do_not_assign\":false}",
+    "data": "{\"doctype\":\"Request for Quotation\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"buttons\":[{\"option\":\"Approve\"},{\"option\":\"Reject\"}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "q_MHuNnaeboyoRL2gy-3F",
     "parent": "Exim Flow",
@@ -1018,7 +1018,7 @@
     "type": "chatnext_assistant_multi_actions"
    },
    {
-    "data": "{\"doctype\":\"Purchase Order\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"Purchase Hod\",\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"container\":{},\"info_required\":false}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"do_not_assign\":false}",
+    "data": "{\"doctype\":\"Purchase Order\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"buttons\":[{\"option\":\"Approve\"},{\"option\":\"Reject\"}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "K6Fy1piYzcrkDmpostN3I",
     "parent": "Exim Flow",
@@ -1032,7 +1032,7 @@
     "type": "chatnext_assistant_multi_actions"
    },
    {
-    "data": "{\"doctype\":\"Pre-Alert Check List\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"Purchase Hod\",\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"container\":{},\"info_required\":false}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"do_not_assign\":false}",
+    "data": "{\"doctype\":\"Pre-Alert Check List\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"buttons\":[{\"option\":\"Approve\"},{\"option\":\"Reject\"}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "OrLBQZf5KhdDNN-4FWcWN",
     "parent": "Exim Flow",
@@ -1046,7 +1046,7 @@
     "type": "chatnext_assistant_multi_actions"
    },
    {
-    "data": "{\"doctype\":\"Supplier Quotation\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"Purchase Hod\",\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"container\":{},\"info_required\":false}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"do_not_assign\":false}",
+    "data": "{\"doctype\":\"Supplier Quotation\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"buttons\":[{\"option\":\"Approve\"},{\"option\":\"Reject\"}],\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"open_chatnext_assistant\":true,\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "CYVquLKOrmspVmFLpaFTQ",
     "parent": "Exim Flow",
@@ -1066,7 +1066,7 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":1695,\"y\":45}",
+    "position": "{\"x\":1695,\"y\":30}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -1080,7 +1080,7 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":2370,\"y\":75}",
+    "position": "{\"x\":2370,\"y\":60}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -1158,6 +1158,20 @@
     "type": "chatnext_assistant_message"
    },
    {
+    "data": "{\"email_account\":\"\",\"select_template\":false,\"email_subject\":\"Test\",\"send_to_assigned_users\":false,\"recepients\":[{\"recepientField\":\"\",\"recipient\":\"\",\"cc\":\"\"}],\"link_doctype\":true,\"attach_prints\":true,\"submit\":true,\"variable_path_for_output\":\"\",\"recipients\":\"hardik@mail.hybrowlabs.com\",\"cc\":\"\",\"bcc\":\"\",\"email_content\":\"<p>Hello, Sir This approve Flow Test So Please Approve That</p>\",\"doctype\":\"Request for Quotation\",\"docname\":\"{{doc.name}}\",\"attachments\":[{\"doctype\":\"Request for Quotation\",\"docname\":\"{{doc.name}}\",\"print_format\":\"\"}]}",
+    "element_type": "Action",
+    "id": "fYR_s362ykDTNuCny6Dla",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":1575,\"y\":-195}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "send_mail"
+   },
+   {
     "data": "{\"message\":\"Approve By HOD\",\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "RaUIsl-rwZji6J-_tNKRD",
@@ -1192,7 +1206,7 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":2235,\"y\":210}",
+    "position": "{\"x\":2235,\"y\":225}",
     "source": null,
     "sourcehandle": null,
     "target": null,
@@ -1228,7 +1242,7 @@
     "type": "chatnext_assistant_message"
    },
    {
-    "data": "{\"doctype\":\"Pickup Request\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"Purchase Hod\",\"do_not_assign\":false,\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"info_required\":false,\"container\":{}}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"open_chatnext_assistant\":true,\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"submit\":true,\"variable_path_for_output\":\"\"}",
+    "data": "{\"doctype\":\"Pickup Request\",\"doc_variable\":\"{{ doc.name }}\",\"user_data\":\"System Manager\",\"do_not_assign\":false,\"buttons\":[{\"option\":\"Approve\",\"formQuestion\":{\"info_required\":false}},{\"option\":\"Reject\",\"formQuestion\":{\"info_required\":false}}],\"open_chatnext_assistant\":true,\"output_handles_array_field\":\"buttons\",\"output_handle_key_field\":\"option\",\"submit\":true,\"variable_path_for_output\":\"\"}",
     "element_type": "Action",
     "id": "G4--Oenm1CXPGuI_hNI5u",
     "parent": "Exim Flow",
@@ -1416,12 +1430,26 @@
     "parent": "Exim Flow",
     "parentfield": "funnel_definition",
     "parenttype": "Funnel",
-    "position": "{\"x\":2370,\"y\":-15}",
+    "position": "{\"x\":2625,\"y\":-15}",
     "source": null,
     "sourcehandle": null,
     "target": null,
     "targethandle": null,
     "type": "exec_python"
+   },
+   {
+    "data": "{\"is_dynamic_form\":false,\"selected_form\":{\"name\":\"user_details\",\"label\":\"User Detials\"},\"prefill_data\":\"\",\"answer_var\":\"value\",\"submit\":true}",
+    "element_type": "Action",
+    "id": "nwo8sMmX7vOLsmwTE_dvj",
+    "parent": "Exim Flow",
+    "parentfield": "funnel_definition",
+    "parenttype": "Funnel",
+    "position": "{\"x\":2850,\"y\":315}",
+    "source": null,
+    "sourcehandle": null,
+    "target": null,
+    "targethandle": null,
+    "type": "chatnext_assistant_form_question"
    },
    {
     "data": null,
