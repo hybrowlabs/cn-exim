@@ -158,7 +158,8 @@ def create_stock_entry_for_quality_inspection(doc):
                 # Get target warehouse shelf
                 target_shelf = frappe.db.get_value("Warehouse", purchase_order_item.warehouse, "custom_shelf")
                 
-                stock_entry.append("items", {
+                # Prepare stock entry item with serial/batch information
+                stock_entry_item = {
                     "item_code": doc.item_code,
                     "item_name": doc.item_name,
                     "qty": doc.custom_accepted_quantity,
@@ -169,7 +170,21 @@ def create_stock_entry_for_quality_inspection(doc):
                     "to_shelf": target_shelf,
                     "allow_zero_valuation_rate": 1,
                     "use_serial_batch_fields": use_serial_batch_fields
-                })
+                }
+                
+                # Add serial/batch information if available
+                if doc.custom_serial_and_batch_bundle:
+                    stock_entry_item["serial_and_batch_bundle"] = doc.custom_serial_and_batch_bundle
+                elif doc.batch_no:
+                    stock_entry_item["batch_no"] = doc.batch_no
+                elif purchase_receipt_item.serial_and_batch_bundle:
+                    stock_entry_item["serial_and_batch_bundle"] = purchase_receipt_item.serial_and_batch_bundle
+                elif purchase_receipt_item.batch_no:
+                    stock_entry_item["batch_no"] = purchase_receipt_item.batch_no
+                elif purchase_receipt_item.serial_no:
+                    stock_entry_item["serial_no"] = purchase_receipt_item.serial_no
+                
+                stock_entry.append("items", stock_entry_item)
         
         # Add rejected quantity item
         if doc.custom_rejected_quantity and doc.custom_rejected_quantity > 0:
@@ -180,7 +195,8 @@ def create_stock_entry_for_quality_inspection(doc):
                     # Get rejected warehouse shelf
                     rejected_shelf = frappe.db.get_value("Warehouse", rejected_warehouse, "custom_shelf")
                     
-                    stock_entry.append("items", {
+                    # Prepare rejected stock entry item with serial/batch information
+                    rejected_stock_entry_item = {
                         "item_code": doc.item_code,
                         "item_name": doc.item_name,
                         "qty": doc.custom_rejected_quantity,
@@ -191,7 +207,21 @@ def create_stock_entry_for_quality_inspection(doc):
                         "to_shelf": rejected_shelf,
                         "allow_zero_valuation_rate": 1,
                         "use_serial_batch_fields": use_serial_batch_fields
-                    })
+                    }
+                    
+                    # Add serial/batch information if available
+                    if doc.custom_serial_and_batch_bundle:
+                        rejected_stock_entry_item["serial_and_batch_bundle"] = doc.custom_serial_and_batch_bundle
+                    elif doc.batch_no:
+                        rejected_stock_entry_item["batch_no"] = doc.batch_no
+                    elif purchase_receipt_item.serial_and_batch_bundle:
+                        rejected_stock_entry_item["serial_and_batch_bundle"] = purchase_receipt_item.serial_and_batch_bundle
+                    elif purchase_receipt_item.batch_no:
+                        rejected_stock_entry_item["batch_no"] = purchase_receipt_item.batch_no
+                    elif purchase_receipt_item.serial_no:
+                        rejected_stock_entry_item["serial_no"] = purchase_receipt_item.serial_no
+                    
+                    stock_entry.append("items", rejected_stock_entry_item)
                 else:
                     # Throw error with link to warehouse
                     warehouse_link = f'<a href="/app/warehouse/{purchase_order_item.warehouse}" target="_blank">{purchase_order_item.warehouse}</a>'
@@ -289,6 +319,7 @@ def update_purchase_receipt_item(doc, purchase_order_item):
                     rejected_shelf = frappe.db.get_value("Warehouse", rejected_warehouse, "custom_shelf")
                     if rejected_shelf:
                         frappe.db.set_value("Purchase Receipt Item", doc.child_row_reference, "rejected_shelf", rejected_shelf)
+                        #frappe.msgprint(f"Rejected warehouse and shelf updated to {rejected_warehouse} and {rejected_shelf} for Purchase Receipt Item {doc.child_row_reference}"),
         
     except Exception as e:
         frappe.log_error(f"Error updating Purchase Receipt Item {doc.child_row_reference}: {str(e)}", "Purchase Receipt Item Update Error")
