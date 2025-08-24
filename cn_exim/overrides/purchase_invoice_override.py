@@ -25,7 +25,7 @@ def custom_set_expense_account(self, for_validate=False):
 				elif item.default_warehouse:
 					account = frappe.db.get_value("Warehouse", item.default_warehouse, "account")
 
-				print("Account from Item Default:\n\n\n", account, "\n\n\n")
+				# print("Account from Item Default:\n\n\n", account, "\n\n\n")
 				if account:
 					stock_not_billed_account = account
 					item.expense_account = account

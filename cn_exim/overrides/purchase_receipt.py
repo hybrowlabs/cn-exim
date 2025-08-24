@@ -14,8 +14,8 @@ def on_submit(self, method):
         frappe.db.commit()
     
     # Create OUT stock entry when GRN is submitted
-    if self.custom_gate_entry_no:
-        create_out_stock_entry_from_gate_entry(self)
+    # if self.custom_gate_entry_no:
+    #     create_out_stock_entry_from_gate_entry(self)
 
 def create_out_stock_entry_from_gate_entry(pr_doc):
     """Create Material Issue stock entry by copying from Gate Entry's IN stock entry"""

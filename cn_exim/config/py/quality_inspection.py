@@ -58,20 +58,36 @@ def get_gate_entry_received_qty(gate_entry_child, item_code):
             "message": f"Error: {str(e)}"
         }
 
-def on_submit(doc, method):
+@frappe.whitelist()
+def get_purchase_receipt_item_qty(child_row_reference, item_code):
     """
-    Validate Quality Inspection before submission
+    Get the quantity from Purchase Receipt Item for a specific child row reference
     """
-    if doc.status == "Under Inspection":
-        frappe.throw("Status must be 'Accepted' or 'Rejected' before submitting.")
-    
-    # Additional validation for Gate Entry reference type
-    if doc.reference_type == "Gate Entry":
-        if not doc.custom_gate_entry_child:
-            frappe.throw("Gate Entry Child reference is required for Gate Entry type Quality Inspection.")
+    try:
+        # Get the quantity from Purchase Receipt Item
+        data = frappe.db.sql("""
+            SELECT qty 
+            FROM `tabPurchase Receipt Item` 
+            WHERE name = %s AND item_code = %s
+        """, (child_row_reference, item_code), as_dict=True)
         
-        # Validate quantities
-        total_qty = (doc.custom_accepted_quantity or 0) + (doc.custom_rejected_quantity or 0)
-        if total_qty <= 0:
-            frappe.throw("Total quantity (Accepted + Rejected) must be greater than 0.")
-    
+        if data:
+            return {
+                "qty": data[0].qty,
+                "success": True
+            }
+        else:
+            return {
+                "qty": 0,
+                "success": False,
+                "message": "No Purchase Receipt Item found for this reference"
+            }
+            
+    except Exception as e:
+        frappe.log_error(f"Error getting Purchase Receipt item quantity: {str(e)}")
+        return {
+            "qty": 0,
+            "success": False,
+            "message": f"Error: {str(e)}"
+        }
+

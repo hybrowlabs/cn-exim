@@ -166,7 +166,10 @@ doc_events = {
         "on_trash": "cn_exim.cn_exim.doc_events.rfq_event.on_trash",
     },
     "Quality Inspection": {
-        "on_submit": "cn_exim.config.py.quality_inspection.on_submit",
+        "before_save": "cn_exim.overrides.quality_inspection.before_save",
+        "on_submit": "cn_exim.overrides.quality_inspection.on_submit",
+        "after_insert": "cn_exim.overrides.quality_inspection.after_insert",
+        "on_cancel": "cn_exim.overrides.quality_inspection.on_cancel",
     },
 }
 
