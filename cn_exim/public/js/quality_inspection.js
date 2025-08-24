@@ -159,34 +159,7 @@ frappe.ui.form.on('Quality Inspection', {
             }
         }
     },
-    before_save: function (frm) {
-        // Only run validation if values are not already set to avoid "document was modified" error
-        if(frm.doc.reference_type !== "Gate Entry" && 
-           (!frm.doc.custom_accepted_quantity || !frm.doc.custom_rejected_quantity)) {
-            return new Promise((resolve, reject) => {
-                frappe.call({
-                    method: "cn_exim.config.py.quality_inspection.get_qty_from_purchase_receipt",
-                    args: {
-                        parent: frm.doc.reference_name,
-                        item_code: frm.doc.item_code
-                    },
-                    callback: function (r) {
-                        if (r.message) {
-                            if (r.message[0]['qty'] < frm.doc.custom_rejected_quantity) {
-                                frappe.msgprint("Rejected quantity cannot be greater than Purchase Receipt quantity.");
-                                frm.set_value("custom_rejected_quantity", 0);
-                                reject(); // Cancel save
-                            } else {
-                                resolve(); // Allow save
-                            }
-                        } else {
-                            resolve(); // If nothing returned, allow save
-                        }
-                    }
-                });
-            });
-        }
-    },
+
     on_submit: function (frm) {
         if(frm.doc.reference_type !== "Gate Entry"){
         frappe.call({
