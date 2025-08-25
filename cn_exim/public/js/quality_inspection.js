@@ -5,6 +5,16 @@ frappe.ui.form.on('Quality Inspection', {
 
             if (doc.reference_type === "Gate Entry") {
                 doctype = "Gate Entry Details";
+            } else if (doc.reference_type === "Work Order") {
+                // Work Order uses production_item field, not child table
+                return {
+                    query: "erpnext.stock.doctype.quality_inspection.quality_inspection.item_query",
+                    filters: {
+                        from: "Work Order",
+                        inspection_type: doc.inspection_type,
+                        reference_name: doc.reference_name
+                    },
+                };
             } else if (doc.reference_type !== "Job Card") {
                 doctype = doc.reference_type == "Stock Entry"
                     ? "Stock Entry Detail"
@@ -47,20 +57,25 @@ frappe.ui.form.on('Quality Inspection', {
     },
     
     onload: function (frm) {
-        if(frm.doc.reference_type !== "Gate Entry"){
+        // Only proceed if we have the necessary data
+        if (!frm.doc.reference_type || !frm.doc.reference_name || !frm.doc.item_code) {
+            return;
+        }
+        
+        // Use the comprehensive function that handles all reference types
         if (frm.doc.custom_accepted_quantity == undefined || frm.doc.custom_accepted_quantity == 0) {
             frappe.call({
-                method: "cn_exim.config.py.quality_inspection.set_value_in_qc_base_on_pr",
+                method: "cn_exim.config.py.quality_inspection.set_initial_quantity_from_reference",
                 args: {
-                    "parent": frm.doc.reference_name,
-                    "item_code": frm.doc.item_code,
                     "name": frm.doc.name
                 },
                 callback: function (r) {
+                    if (r.message && !r.message.success) {
+                        console.log("Quantity initialization result:", r.message);
+                    }
                 }
             })
         }
-    }
     },
     
     // Expiry date calculation functions
@@ -105,6 +120,78 @@ frappe.ui.form.on('Quality Inspection', {
                             }
                         } else {
                             frappe.throw(__("Could not find received quantity for this item in Purchase Receipt."));
+                        }
+                    }
+                });
+            }
+        } else if(frm.doc.reference_type === "Work Order"){
+            // For Work Order reference type
+            if (frm.doc.custom_rejected_quantity !== undefined && frm.doc.custom_rejected_quantity !== null) {
+                frappe.call({
+                    method: "cn_exim.config.py.quality_inspection.get_work_order_qty",
+                    args: {
+                        "work_order": frm.doc.reference_name,
+                        "item_code": frm.doc.item_code,
+                    },
+                    callback: function (r) {
+                        if (r.message && r.message.qty !== undefined) {
+                            let work_order_qty = r.message.qty || 0;
+                            let rejected_qty = frm.doc.custom_rejected_quantity || 0;
+                            
+                            if (rejected_qty > work_order_qty) {
+                                frappe.throw(__("Rejected quantity ({0}) cannot be greater than work order quantity ({1}).", 
+                                    [rejected_qty, work_order_qty]));
+                                frm.set_value("custom_rejected_quantity", 0);
+                                frm.set_value("custom_accepted_quantity", work_order_qty);
+                            } else {
+                                let accepted_qty = work_order_qty - rejected_qty;
+                                frm.set_value("custom_accepted_quantity", accepted_qty);
+                                
+                                frappe.msgprint({
+                                    title: __("Quantity Calculated"),
+                                    message: __("Work Order Quantity: {0}<br>Rejected Quantity: {1}<br>Accepted Quantity: {2}", 
+                                        [work_order_qty, rejected_qty, accepted_qty]),
+                                    indicator: 'green'
+                                });
+                            }
+                        } else {
+                            frappe.throw(__("Could not find quantity for this item in Work Order."));
+                        }
+                    }
+                });
+            }
+        } else if(frm.doc.reference_type === "Stock Entry"){
+            // For Stock Entry reference type
+            if (frm.doc.child_row_reference && frm.doc.custom_rejected_quantity !== undefined && frm.doc.custom_rejected_quantity !== null) {
+                frappe.call({
+                    method: "cn_exim.config.py.quality_inspection.get_stock_entry_item_qty",
+                    args: {
+                        "child_row_reference": frm.doc.child_row_reference,
+                        "item_code": frm.doc.item_code,
+                    },
+                    callback: function (r) {
+                        if (r.message && r.message.qty !== undefined) {
+                            let stock_entry_qty = r.message.qty || 0;
+                            let rejected_qty = frm.doc.custom_rejected_quantity || 0;
+                            
+                            if (rejected_qty > stock_entry_qty) {
+                                frappe.throw(__("Rejected quantity ({0}) cannot be greater than stock entry quantity ({1}).", 
+                                    [rejected_qty, stock_entry_qty]));
+                                frm.set_value("custom_rejected_quantity", 0);
+                                frm.set_value("custom_accepted_quantity", stock_entry_qty);
+                            } else {
+                                let accepted_qty = stock_entry_qty - rejected_qty;
+                                frm.set_value("custom_accepted_quantity", accepted_qty);
+                                
+                                frappe.msgprint({
+                                    title: __("Quantity Calculated"),
+                                    message: __("Stock Entry Quantity: {0}<br>Rejected Quantity: {1}<br>Accepted Quantity: {2}", 
+                                        [stock_entry_qty, rejected_qty, accepted_qty]),
+                                    indicator: 'green'
+                                });
+                            }
+                        } else {
+                            frappe.throw(__("Could not find quantity for this item in Stock Entry."));
                         }
                     }
                 });
@@ -161,7 +248,7 @@ frappe.ui.form.on('Quality Inspection', {
     },
 
     on_submit: function (frm) {
-        if(frm.doc.reference_type !== "Gate Entry"){
+        if(frm.doc.reference_type !== "Gate Entry" && frm.doc.reference_type !== "Work Order"){
         frappe.call({
             method: "cn_exim.config.py.quality_inspection.update_purchase_receipt",
             args: {
@@ -173,6 +260,21 @@ frappe.ui.form.on('Quality Inspection', {
             callback: function (r) {
                 if (r.message) {
                     frappe.msgprint("Purchase Receipt updated successfully.");
+                }
+            }
+        });
+    } else if(frm.doc.reference_type === "Work Order"){
+        frappe.call({
+            method: "cn_exim.config.py.quality_inspection.update_work_order",
+            args: {
+                "work_order": frm.doc.reference_name,
+                "item_code": frm.doc.item_code,
+                "accepted_qty": frm.doc.custom_accepted_quantity,
+                "rejected_qty": frm.doc.custom_rejected_quantity
+            },
+            callback: function (r) {
+                if (r.message && r.message.success) {
+                    frappe.msgprint("Work Order updated successfully.");
                 }
             }
         });

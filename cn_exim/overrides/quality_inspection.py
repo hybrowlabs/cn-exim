@@ -6,6 +6,13 @@ def before_save(doc, method):
     # Auto-calculate expiry date and validate quantities
     calculate_expiry_date(doc)
     validate_rejected_quantity(doc)
+    
+    # Handle Work Order reference type - skip child_row_reference logic
+    if doc.reference_type == "Work Order":
+        # Work Order doesn't have child table, so we don't need child_row_reference
+        # The ERPNext core set_child_row_reference method will handle this gracefully
+        # by returning early when no child rows are found
+        pass
 
 def calculate_expiry_date(doc):
     # Auto-calculate expiry date if manufacturing date and months provided
@@ -81,23 +88,33 @@ def after_insert(doc, method):
                 doc.save()
 
 def on_submit(doc, method):
-    # Validate status before submission
-    if doc.status == "Under Inspection":
-        frappe.throw("Status must be 'Accepted' or 'Rejected' before submitting.")
+    if doc.reference_type == "Purchase Receipt":
+        # Existing Purchase Receipt logic
+        if doc.custom_accepted_quantity > 0:
+            frappe.msgprint(f"Accepted Quantity: {doc.custom_accepted_quantity}")
+        if doc.custom_rejected_quantity > 0:
+            frappe.msgprint(f"Rejected Quantity: {doc.custom_rejected_quantity}")
     
-    # Handle Purchase Receipt quality inspection workflow
-    if doc.reference_type == "Purchase Receipt" and doc.inspection_type == "Incoming":
-        if not doc.child_row_reference:
-            frappe.throw("Child Row Reference is required for Purchase Receipt type Quality Inspection.")
+    elif doc.reference_type == "Work Order":
+        # Validate quantities
+        if doc.custom_accepted_quantity + doc.custom_rejected_quantity != doc.sample_size:
+            frappe.throw("Accepted Quantity + Rejected Quantity must equal Sample Size")
         
-        # Validate total quantities
-        total_qty = (doc.custom_accepted_quantity or 0) + (doc.custom_rejected_quantity or 0)
-        if total_qty <= 0:
-            frappe.throw("Total quantity (Accepted + Rejected) must be greater than 0.")
+        # Update Work Order with quality results
+        update_work_order_with_quality_results(doc)
+    
+    elif doc.reference_type == "Stock Entry":
+        # Validate quantities
+        if doc.custom_accepted_quantity + doc.custom_rejected_quantity != doc.sample_size:
+            frappe.throw("Accepted Quantity + Rejected Quantity must equal Sample Size")
         
-        # Create stock movement and update batch info
-        create_stock_entry_for_quality_inspection(doc)
-        update_batch_expiry_date(doc)
+        # Move quantities to target and rejected warehouses
+        if doc.custom_accepted_quantity > 0 or doc.custom_rejected_quantity > 0:
+            move_quantities_to_target_and_rejected_locations(doc)
+        
+        # Update Work Order if linked
+        if doc.custom_work_order:
+            update_work_order_with_quality_results(doc)
 
 def create_stock_entry_for_quality_inspection(doc):
     # Get purchase receipt and order item details
@@ -297,3 +314,126 @@ def fetch_serial_batch_bundle_data(child_row_reference, reference_name):
         "serial_and_batch_bundle": purchase_receipt_item.serial_and_batch_bundle,
         "batch_no": batch_no
     }
+
+def move_quantities_to_target_and_rejected_locations(doc):
+    """
+    Move accepted and rejected quantities to their respective warehouses in one Stock Entry
+    """
+    try:
+        # Get Stock Entry Detail to find source warehouse and shelf
+        stock_entry_detail = frappe.get_doc("Stock Entry Detail", doc.child_row_reference)
+        
+        if not stock_entry_detail:
+            frappe.throw(f"Stock Entry Detail {doc.child_row_reference} not found")
+        
+        # Source: Stock Entry's target warehouse (where finished goods went)
+        source_warehouse = stock_entry_detail.t_warehouse
+        source_shelf = stock_entry_detail.to_shelf
+        
+        # Get Work Order details
+        work_order_name = doc.custom_work_order
+        if not work_order_name:
+            frappe.throw("Work Order not found in Quality Inspection")
+        
+        target_warehouse = frappe.db.get_value("Work Order", work_order_name, "custom_target_warehouse")
+        rejected_warehouse = frappe.db.get_value("Warehouse", target_warehouse, "custom_rejected_warehouse")
+        rejected_shelf = frappe.db.get_value("Warehouse", rejected_warehouse, "custom_shelf")
+        
+        if not target_warehouse and doc.custom_accepted_quantity > 0:
+            frappe.throw("Target warehouse not found in Work Order")
+        
+        if not rejected_warehouse and doc.custom_rejected_quantity > 0:
+            frappe.throw("Rejected warehouse not found in Work Order")
+        
+        # Create single Stock Entry for both movements
+        stock_entry = frappe.new_doc("Stock Entry")
+        stock_entry.stock_entry_type = "Material Transfer"
+        stock_entry.purpose = "Material Transfer"
+        stock_entry.company = doc.company
+        stock_entry.posting_date = frappe.utils.today()
+        stock_entry.posting_time = frappe.utils.nowtime()
+        stock_entry.set_posting_time = 0
+        stock_entry.from_warehouse = source_warehouse
+        
+        # Add accepted quantity to target warehouse
+        if doc.custom_accepted_quantity > 0 and target_warehouse != source_warehouse:
+            to_shelf = frappe.db.get_value("Warehouse", target_warehouse, "custom_shelf")
+            stock_entry.append("items", {
+                "item_code": doc.item_code,
+                "item_name": doc.item_name,
+                "description": doc.description,
+                "qty": doc.custom_accepted_quantity,
+                "uom": stock_entry_detail.uom,
+                "stock_uom": stock_entry_detail.stock_uom,
+                "conversion_factor": stock_entry_detail.conversion_factor,
+                "basic_rate": stock_entry_detail.basic_rate,
+                "s_warehouse": source_warehouse,
+                "t_warehouse": target_warehouse,
+                "shelf": source_shelf,
+                "to_shelf": to_shelf,
+                "batch_no": doc.batch_no,
+            })
+        
+        # Add rejected quantity to rejected warehouse
+        if doc.custom_rejected_quantity > 0 and rejected_warehouse != source_warehouse:
+            stock_entry.append("items", {
+                "item_code": doc.item_code,
+                "item_name": doc.item_name,
+                "description": doc.description,
+                "qty": doc.custom_rejected_quantity,
+                "uom": stock_entry_detail.uom,
+                "stock_uom": stock_entry_detail.stock_uom,
+                "conversion_factor": stock_entry_detail.conversion_factor,
+                "basic_rate": stock_entry_detail.basic_rate,
+                "s_warehouse": source_warehouse,
+                "t_warehouse": rejected_warehouse,
+                "shelf": source_shelf,
+                "to_shelf": rejected_shelf,
+                "batch_no": doc.batch_no,
+            })
+        
+        # Submit the Stock Entry if items were added
+        if stock_entry.items:
+            stock_entry.insert()
+            stock_entry.submit()
+            
+            message = "Successfully moved quantities:"
+            if doc.custom_accepted_quantity > 0 and target_warehouse != source_warehouse:
+                message += f"\n• {doc.custom_accepted_quantity} accepted to {target_warehouse}"
+            if doc.custom_rejected_quantity > 0 and rejected_warehouse != source_warehouse:
+                message += f"\n• {doc.custom_rejected_quantity} rejected to {rejected_warehouse}"
+            
+            frappe.msgprint(message)
+        else:
+            frappe.msgprint("No quantities to move - stock already in target locations")
+        
+    except Exception as e:
+        frappe.log_error(f"Error moving quantities to target and rejected locations: {str(e)}")
+        frappe.throw(f"Error moving quantities: {str(e)}")
+
+def update_work_order_with_quality_results(doc):
+    """
+    Update Work Order with quality inspection results
+    """
+    try:
+        work_order_name = doc.custom_work_order
+        if not work_order_name:
+            return
+        
+        # Get current values from Work Order
+        current_accepted = frappe.db.get_value("Work Order", work_order_name, "custom_quality_accepted_qty") or 0
+        current_rejected = frappe.db.get_value("Work Order", work_order_name, "custom_quality_rejected_qty") or 0
+        
+        # Calculate new values
+        new_accepted = current_accepted + (doc.custom_accepted_quantity or 0)
+        new_rejected = current_rejected + (doc.custom_rejected_quantity or 0)
+        
+        # Update using frappe.db.set_value
+        frappe.db.set_value("Work Order", work_order_name, "custom_quality_accepted_qty", new_accepted)
+        frappe.db.set_value("Work Order", work_order_name, "custom_quality_rejected_qty", new_rejected)
+        
+        frappe.msgprint(f"Updated Work Order {work_order_name} with quality results")
+        
+    except Exception as e:
+        frappe.log_error(f"Error updating Work Order with quality results: {str(e)}")
+        frappe.throw(f"Error updating Work Order: {str(e)}")
