@@ -6,7 +6,17 @@ from frappe.model.document import Document
 
 
 class MaterialTypes(Document):
-	pass
+	def validate(self):
+		self.validate_shelf()
+
+	def validate_shelf(self):
+		if self.shelf:
+			if not self.warehouse:
+				frappe.throw("Warehouse is required")
+			else:
+				valid_warehouse = frappe.db.get_value("Shelf",self.shelf,"warehouse")
+				if valid_warehouse != self.warehouse:
+					frappe.throw("Wrong Parent Warehouse")
 
 @frappe.whitelist()
 def get_Charges_of_item(name):

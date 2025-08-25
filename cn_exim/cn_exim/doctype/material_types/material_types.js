@@ -47,6 +47,21 @@ frappe.ui.form.on("Material Types", {
             };
         };
 
+        // Add warehouse filter to shelf field
+        frm.get_field("shelf").get_query = function(doc) {
+            return {
+                filters: {
+                    warehouse: doc.warehouse
+                }
+            };
+        };
+
+    },
+    
+    warehouse: function(frm) {
+        // Clear shelf field when warehouse changes
+        frm.set_value("shelf", "");
+        frm.refresh_field("shelf");
     }
     
 });

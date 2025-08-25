@@ -7,6 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "material_tyep",
+  "warehouse",
+  "shelf",
   "qty_updating",
   "column_break_lhvg",
   "counter",
@@ -30,16 +32,19 @@
   {
    "fieldname": "counter",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Counter"
   },
   {
    "fieldname": "qty_updating",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Qty updating"
   },
   {
    "fieldname": "materil_type_description",
    "fieldtype": "Small Text",
+   "hidden": 1,
    "label": "Materil Type Description"
   },
   {
@@ -61,18 +66,34 @@
   },
   {
    "fieldname": "section_break_jlze",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "material_type_account",
    "fieldtype": "Table",
    "label": "Material Type Account",
    "options": "Material Type Account"
+  },
+  {
+   "description": "This is used for putaway rule.",
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "description": "This is used for putaway rule.",
+   "fieldname": "shelf",
+   "fieldtype": "Link",
+   "label": "Shelf",
+   "options": "Shelf"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-20 15:19:41.377874",
+ "modified": "2025-08-25 18:11:26.988974",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Types",
@@ -92,6 +113,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
