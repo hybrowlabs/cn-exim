@@ -49,7 +49,10 @@ doctype_js = {
     "Work Order": "public/js/work_order.js",
     "Supplier Quotation": "public/js/supplier_quotation.js",
 }
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+# include js in DocType list views
+doctype_list_js = {
+    "Item": "public/js/item_list.js",
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -171,6 +174,11 @@ doc_events = {
         "on_submit": "cn_exim.overrides.quality_inspection.on_submit",
         "after_insert": "cn_exim.overrides.quality_inspection.after_insert",
         "on_cancel": "cn_exim.overrides.quality_inspection.on_cancel",
+    },
+    "Item": {
+        "validate": "cn_exim.config.py.item.validate_putaway_configuration",
+        "after_insert": "cn_exim.config.py.item.create_putaway_rule_from_material_type",
+        "on_update": "cn_exim.config.py.item.update_putaway_rule_on_material_type_change",
     },
 }
 

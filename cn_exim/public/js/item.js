@@ -47,6 +47,11 @@ frappe.ui.form.on("Item", {
             };
         };
 
+        // Add custom button for Putaway Rule creation
+        frm.add_custom_button(__('Create Putaway Rule'), function() {
+            show_putaway_rule_options(frm);
+        }, __('Actions'));
+
         // let len = frm.doc.custom_item_charges_template.length
 
         // if(frm.doc.custom_material_type != undefined && len == 0){
@@ -99,6 +104,67 @@ frappe.ui.form.on("Item", {
     }
 })
 
+function show_putaway_rule_options(frm) {
+    let options = [
+        {
+            label: __('Based on Material Types'),
+            value: 'material_types',
+            description: __('Create Putaway Rule using Material Types configuration')
+        },
+        {
+            label: __('Custom Manual Entry'),
+            value: 'custom',
+            description: __('Open Putaway Rule form with item details pre-filled')
+        }
+    ];
+
+    frappe.prompt([
+        {
+            fieldtype: 'Select',
+            label: __('Select Option'),
+            fieldname: 'option',
+            options: options,
+            reqd: 1
+        }
+    ], function(values) {
+        if (values.option === 'material_types') {
+            create_putaway_rule_from_material_types(frm);
+        } else if (values.option === 'custom') {
+            open_putaway_rule_form(frm);
+        }
+    }, __('Create Putaway Rule'), __('Create'));
+}
+
+function open_putaway_rule_form(frm) {
+    // Open Putaway Rule form with item details pre-filled
+    frappe.new_doc('Putaway Rule', {
+        item_code: frm.doc.item_code,
+        item_name: frm.doc.item_name,
+        stock_uom: frm.doc.stock_uom
+    });
+}
+
+function create_putaway_rule_from_material_types(frm) {
+    if (!frm.doc.custom_material_type) {
+        frappe.msgprint(__('Please select a Material Type first.'));
+        return;
+    }
+
+    frappe.call({
+        method: "cn_exim.config.py.item.create_putaway_rule_from_material_types",
+        args: {
+            item_code: frm.doc.item_code,
+            material_type: frm.doc.custom_material_type
+        },
+        callback: function(response) {
+            if (response.message.success) {
+                frappe.msgprint(__('Putaway Rule created successfully!'));
+            } else {
+                frappe.msgprint(__('Error: ') + response.message.message);
+            }
+        }
+    });
+}
 
 // function get_item_wise_charges(frm){
 //     frappe.call({

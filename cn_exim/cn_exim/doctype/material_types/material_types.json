@@ -7,8 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "material_tyep",
+  "is_putaway_configuration",
   "warehouse",
   "shelf",
+  "capacity",
+  "company",
   "qty_updating",
   "column_break_lhvg",
   "counter",
@@ -76,6 +79,7 @@
    "options": "Material Type Account"
   },
   {
+   "depends_on": "is_putaway_configuration",
    "description": "This is used for putaway rule.",
    "fieldname": "warehouse",
    "fieldtype": "Link",
@@ -83,17 +87,46 @@
    "options": "Warehouse"
   },
   {
+   "depends_on": "is_putaway_configuration",
    "description": "This is used for putaway rule.",
    "fieldname": "shelf",
    "fieldtype": "Link",
    "label": "Shelf",
    "options": "Shelf"
+  },
+  {
+   "depends_on": "is_putaway_configuration",
+   "description": "This is used for putaway rule.",
+   "fetch_from": "shelf.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "depends_on": "eval:doc.shelf",
+   "fieldname": "capacity",
+   "fieldtype": "Float",
+   "label": "Capacity",
+   "mandatory_depends_on": "eval:doc.shelf"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_putaway_configuration",
+   "fieldtype": "Check",
+   "label": "is putaway configuration"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-08-25 18:11:26.988974",
+ "links": [
+  {
+   "link_doctype": "Item",
+   "link_fieldname": "custom_material_type"
+  }
+ ],
+ "modified": "2025-08-25 22:42:04.046683",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Types",
