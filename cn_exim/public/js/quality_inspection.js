@@ -248,7 +248,7 @@ frappe.ui.form.on('Quality Inspection', {
     },
 
     on_submit: function (frm) {
-        if(frm.doc.reference_type !== "Gate Entry" && frm.doc.reference_type !== "Work Order"){
+        if(frm.doc.reference_type !== "Gate Entry" && frm.doc.reference_type !== "Work Order" && frm.doc.reference_type !== "Stock Entry"){
         frappe.call({
             method: "cn_exim.config.py.quality_inspection.update_purchase_receipt",
             args: {

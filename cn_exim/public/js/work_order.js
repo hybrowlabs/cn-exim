@@ -6,8 +6,41 @@ frappe.ui.form.on('Work Order', {
                 create_quality_inspections_for_all_stock_entries(frm);
             }, __('Create')).addClass('btn-primary');
         }
+        
+        // Set up shelf filter based on warehouse
+        setup_shelf_filter(frm);
+    },
+    
+    custom_target_warehouse: function(frm) {
+        // Update shelf options when warehouse changes
+        update_shelf_options(frm);
     }
 });
+
+function setup_shelf_filter(frm) {
+    // Set up the shelf field with warehouse filter
+    if (frm.get_field('custom_target_shelf')) {
+        frm.get_field('custom_target_shelf').get_query = function() {
+            return {
+                filters: {
+                    'warehouse': frm.doc.custom_target_warehouse || ''
+                }
+            };
+        };
+    }
+}
+
+function update_shelf_options(frm) {
+    // Clear shelf value when warehouse changes
+    if (frm.doc.custom_target_warehouse) {
+        frm.set_value('custom_target_shelf', '');
+        
+        // Refresh the shelf field to update options
+        if (frm.get_field('custom_target_shelf')) {
+            frm.get_field('custom_target_shelf').refresh();
+        }
+    }
+}
 
 function create_quality_inspections_for_all_stock_entries(frm) {
     // Get Stock Entries for this Work Order
@@ -214,7 +247,10 @@ function create_quality_inspection_from_stock_entry(stock_entry_name, frm) {
                 // Set initial accepted quantity from stock entry finished quantity
                 qi.custom_accepted_quantity = stock_entry.fg_completed_qty;
                 
-                // Set batch number if available
+                // Set batch number and serial/batch bundle if available
+                if (stock_entry.serial_and_batch_bundle) {
+                    qi.custom_serial_and_batch_bundle = stock_entry.serial_and_batch_bundle;
+                }
                 if (stock_entry.batch_no) {
                     qi.batch_no = stock_entry.batch_no;
                 }

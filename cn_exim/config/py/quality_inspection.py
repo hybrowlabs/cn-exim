@@ -56,10 +56,12 @@ def create_quality_inspection_from_stock_entry(stock_entry_name, work_order_name
         # Find the finished good item (is_finished_item = 1)
         finished_item = None
         batch_no = None
+        serial_and_batch_bundle = None
         for item in stock_entry_doc.items:
             if item.is_finished_item:
                 finished_item = item.item_code
                 batch_no = item.batch_no
+                serial_and_batch_bundle = item.serial_and_batch_bundle
                 break
         
         if not finished_item:
@@ -81,7 +83,17 @@ def create_quality_inspection_from_stock_entry(stock_entry_name, work_order_name
         qi.inspected_by = frappe.session.user
         qi.sample_size = stock_entry_doc.fg_completed_qty  # Set sample size to finished good quantity
         
-        if batch_no:
+        # Set batch number with priority: serial_and_batch_bundle > batch_no
+        if serial_and_batch_bundle:
+            qi.custom_serial_and_batch_bundle = serial_and_batch_bundle
+            # Try to extract batch number from bundle
+            try:
+                bundle_doc = frappe.get_doc("Serial and Batch Bundle", serial_and_batch_bundle)
+                if bundle_doc.entries and bundle_doc.entries[0].batch_no:
+                    qi.batch_no = bundle_doc.entries[0].batch_no
+            except:
+                pass
+        elif batch_no:
             qi.batch_no = batch_no
         
         qi.insert()
@@ -155,14 +167,26 @@ def get_stock_entry_details(stock_entry):
         # Find the finished good item (is_finished_item = 1)
         finished_item = None
         batch_no = None
+        serial_and_batch_bundle = None
         for item in stock_entry_doc.items:
             if item.is_finished_item:
                 finished_item = item.item_code
                 batch_no = item.batch_no
+                serial_and_batch_bundle = item.serial_and_batch_bundle
                 break
         
         if not finished_item:
             frappe.throw("No finished good item found in Stock Entry")
+        
+        # Extract batch number from bundle if available
+        extracted_batch_no = batch_no
+        if serial_and_batch_bundle:
+            try:
+                bundle_doc = frappe.get_doc("Serial and Batch Bundle", serial_and_batch_bundle)
+                if bundle_doc.entries and bundle_doc.entries[0].batch_no:
+                    extracted_batch_no = bundle_doc.entries[0].batch_no
+            except:
+                pass
         
         return {
             "name": stock_entry_doc.name,
@@ -170,7 +194,8 @@ def get_stock_entry_details(stock_entry):
             "finished_item": finished_item,
             "fg_completed_qty": stock_entry_doc.fg_completed_qty,
             "posting_date": stock_entry_doc.posting_date,
-            "batch_no": batch_no
+            "batch_no": extracted_batch_no,
+            "serial_and_batch_bundle": serial_and_batch_bundle
         }
         
     except Exception as e:
