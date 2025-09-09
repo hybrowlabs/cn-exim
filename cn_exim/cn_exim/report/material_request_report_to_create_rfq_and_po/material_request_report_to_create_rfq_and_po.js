@@ -284,12 +284,14 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 		}
 	}else if (docstatus === "0") {
         // Check planner role for Submit Material Req button
+        const company = frappe.query_report.get_filter_value("company");
         frappe.call({
             method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.check_user_planner_role_for_elventive",
             args: {
                 company: company
             },
             callback: function(r) {
+				console.log("r.message", r.message);
                 if (r.message && r.message.show_buttons) {
                     // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
                     report.page.add_inner_button(__('Submit Material Req'), function () {

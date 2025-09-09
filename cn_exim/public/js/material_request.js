@@ -27,7 +27,16 @@ frappe.ui.form.on("Material Request", {
         }
     },
     refresh: function (frm) {
-        if (frm.doc.docstatus == 1 && frm.doc.material_request_type == "Purchase") {
+        const isApproved = frm.doc.workflow_state == "Approved";
+
+        if (!isApproved) {
+            frm.remove_custom_button("Pick List", "Create");
+            frm.remove_custom_button("Material Transfer", "Create");
+            frm.remove_custom_button("Material Transfer (In Transit)", "Create");
+            frm.remove_custom_button("Request for Quotation", "Create");
+        }
+
+        if (frm.doc.docstatus == 1 && frm.doc.material_request_type == "Purchase" && isApproved) {
             frm.remove_custom_button("Request for Quotation", "Create");
             frm.add_custom_button(__("Request for Quotations"), function () {
                 frappe.call({
