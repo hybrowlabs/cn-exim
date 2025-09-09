@@ -35,10 +35,31 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			"fieldname": "transaction_date",
 			"label": "Transaction Date",
 			"fieldtype": "Date"
+		},
+		{
+			"fieldname": "company",
+			"label": "Company",
+			"fieldtype": "Link",
+			"options": "Company"
 		}
 	],
 
 	onload: function (report) {
+		// Auto-set company from user's employee
+		frappe.call({
+			method: "frappe.client.get_value",
+			args: {
+				doctype: "Employee",
+				filters: {"user_id": frappe.session.user},
+				fieldname: "company"
+			},
+			callback: function(r) {
+				if (r.message && r.message.company) {
+					frappe.query_report.set_filter_value("company", r.message.company);
+				}
+			}
+		});
+
 		setup_buttons(report);
 
 		frappe.query_report.get_filter("docstatus").$input.on("change", function () {
@@ -149,6 +170,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 function setup_buttons(report) {
 	report.page.clear_inner_toolbar();
 	const docstatus = frappe.query_report.get_filter_value("docstatus");
+	const company = frappe.query_report.get_filter_value("company");
 
 	let select_all_btn = report.page.add_inner_button(__('Select All'), function () {
 		const checkboxes = $('.create-po-checkbox');
@@ -165,8 +187,28 @@ function setup_buttons(report) {
 		}
 	});
 
+	// Check role only for ELVENTIVE TECH PVT LTD company
+	frappe.call({
+		method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.check_user_buyer_role_for_elventive",
+		args: {
+			company: company
+		},
+		callback: function(r) {
+			if (r.message) {
+				let show_buttons = r.message.show_buttons;
+				setup_buttons_based_on_permission(report, docstatus, show_buttons);
+			} else {
+				setup_buttons_based_on_permission(report, docstatus, true);
+			}
+		}
+	});
+}
+
+function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 	if (docstatus === "1") {
-		report.page.add_inner_button(__('Create RFQ'), function () {
+		// Only show RFQ and PO buttons if permission is granted
+		if (show_buttons) {
+			report.page.add_inner_button(__('Create RFQ'), function () {
 			frappe.confirm('Are you sure you want to proceed to create RFQ?', function () {
 				let checked_items = [];
 				$('.create-po-checkbox:checked').each(function () {
@@ -239,9 +281,18 @@ function setup_buttons(report) {
 				});
 			});
 		});
+		}
 	}else if (docstatus === "0") {
-        // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
-        report.page.add_inner_button(__('Submit Material Req'), function () {
+        // Check planner role for Submit Material Req button
+        frappe.call({
+            method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.check_user_planner_role_for_elventive",
+            args: {
+                company: company
+            },
+            callback: function(r) {
+                if (r.message && r.message.show_buttons) {
+                    // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
+                    report.page.add_inner_button(__('Submit Material Req'), function () {
             let checked_items = [];
             $('.create-po-checkbox:checked').each(function () {
                 checked_items.push({
@@ -285,6 +336,9 @@ function setup_buttons(report) {
                     frappe.query_report.refresh();
                 }
             });
+        });
+                }
+            }
         });
     }
 }

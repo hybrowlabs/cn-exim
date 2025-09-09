@@ -72,6 +72,10 @@ def get_data(filters):
         conditions.append("mr.transaction_date = %(transaction_date)s")
         values["transaction_date"] = filters.get("transaction_date")
 
+    if filters.get("company"):
+        conditions.append("mr.company = %(company)s")
+        values["company"] = filters.get("company")
+
     condition_str = " AND " + " AND ".join(conditions) if conditions else ""
     
     if docstatus == "1":
@@ -429,3 +433,75 @@ def submit_selected_material_requests(mr_selections):
         "success_mrs": success_mrs,
         "incomplete_mrs": incomplete_mrs
     }
+
+@frappe.whitelist()
+def check_user_buyer_role_for_elventive(company=None):
+    """Check if user has buyer role only for ELVENTIVE TECH PVT LTD company"""
+    try:
+        # If company is not ELVENTIVE TECH PVT LTD, always show buttons
+        if company != "ELVENTIVE TECH PVT LTD":
+            return {"show_buttons": True, "reason": "not_elventive_company"}
+        
+        # Get current user roles
+        user_roles = frappe.get_roles()
+        
+        # Get buyer roles from Custom Settings
+        custom_settings = frappe.get_single("Custom Settings")
+        buyer_roles = []
+        
+        if hasattr(custom_settings, 'elev_buyer_role') and custom_settings.elev_buyer_role:
+            buyer_roles = [role.role for role in custom_settings.elev_buyer_role]
+        
+        # Check if user has any buyer role
+        has_buyer_role = any(role in user_roles for role in buyer_roles)
+        
+        return {
+            "show_buttons": has_buyer_role,
+            "has_buyer_role": has_buyer_role,
+            "user_roles": user_roles,
+            "buyer_roles": buyer_roles,
+            "reason": "elventive_company_check"
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error in check_user_buyer_role_for_elventive: {str(e)}")
+        return {
+            "show_buttons": True,  # Default to show buttons on error
+            "error": str(e)
+        }
+
+@frappe.whitelist()
+def check_user_planner_role_for_elventive(company=None):
+    """Check if user has planner role only for ELVENTIVE TECH PVT LTD company"""
+    try:
+        # If company is not ELVENTIVE TECH PVT LTD, always show buttons
+        if company != "ELVENTIVE TECH PVT LTD":
+            return {"show_buttons": True, "reason": "not_elventive_company"}
+        
+        # Get current user roles
+        user_roles = frappe.get_roles()
+        
+        # Get planner roles from Custom Settings
+        custom_settings = frappe.get_single("Custom Settings")
+        planner_roles = []
+        
+        if hasattr(custom_settings, 'elev_planner_role') and custom_settings.elev_planner_role:
+            planner_roles = [role.role for role in custom_settings.elev_planner_role]
+        
+        # Check if user has any planner role
+        has_planner_role = any(role in user_roles for role in planner_roles)
+        
+        return {
+            "show_buttons": has_planner_role,
+            "has_planner_role": has_planner_role,
+            "user_roles": user_roles,
+            "planner_roles": planner_roles,
+            "reason": "elventive_company_check"
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error in check_user_planner_role_for_elventive: {str(e)}")
+        return {
+            "show_buttons": True,  # Default to show buttons on error
+            "error": str(e)
+        }
