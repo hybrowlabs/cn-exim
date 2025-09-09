@@ -1,9 +1,9 @@
 let removed_items_info = [];
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
-        setTimeout(() => {
-            frm.remove_custom_button('Material Request', 'Get Items From');
-        }, 300);
+        // setTimeout(() => {
+        //     frm.remove_custom_button('Material Request', 'Get Items From');
+        // }, 300);
         if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{

@@ -12,7 +12,7 @@ def execute(filters=None):
 
 def get_columns(filters=None):
 	if filters and filters.get("docstatus") == "0":
-		return [
+		columns = [
 			{"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
@@ -26,7 +26,7 @@ def get_columns(filters=None):
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
 	else:
-		return [
+		columns = [
 			{"label": "Create PO", "fieldname": "create_po", "fieldtype": "Check", "width": 35},
 			{"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 200},
 			{"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
@@ -41,6 +41,13 @@ def get_columns(filters=None):
 			# {"label": "Qty Difference", "fieldname": "quantity", "fieldtype": "Float", "width": 120},
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
+	
+	# Add workflow state column only for submitted MRs when checkbox is checked
+	if filters and filters.get("show_workflow_state") and filters.get("docstatus") == "1":
+		workflow_column = {"label": "Workflow State", "fieldname": "workflow_state", "fieldtype": "Data", "width": 120}
+		columns.insert(-1, workflow_column)  # Insert before Item Info
+	
+	return columns
 
 
         
@@ -76,9 +83,17 @@ def get_data(filters):
         conditions.append("mr.company = %(company)s")
         values["company"] = filters.get("company")
 
+    # Add workflow state filter only for submitted MRs when checkbox is checked
+    if filters.get("show_workflow_state") and filters.get("docstatus") == "1":
+        conditions.append("mr.workflow_state = 'Approved'")
+
     condition_str = " AND " + " AND ".join(conditions) if conditions else ""
     
+    # Check if workflow state column is needed (only for submitted MRs)
+    show_workflow_state = filters.get("show_workflow_state") and filters.get("docstatus") == "1"
+    
     if docstatus == "1":
+        workflow_select = ", mr.workflow_state" if show_workflow_state else ""
         query = f"""
             SELECT
                 mr_item.name AS mr_item_name,
@@ -87,7 +102,7 @@ def get_data(filters):
                 mr_item.uom AS uom,
                 mr_item.qty AS mr_qty,
                 IFNULL(rfq_item.total_rfq_qty, 0) AS total_rfq_qty,
-                (IFNULL(rfq_item.total_rfq_qty, 0) - mr_item.qty) AS quantity
+                (IFNULL(rfq_item.total_rfq_qty, 0) - mr_item.qty) AS quantity{workflow_select}
             FROM
                 `tabMaterial Request Item` AS mr_item
             INNER JOIN

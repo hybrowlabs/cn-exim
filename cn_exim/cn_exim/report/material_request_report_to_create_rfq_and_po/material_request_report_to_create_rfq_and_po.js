@@ -41,6 +41,11 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			"label": "Company",
 			"fieldtype": "Link",
 			"options": "Company"
+		},
+		{
+			"fieldname": "show_workflow_state",
+			"label": "Show Workflow State",
+			"fieldtype": "Check"
 		}
 	],
 
@@ -62,8 +67,13 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 
 		setup_buttons(report);
 
+		// Apply workflow filter rules on load
+		apply_workflow_filter_rules();
+
 		frappe.query_report.get_filter("docstatus").$input.on("change", function () {
 			setup_buttons(report);
+			apply_workflow_filter_rules();
+			frappe.query_report.refresh();
 		});
 
 		$(document).on('click', '.item-info-btn', function () {
@@ -165,6 +175,24 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 		}
 		return value;
 	}
+}
+
+// Auto-check and hide 'Show Workflow State' when docstatus = Submitted, hide for Draft
+function apply_workflow_filter_rules() {
+    const docstatus = frappe.query_report.get_filter_value("docstatus");
+    const showWf = frappe.query_report.get_filter("show_workflow_state");
+    if (!showWf) return;
+
+    if (docstatus === "1") {
+        // Submitted: force checked and hide
+        frappe.query_report.set_filter_value("show_workflow_state", 1);
+        showWf.df.hidden = 1;
+        showWf.refresh();
+    } else {
+        // Draft: hide the checkbox completely
+        showWf.df.hidden = 1;
+        showWf.refresh();
+    }
 };
 
 function setup_buttons(report) {
