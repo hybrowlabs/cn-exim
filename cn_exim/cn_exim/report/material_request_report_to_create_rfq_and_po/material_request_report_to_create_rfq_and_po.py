@@ -394,7 +394,14 @@ def submit_selected_material_requests(mr_selections):
             try:
                 mr_doc = frappe.get_doc("Material Request", mr)
                 if mr_doc.docstatus == 0:
-                    mr_doc.submit()
+                    if mr_doc.company == "ELVENTIVE TECH PVT LTD":
+                        mr_doc.submit()
+                        mr_doc.workflow_state = "Approval pending from  Planner"
+                        mr_doc.save()
+                    else:
+                        mr_doc.submit()
+                        mr_doc.workflow_state = "Approval pending from  Planner"
+                        mr_doc.save()
                     success_mrs.append(mr)
             except Exception as e:
                 incomplete_mrs.append(
