@@ -71,9 +71,16 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 		apply_workflow_filter_rules();
 
 		frappe.query_report.get_filter("docstatus").$input.on("change", function () {
+			console.log("docstatus changed");
 			setup_buttons(report);
 			apply_workflow_filter_rules();
 			frappe.query_report.refresh();
+		});
+		
+		// Company filter change event
+		frappe.query_report.get_filter("company").$input.on("change", function () {
+			console.log("company changed");
+			setup_buttons(report);
 		});
 
 		$(document).on('click', '.item-info-btn', function () {
@@ -138,6 +145,12 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
         );
     });
 	},
+
+	// refresh: function(report) {
+	// 	// This function is called every time the report refreshes
+	// 	console.log("report refresh callback");
+	// 	setup_buttons(report);
+	// },
 
 	formatter: function (value, row, column, data, default_formatter) {
 		if (column.fieldname === "quantity") {
