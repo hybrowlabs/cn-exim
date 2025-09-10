@@ -86,6 +86,11 @@ def get_data(filters):
     # Add workflow state filter only for submitted MRs when checkbox is checked
     if filters.get("show_workflow_state") and filters.get("docstatus") == "1":
         conditions.append("mr.workflow_state = 'Approved'")
+    
+    # Add workflow state filter for Approval Pending option
+    if filters.get("docstatus") == "2":
+        conditions.append("mr.workflow_state = 'Submitted'")
+        conditions.append("mr.docstatus = 1")
 
     condition_str = " AND " + " AND ".join(conditions) if conditions else ""
     
@@ -120,6 +125,7 @@ def get_data(filters):
             WHERE
                 mr.docstatus = 1
                 AND mr.material_request_type != 'Material Transfer'
+                AND (mr_item.custom_po_created = 0 OR mr_item.custom_po_created IS NULL)
                 AND NOT EXISTS (
                     SELECT 1
                     FROM `tabRequest for Quotation Item` rfq_item
@@ -144,6 +150,7 @@ def get_data(filters):
                 `tabMaterial Request` AS mr ON mr.name = mr_item.parent
             WHERE
                 mr.material_request_type != 'Material Transfer'
+                AND (mr_item.custom_po_created = 0 OR mr_item.custom_po_created IS NULL)
                 {condition_str}
             ORDER BY mr.transaction_date DESC
         """
@@ -491,6 +498,42 @@ def check_user_buyer_role_for_elventive(company=None):
             "show_buttons": True,  # Default to show buttons on error
             "error": str(e)
         }
+
+@frappe.whitelist()
+def send_for_approval(mr_selections):
+    """Send selected Material Requests for approval"""
+    mr_selections = frappe.parse_json(mr_selections)
+    success_mrs = []
+    error_mrs = []
+
+    for mr, selected_mr_item_names in mr_selections.items():
+        try:
+            # Get the Material Request document
+            mr_doc = frappe.get_doc("Material Request", mr)
+            
+            # Check if MR is in correct state (submitted with workflow_state = 'Submitted')
+            if mr_doc.docstatus != 1:
+                error_mrs.append(f"<b>{mr}</b>: Material Request is not submitted")
+                continue
+                
+            if mr_doc.workflow_state != 'Submitted':
+                error_mrs.append(f"<b>{mr}</b>: Material Request is not in 'Submitted' state")
+                continue
+            
+            # Update workflow state to next approval level
+            mr_doc.workflow_state = "Approval pending from  Planner"
+            mr_doc.save()
+            frappe.db.commit()
+            
+            success_mrs.append(mr)
+            
+        except Exception as e:
+            error_mrs.append(f"<b>{mr}</b>: {frappe.utils.cstr(e)}")
+
+    return {
+        "success_mrs": success_mrs,
+        "error_mrs": error_mrs
+    }
 
 @frappe.whitelist()
 def check_user_planner_role_for_elventive(company=None):

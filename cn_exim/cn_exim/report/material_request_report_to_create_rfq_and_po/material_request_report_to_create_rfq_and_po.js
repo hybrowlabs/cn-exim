@@ -8,8 +8,9 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			label: "Status",
 			fieldtype: "Select",
 			options: [
-				{ label: "Draft", value: "0" },
-				{ label: "Submitted", value: "1" }
+				{ label: "Manual Entry", value: "0" },
+				{ label: "Approval Pending", value: "2" },
+				{ label: "Approved", value: "1" }
 			],
 			default: "1"
 		},
@@ -190,7 +191,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 	}
 }
 
-// Auto-check and hide 'Show Workflow State' when docstatus = Submitted, hide for Draft
+// Auto-check and hide 'Show Workflow State' when docstatus = Submitted, hide for Draft and Approval Pending
 function apply_workflow_filter_rules() {
     const docstatus = frappe.query_report.get_filter_value("docstatus");
     const showWf = frappe.query_report.get_filter("show_workflow_state");
@@ -202,7 +203,7 @@ function apply_workflow_filter_rules() {
         showWf.df.hidden = 1;
         showWf.refresh();
     } else {
-        // Draft: hide the checkbox completely
+        // Draft and Approval Pending: hide the checkbox completely
         showWf.df.hidden = 1;
         showWf.refresh();
     }
@@ -249,6 +250,8 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 	if (docstatus === "1") {
 		// Only show RFQ and PO buttons if permission is granted
 		if (show_buttons) {
+			const docstatus = frappe.query_report.get_filter_value("docstatus");
+			docstatus.df.readonly =1;
 			report.page.add_inner_button(__('Create RFQ'), function () {
 			frappe.confirm('Are you sure you want to proceed to create RFQ?', function () {
 				let checked_items = [];
@@ -334,6 +337,8 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
             callback: function(r) {
 				console.log("r.message", r.message);
                 if (r.message && r.message.show_buttons) {
+					const docstatus = frappe.query_report.get_filter_value("docstatus");
+					docstatus.df.readonly =1;
                     // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
                     report.page.add_inner_button(__('Submit Material Req'), function () {
             let checked_items = [];
@@ -355,7 +360,7 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
                 mr_map[row.material_request].push(row.mr_item_name);
             });
 
-            // Debug: See what’s being passed
+            // Debug: See what's being passed
             console.log("Passing material requests for submit:", mr_map);
 
             frappe.call({
@@ -382,6 +387,51 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
         });
                 }
             }
+        });
+    } else if (docstatus === "2") {
+        report.page.add_inner_button(__('Send for Approval'), function () {
+            let checked_items = [];
+            $('.create-po-checkbox:checked').each(function () {
+                checked_items.push({
+                    material_request: $(this).data('mr'),
+                    mr_item_name: $(this).data('mr-item-name')
+                });
+            });
+
+            if (checked_items.length === 0) {
+                frappe.msgprint(__('Please select at least one Material Request.'));
+                return;
+            }
+
+            let mr_map = {};
+            checked_items.forEach(function(row){
+                if (!mr_map[row.material_request]) mr_map[row.material_request] = [];
+                mr_map[row.material_request].push(row.mr_item_name);
+            });
+
+            frappe.confirm('Are you sure you want to send these Material Requests for approval?', function () {
+                frappe.call({
+                    method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.send_for_approval",
+                    args: { mr_selections: mr_map },
+                    callback: function (r) {
+                        if (r.message && r.message.success_mrs && r.message.success_mrs.length) {
+                            frappe.msgprint({
+                                title: __("Material Requests Sent for Approval"),
+                                message: "Sent for approval: " + r.message.success_mrs.join(", "),
+                                indicator: "green"
+                            });
+                        }
+                        if (r.message && r.message.error_mrs && r.message.error_mrs.length) {
+                            frappe.msgprint({
+                                title: __("Could Not Send for Approval"),
+                                message: r.message.error_mrs.join("<br>"),
+                                indicator: "red"
+                            });
+                        }
+                        frappe.query_report.refresh();
+                    }
+                });
+            });
         });
     }
 }
