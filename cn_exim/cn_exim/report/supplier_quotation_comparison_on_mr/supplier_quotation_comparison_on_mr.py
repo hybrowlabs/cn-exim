@@ -285,6 +285,7 @@ def get_data(filters):
 
 @frappe.whitelist()
 def create_purchase_orders(items):
+    # frappe.throw(f"items: {items}")
     items = json.loads(items)
 
     # Group items by supplier
@@ -299,13 +300,16 @@ def create_purchase_orders(items):
     skipped_items = []
 
     for supplier, items_list in supplier_items_map.items():
+        # frappe.throw(f"supplier: {supplier_items_map}")
         po = frappe.new_doc("Purchase Order")
         po.supplier = supplier
+        
 
         mri_to_update = []
 
         for item in items_list:
             supplier_quotation = item["supplier_quotation"]
+            po.company = frappe.db.get_value("Supplier Quotation", supplier_quotation, "company")
             item_code = item["item_code"]
             qty = float(item["qty"])
             

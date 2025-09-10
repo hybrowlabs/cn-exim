@@ -23,6 +23,7 @@ def get_columns(filters=None):
             {"label": "Last Purchase Rate", "fieldname": "last_purchase_rate", "fieldtype": "Currency", "width": 150},
             {"label": "Lead Time", "fieldname": "lead_time", "fieldtype": "Int", "width": 100},
             {"label": "MOQ", "fieldname": "moq", "fieldtype": "Float", "width": 100},
+            {"label": "Workflow State", "fieldname": "workflow_state", "fieldtype": "Data", "width": 120},
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
 	else:
@@ -39,13 +40,14 @@ def get_columns(filters=None):
             {"label": "MOQ", "fieldname": "moq", "fieldtype": "Float", "width": 100},
 			# {"label": "RFQ Qty", "fieldname": "total_rfq_qty", "fieldtype": "Float", "width": 100},
 			# {"label": "Qty Difference", "fieldname": "quantity", "fieldtype": "Float", "width": 120},
+            {"label": "Workflow State", "fieldname": "workflow_state", "fieldtype": "Data", "width": 120},
 			{"label": "Item Info", "fieldname": "item_info", "fieldtype": "Data", "width": 100}
 		]
 	
 	# Add workflow state column only for submitted MRs when checkbox is checked
-	if filters and filters.get("show_workflow_state") and filters.get("docstatus") == "1":
-		workflow_column = {"label": "Workflow State", "fieldname": "workflow_state", "fieldtype": "Data", "width": 120}
-		columns.insert(-1, workflow_column)  # Insert before Item Info
+	# if filters and filters.get("show_workflow_state") and filters.get("docstatus") == "1":
+	# 	workflow_column = {"label": "Workflow State", "fieldname": "workflow_state", "fieldtype": "Data", "width": 120}
+	# 	columns.insert(-1, workflow_column)  # Insert before Item Info
 	
 	return columns
 
@@ -92,13 +94,19 @@ def get_data(filters):
         conditions.append("mr.workflow_state = 'Submitted'")
         conditions.append("mr.docstatus = 1")
 
+    if filters.get("docstatus") == "3":
+        pending_state = frappe.db.get_single_value("Custom Settings", "mr_to_po_pending_state")
+        if not pending_state:
+            frappe.throw("Pending State is not set in Custom Settings")
+        conditions.append(f"mr.workflow_state = '{pending_state}'")
+        conditions.append("mr.docstatus = 1")
+
     condition_str = " AND " + " AND ".join(conditions) if conditions else ""
     
-    # Check if workflow state column is needed (only for submitted MRs)
-    show_workflow_state = filters.get("show_workflow_state") and filters.get("docstatus") == "1"
+    # Always include workflow state in query since column is always shown
+    workflow_select = ", mr.workflow_state"
     
     if docstatus == "1":
-        workflow_select = ", mr.workflow_state" if show_workflow_state else ""
         query = f"""
             SELECT
                 mr_item.name AS mr_item_name,
@@ -143,7 +151,7 @@ def get_data(filters):
                 mr.name AS material_request,
                 mr_item.item_code AS item_code,
                 mr_item.uom AS uom,
-                mr_item.qty AS mr_qty
+                mr_item.qty AS mr_qty{workflow_select}
             FROM
                 `tabMaterial Request Item` AS mr_item
             INNER JOIN

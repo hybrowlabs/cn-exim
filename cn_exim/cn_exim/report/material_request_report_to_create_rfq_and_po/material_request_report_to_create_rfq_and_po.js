@@ -9,7 +9,8 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			fieldtype: "Select",
 			options: [
 				{ label: "Manual Entry", value: "0" },
-				{ label: "Approval Pending", value: "2" },
+				{ label: "Submitted", value: "2" },
+				{ label: "Approval Pending", value: "3"},
 				{ label: "Approved", value: "1" }
 			],
 			default: "1"
@@ -46,7 +47,9 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 		{
 			"fieldname": "show_workflow_state",
 			"label": "Show Workflow State",
-			"fieldtype": "Check"
+			"fieldtype": "Check",
+			"hidden": 1,
+			"default": 1
 		}
 	],
 
@@ -68,6 +71,9 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 
 		setup_buttons(report);
 
+		// Always hide the generic Actions dropdown on this report
+		hide_actions_button();
+
 		// Apply workflow filter rules on load
 		apply_workflow_filter_rules();
 
@@ -76,12 +82,14 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 			setup_buttons(report);
 			apply_workflow_filter_rules();
 			frappe.query_report.refresh();
+			hide_actions_button();
 		});
 		
 		// Company filter change event
 		frappe.query_report.get_filter("company").$input.on("change", function () {
 			console.log("company changed");
 			setup_buttons(report);
+			hide_actions_button();
 		});
 
 		$(document).on('click', '.item-info-btn', function () {
@@ -114,7 +122,9 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 				}
 			});
 		});
-		$(document).on('click', '.editable-mr-qty', function (e) {
+		// Ensure single binding: remove previous handler before attaching
+		$(document).off('click.editableQty', '.editable-mr-qty');
+		$(document).on('click.editableQty', '.editable-mr-qty', function (e) {
         e.preventDefault();
         const mr = $(this).data('mr');
         const item_code = $(this).data('item');
@@ -176,7 +186,7 @@ frappe.query_reports["Material Request Report To Create Rfq And Po"] = {
 				data-qty="${data.mr_qty}"
 				>`;
 		}
-		if (frappe.query_report.get_filter_value("docstatus") === "0" && column.fieldname === "mr_qty") {
+		if (["0", "2"].includes(frappe.query_report.get_filter_value("docstatus")) && column.fieldname === "mr_qty") {
 			return `<a href="#" class="editable-mr-qty" data-mr="${data.material_request}" data-item="${data.item_code}">${value}</a>`;
 		}
 		if (["item_code", "material_request"].includes(column.fieldname) && value) {
@@ -214,6 +224,9 @@ function setup_buttons(report) {
 	const docstatus = frappe.query_report.get_filter_value("docstatus");
 	const company = frappe.query_report.get_filter_value("company");
 
+	// Ensure Actions dropdown stays hidden even after toolbar rebuilds
+	hide_actions_button();
+
 	let select_all_btn = report.page.add_inner_button(__('Select All'), function () {
 		const checkboxes = $('.create-po-checkbox');
 		let allChecked = true;
@@ -239,11 +252,38 @@ function setup_buttons(report) {
 			if (r.message) {
 				let show_buttons = r.message.show_buttons;
 				setup_buttons_based_on_permission(report, docstatus, show_buttons);
+
+				// If user has buyer role from Custom Settings (elev_buyer_role),
+				// force docstatus to Approved and make it read-only
+				const dsFilter = frappe.query_report.get_filter("docstatus");
+				if (show_buttons) {
+					frappe.query_report.set_filter_value("docstatus", "1");
+					dsFilter.df.read_only = 1;
+					dsFilter.refresh();
+				} else {
+					// Allow changing docstatus for non-buyer roles
+					dsFilter.df.read_only = 0;
+					dsFilter.refresh();
+				}
 			} else {
 				setup_buttons_based_on_permission(report, docstatus, true);
+				// Default: allow changing docstatus
+				const dsFilter = frappe.query_report.get_filter("docstatus");
+				dsFilter.df.read_only = 0;
+				dsFilter.refresh();
 			}
 		}
 	});
+}
+
+// Utility: hide standard Actions dropdown on Query Report
+function hide_actions_button() {
+	try {
+		// Hide both the dropdown trigger and group if present
+		$(".page-actions .actions-btn-group, .page-actions .btn-actions").hide();
+	} catch (e) {
+		// no-op
+	}
 }
 
 function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
@@ -340,7 +380,7 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 					const docstatus = frappe.query_report.get_filter_value("docstatus");
 					// docstatus.df.readonly =1;
                     // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
-                    report.page.add_inner_button(__('Submit Material Req'), function () {
+                    report.page.add_inner_button(__('Send for Approval'), function () {
             let checked_items = [];
             $('.create-po-checkbox:checked').each(function () {
                 checked_items.push({
@@ -431,6 +471,48 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
                         frappe.query_report.refresh();
                     }
                 });
+            });
+        });
+    } else if (docstatus === "3") {
+        report.page.add_inner_button(__('Go to Bulk Approval Page'), function () {
+            let checked_items = [];
+            $('.create-po-checkbox:checked').each(function () {
+                checked_items.push({
+                    material_request: $(this).data('mr'),
+                    mr_item_name: $(this).data('mr-item-name')
+                });
+            });
+
+            if (checked_items.length === 0) {
+                frappe.msgprint(__('Please select at least one Material Request.'));
+                return;
+            }
+
+            // Get unique Material Request IDs
+            let mr_ids = [...new Set(checked_items.map(item => item.material_request))];
+            
+            // Get pending state from Custom Settings first, then navigate
+            frappe.call({
+                method: "frappe.client.get_value",
+                args: {
+                    doctype: "Custom Settings",
+                    fieldname: "mr_to_po_pending_state"
+                },
+                callback: function(r) {
+                    let pending_state = r.message ? r.message.mr_to_po_pending_state : null;
+                    
+                    // Navigate to Material Request list view with filters
+                    frappe.route_options = {
+                        "name": ["in", mr_ids]
+                    };
+                    
+                    // Add workflow state filter if available
+                    if (pending_state) {
+                        frappe.route_options["workflow_state"] = pending_state;
+                    }
+                    
+                    frappe.set_route("List", "Material Request");
+                }
             });
         });
     }
