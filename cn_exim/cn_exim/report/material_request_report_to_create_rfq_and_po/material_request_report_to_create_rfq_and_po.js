@@ -251,7 +251,7 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 		// Only show RFQ and PO buttons if permission is granted
 		if (show_buttons) {
 			const docstatus = frappe.query_report.get_filter_value("docstatus");
-			docstatus.df.readonly =1;
+			// docstatus.df.readonly =1;
 			report.page.add_inner_button(__('Create RFQ'), function () {
 			frappe.confirm('Are you sure you want to proceed to create RFQ?', function () {
 				let checked_items = [];
@@ -338,7 +338,7 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 				console.log("r.message", r.message);
                 if (r.message && r.message.show_buttons) {
 					const docstatus = frappe.query_report.get_filter_value("docstatus");
-					docstatus.df.readonly =1;
+					// docstatus.df.readonly =1;
                     // DRAFT: Submit Material Req logic (fully updated, passes mr_item_name!)
                     report.page.add_inner_button(__('Submit Material Req'), function () {
             let checked_items = [];
