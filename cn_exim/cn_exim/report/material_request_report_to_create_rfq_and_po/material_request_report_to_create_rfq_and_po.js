@@ -251,12 +251,13 @@ function setup_buttons(report) {
 		callback: function(r) {
 			if (r.message) {
 				let show_buttons = r.message.show_buttons;
+				let has_buyer_role = r.message.has_buyer_role;
 				setup_buttons_based_on_permission(report, docstatus, show_buttons);
 
 				// If user has buyer role from Custom Settings (elev_buyer_role),
 				// force docstatus to Approved and make it read-only
 				const dsFilter = frappe.query_report.get_filter("docstatus");
-				if (show_buttons) {
+				if (has_buyer_role) {
 					frappe.query_report.set_filter_value("docstatus", "1");
 					dsFilter.df.read_only = 1;
 					dsFilter.refresh();
