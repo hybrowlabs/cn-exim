@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2025-07-03 12:58:36.447632",
+ "modified": "2025-09-12 12:44:54.981245",
  "modified_by": "Administrator",
  "module": "Cn Exim",
  "name": "Material Request Report To Create Rfq And Po",
@@ -31,6 +31,9 @@
   },
   {
    "role": "Purchase User"
+  },
+  {
+   "role": "Purchaser"
   }
  ],
  "timeout": 0

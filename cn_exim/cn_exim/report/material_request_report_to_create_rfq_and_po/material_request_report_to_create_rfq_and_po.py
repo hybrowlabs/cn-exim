@@ -298,6 +298,7 @@ def create_rfqs_from_simple_data(items):
         rfq.custom_type = "Material"
         rfq.custom_plant = frappe.db.get_value("Material Request", material_request, "custom_plant")
         rfq.schedule_date = frappe.db.get_value("Material Request", material_request, "schedule_date")
+        rfq.company = frappe.db.get_value("Material Request", material_request, "company")
         rfq.custom_validity_start_date = frappe.utils.nowdate()
         rfq.custom_validity_end_date = frappe.utils.add_days(frappe.utils.nowdate(), 7)
         rfq.custom_quotation_deadline = frappe.utils.add_days(frappe.utils.nowdate(), 7)
