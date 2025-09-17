@@ -217,20 +217,21 @@ def create_stock_entry_for_quality_inspection(doc):
                 "t_warehouse": purchase_order_item.warehouse,
                 "to_shelf": target_shelf,
                 "allow_zero_valuation_rate": 1,
-                "use_serial_batch_fields": use_serial_batch_fields
+                "use_serial_batch_fields": use_serial_batch_fields,
+                "batch_no": doc.batch_no
             }
             
-            # Add serial/batch tracking info (priority order)
-            if doc.custom_serial_and_batch_bundle:
-                stock_entry_item["serial_and_batch_bundle"] = doc.custom_serial_and_batch_bundle
-            elif doc.batch_no:
-                stock_entry_item["batch_no"] = doc.batch_no
-            elif purchase_receipt_item.serial_and_batch_bundle:
-                stock_entry_item["serial_and_batch_bundle"] = purchase_receipt_item.serial_and_batch_bundle
-            elif purchase_receipt_item.batch_no:
-                stock_entry_item["batch_no"] = purchase_receipt_item.batch_no
-            elif purchase_receipt_item.serial_no:
-                stock_entry_item["serial_no"] = purchase_receipt_item.serial_no
+            # # Add serial/batch tracking info (priority order)
+            # if doc.custom_serial_and_batch_bundle:
+            #     stock_entry_item["serial_and_batch_bundle"] = doc.custom_serial_and_batch_bundle
+            # elif doc.batch_no:
+            #     stock_entry_item["batch_no"] = doc.batch_no
+            # elif purchase_receipt_item.serial_and_batch_bundle:
+            #     stock_entry_item["serial_and_batch_bundle"] = purchase_receipt_item.serial_and_batch_bundle
+            # elif purchase_receipt_item.batch_no:
+            #     stock_entry_item["batch_no"] = purchase_receipt_item.batch_no
+            # elif purchase_receipt_item.serial_no:
+            #     stock_entry_item["serial_no"] = purchase_receipt_item.serial_no
             
             stock_entry.append("items", stock_entry_item)
     
