@@ -209,6 +209,7 @@ def create_purchase_receipt_from_gate_entry(gate_entry_name):
         # Create Purchase Receipt data
         purchase_receipt_data = {
             "doctype": "Purchase Receipt",
+            "company": gate_entry.company,
             "supplier": gate_entry.supplier,
             "supplier_name": gate_entry.supplier_name,
             "custom_gate_entry_no": gate_entry.name,
@@ -239,7 +240,7 @@ def create_purchase_receipt_from_gate_entry(gate_entry_name):
             "custom_freight_and_forwarding_vendor_charges": update_po_data.get('freight_and_forwarding_vendor_charges', 0),
             "custom_update_po_number": update_po_data.get('name', ""),
             "custom_total_category_charges": update_po_data.get('total_category_charges', 0),
-            "custom_house_number": update_po_data.get('house_number', "")
+            "custom_house_number": update_po_data.get('house_number', ""),
         }
         
         # Add pre-alert request if e-waybill exists

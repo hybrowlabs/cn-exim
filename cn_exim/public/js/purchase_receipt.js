@@ -77,6 +77,11 @@ if (erpnext.stock && erpnext.stock.PurchaseReceiptController && erpnext.stock.Pu
 
 frappe.ui.form.on("Purchase Receipt", {
     refresh: function (frm) {
+        setTimeout(() => {
+            if (frm.doc.docstatus !== 1) {
+                frm.remove_custom_button("Quality Inspection(s)", "Create");
+            }
+        }, 100);
         frm.remove_custom_button("Landed Cost Voucher", "Create")
         frm.add_custom_button("Landed Cost Vouchers", function () {
             let purchase_receipts = []
