@@ -317,6 +317,7 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 								message: "Request for Quotation Created Successfully!",
 								indicator: 'green'
 							});
+							report.refresh();
 						}
 					}
 				});
@@ -341,6 +342,7 @@ function setup_buttons_based_on_permission(report, docstatus, show_buttons) {
 					method: "cn_exim.cn_exim.report.material_request_report_to_create_rfq_and_po.material_request_report_to_create_rfq_and_po.create_pos_from_simple_data",
 					args: { items: checked_items },
 					callback: function (r) {
+						// report.refresh();
 						let mr_item_data = r.message[0];
 						let company = r.message[1];
 						let po = frappe.model.get_new_doc("Purchase Order");

@@ -112,6 +112,7 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 							message: `Created Purchase Orders: <br> ${r.message.map(po => `<a href="/app/purchase-order/${po}" target="_blank"><b>${po}</b></a>`).join('<br>')}`,
 							indicator: 'green'
 						});
+						report.refresh();
 					}
 				}
 			});

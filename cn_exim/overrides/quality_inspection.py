@@ -252,20 +252,21 @@ def create_stock_entry_for_quality_inspection(doc):
                     "t_warehouse": rejected_warehouse,
                     "to_shelf": rejected_shelf,
                     "allow_zero_valuation_rate": 1,
-                    "use_serial_batch_fields": use_serial_batch_fields
+                    "use_serial_batch_fields": use_serial_batch_fields,
+                    "batch_no": doc.batch_no
                 }
                 
                 # Add serial/batch tracking info (same priority as accepted)
-                if doc.custom_serial_and_batch_bundle:
-                    rejected_stock_entry_item["serial_and_batch_bundle"] = doc.custom_serial_and_batch_bundle
-                elif doc.batch_no:
-                    rejected_stock_entry_item["batch_no"] = doc.batch_no
-                elif purchase_receipt_item.serial_and_batch_bundle:
-                    rejected_stock_entry_item["serial_and_batch_bundle"] = purchase_receipt_item.serial_and_batch_bundle
-                elif purchase_receipt_item.batch_no:
-                    rejected_stock_entry_item["batch_no"] = purchase_receipt_item.batch_no
-                elif purchase_receipt_item.serial_no:
-                    rejected_stock_entry_item["serial_no"] = purchase_receipt_item.serial_no
+                # if doc.custom_serial_and_batch_bundle:
+                #     rejected_stock_entry_item["serial_and_batch_bundle"] = doc.custom_serial_and_batch_bundle
+                # elif doc.batch_no:
+                #     rejected_stock_entry_item["batch_no"] = doc.batch_no
+                # elif purchase_receipt_item.serial_and_batch_bundle:
+                #     rejected_stock_entry_item["serial_and_batch_bundle"] = purchase_receipt_item.serial_and_batch_bundle
+                # elif purchase_receipt_item.batch_no:
+                #     rejected_stock_entry_item["batch_no"] = purchase_receipt_item.batch_no
+                # elif purchase_receipt_item.serial_no:
+                #     rejected_stock_entry_item["serial_no"] = purchase_receipt_item.serial_no
                 
                 stock_entry.append("items", rejected_stock_entry_item)
             else:
