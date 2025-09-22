@@ -29,40 +29,52 @@ frappe.ui.form.on("Material Request", {
     refresh: function (frm) {
         const isApproved = frm.doc.workflow_state == "Approved";
 
-        if (!isApproved) {
-            frm.remove_custom_button("Pick List", "Create");
-            frm.remove_custom_button("Material Transfer", "Create");
-            frm.remove_custom_button("Material Transfer (In Transit)", "Create");
-            frm.remove_custom_button("Request for Quotation", "Create");
-        }
+        frappe.call({
+            method: 'frappe.client.get_single_value',
+            args: {
+                doctype: 'Custom Settings',
+                field: 'disable_rfq_button_on_mr'
+            },
+            callback: function(r) {
+                const disabled = r.message || false;
+                console.log("disable_rfq_button_on_mr", disabled);
 
-        if (frm.doc.docstatus == 1 && frm.doc.material_request_type == "Purchase" && isApproved) {
-            frm.remove_custom_button("Request for Quotation", "Create");
-            frm.add_custom_button(__("Request for Quotations"), function () {
-                frappe.call({
-                    method: "cn_exim.config.py.material_request.create_rfqs",
-                    args: {
-                        doc: frm.doc
-                    },
-                    callback: function (r) {
-                        if (r.message && r.message.rfqs && r.message.rfqs.length > 0) {
-                            let rfq_list = r.message.rfqs.join(", ");
-                            frappe.msgprint({
-                                title: __('RFQs Created Successfully'),
-                                message: rfq_list,
-                                indicator: 'green'
-                            });
-                        } else {
-                            frappe.msgprint({
-                                title: __('No RFQs Created'),
-                                message: __('No RFQs were created.'),
-                                indicator: 'orange'
-                            });
-                        }
-                    }
-                })
-            }, __("Create"));
-        }
+                if (!isApproved) {
+                    frm.remove_custom_button("Pick List", "Create");
+                    frm.remove_custom_button("Material Transfer", "Create");
+                    frm.remove_custom_button("Material Transfer (In Transit)", "Create");
+                    frm.remove_custom_button("Request for Quotation", "Create");
+                }
+
+                if (frm.doc.docstatus == 1 && frm.doc.material_request_type == "Purchase" && isApproved && !disabled) {
+                    frm.remove_custom_button("Request for Quotation", "Create");
+                    frm.add_custom_button(__("Request for Quotations"), function () {
+                        frappe.call({
+                            method: "cn_exim.config.py.material_request.create_rfqs",
+                            args: {
+                                doc: frm.doc
+                            },
+                            callback: function (r) {
+                                if (r.message && r.message.rfqs && r.message.rfqs.length > 0) {
+                                    let rfq_list = r.message.rfqs.join(", ");
+                                    frappe.msgprint({
+                                        title: __('RFQs Created Successfully'),
+                                        message: rfq_list,
+                                        indicator: 'green'
+                                    });
+                                } else {
+                                    frappe.msgprint({
+                                        title: __('No RFQs Created'),
+                                        message: __('No RFQs were created.'),
+                                        indicator: 'orange'
+                                    });
+                                }
+                            }
+                        })
+                    }, __("Create"));
+                }
+            }
+        });
 
         if (frm.doc.docstatus == 1 && frm.doc.status == "Pending") {
             frm.add_custom_button("Update Item", function () {

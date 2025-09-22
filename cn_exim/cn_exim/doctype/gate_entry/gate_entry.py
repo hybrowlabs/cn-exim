@@ -256,10 +256,21 @@ def create_purchase_receipt_from_gate_entry(gate_entry_name):
             "purchase_receipt_name": purchase_receipt.name,
             "message": f"Purchase Receipt {purchase_receipt.name} created successfully"
         }
-        
+
     except Exception as e:
         frappe.log_error(f"Failed to create Purchase Receipt from Gate Entry {gate_entry_name}: {str(e)}")
         frappe.throw(f"Failed to create Purchase Receipt: {str(e)}")
+
+@frappe.whitelist()
+def check_grn_exists(gate_entry_name):
+    """Check if Purchase Receipt (GRN) already exists for this Gate Entry"""
+
+    grn_exists = frappe.db.exists("Purchase Receipt", {
+        "custom_gate_entry_no": gate_entry_name,
+        "docstatus": ["!=", 2]
+    })
+
+    return bool(grn_exists)
 
 
 # @frappe.whitelist()

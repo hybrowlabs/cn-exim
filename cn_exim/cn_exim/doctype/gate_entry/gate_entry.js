@@ -66,20 +66,31 @@ frappe.ui.form.on("Gate Entry", {
     },
     refresh: function (frm) {
         if (frm.doc.docstatus == 1) {
-            frm.add_custom_button("Create GRN", function () {
-                frappe.call({
-                    method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.create_purchase_receipt_from_gate_entry",
-                    args: {
-                        gate_entry_name: frm.doc.name
-                    },
-                    callback: function (r) {
-                        if (!r.exc) {
-                            frappe.show_alert(r.message.message, 5);
-                            frappe.set_route("Form", "Purchase Receipt", r.message.purchase_receipt_name);
-                        }
+            // Check if GRN already exists for this Gate Entry
+            frappe.call({
+                method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.check_grn_exists",
+                args: {
+                    gate_entry_name: frm.doc.name
+                },
+                callback: function (r) {
+                    if (!r.message) { // If GRN doesn't exist, show button
+                        frm.add_custom_button("Create GRN", function () {
+                            frappe.call({
+                                method: "cn_exim.cn_exim.doctype.gate_entry.gate_entry.create_purchase_receipt_from_gate_entry",
+                                args: {
+                                    gate_entry_name: frm.doc.name
+                                },
+                                callback: function (r) {
+                                    if (!r.exc) {
+                                        frappe.show_alert(r.message.message, 5);
+                                        frappe.set_route("Form", "Purchase Receipt", r.message.purchase_receipt_name);
+                                    }
+                                }
+                            });
+                        }, __("Create"));
                     }
-                });
-            }, __("Create"));
+                }
+            });
             
             // frm.add_custom_button('Quality Inspection', function () {
             //     frappe.call({
@@ -110,7 +121,8 @@ frappe.ui.form.on("Gate Entry", {
         }
 
 
-        frm.add_custom_button(__('Get PO Items'), function () {
+        if (frm.doc.docstatus === 0) {
+            frm.add_custom_button(__('Get PO Items'), function () {
         if (frm.doc.supplier == undefined || frm.doc.supplier == "") {
             frappe.msgprint("Please select supplier first");
             return;
@@ -210,6 +222,7 @@ frappe.ui.form.on("Gate Entry", {
             });
         }
     }, __('Get Items From'));
+        }
 
         frm.set_query("service_name", function () {
             return {
