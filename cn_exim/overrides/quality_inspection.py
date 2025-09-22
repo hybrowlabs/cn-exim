@@ -155,6 +155,7 @@ def on_submit(doc, method):
             frappe.msgprint(f"Rejected Quantity: {doc.custom_rejected_quantity}")
         create_stock_entry_for_quality_inspection(doc)
         update_batch_expiry_date(doc)
+        check_quality_link(doc)
     
     elif doc.reference_type == "Work Order":
         # Validate quantities
@@ -576,3 +577,10 @@ def get_warehouse_and_shelf(doc,stock_movement,work_order_name):
         rejected_warehouse = frappe.db.get_value("Warehouse", target_warehouse, "custom_rejected_warehouse")
         rejected_shelf = frappe.db.get_value("Warehouse", rejected_warehouse, "custom_shelf")
     return target_warehouse, to_shelf, rejected_warehouse, rejected_shelf
+
+
+def check_quality_link(doc):
+    if doc.reference_type == "Purchase Receipt" and doc.reference_name and doc.child_row_reference:
+        qi = frappe.db.get_value("Purchase Receipt Item",doc.child_row_reference,"quality_inspection")
+        if not qi:
+            frappe.db.set_value("Purchase Receipt Item",doc.child_row_reference,"quality_inspection",doc.name)
