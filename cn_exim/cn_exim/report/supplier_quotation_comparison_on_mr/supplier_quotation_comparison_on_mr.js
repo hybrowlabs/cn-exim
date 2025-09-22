@@ -100,22 +100,27 @@ frappe.query_reports["Supplier Quotation Comparison On Mr"] = {
 				return;
 			}
 
-			frappe.call({
-				method: "cn_exim.cn_exim.report.supplier_quotation_comparison_on_mr.supplier_quotation_comparison_on_mr.create_purchase_orders",
-				args: {
-					items: checked_items
-				},
-				callback: function (r) {
-					if (r.message) {
-						frappe.msgprint({
-							title: __('Purchase Orders Created'),
-							message: `Created Purchase Orders: <br> ${r.message.map(po => `<a href="/app/purchase-order/${po}" target="_blank"><b>${po}</b></a>`).join('<br>')}`,
-							indicator: 'green'
-						});
-						report.refresh();
-					}
+			frappe.confirm(
+				__('Are you sure you want to create Purchase Orders for the selected items?'),
+				function () {
+					frappe.call({
+						method: "cn_exim.cn_exim.report.supplier_quotation_comparison_on_mr.supplier_quotation_comparison_on_mr.create_purchase_orders",
+						args: {
+							items: checked_items
+						},
+						callback: function (r) {
+							if (r.message) {
+								frappe.msgprint({
+									title: __('Purchase Orders Created'),
+									message: `Created Purchase Orders: <br> ${r.message.map(po => `<a href="/app/purchase-order/${po}" target="_blank"><b>${po}</b></a>`).join('<br>')}`,
+									indicator: 'green'
+								});
+								report.refresh();
+							}
+						}
+					});
 				}
-			});
+			);
 		});
 	},
 	after_datatable_render: function (datatable) {
