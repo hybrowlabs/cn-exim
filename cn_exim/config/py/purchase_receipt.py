@@ -286,13 +286,19 @@ def custom_make_stock_entry(source_name, target_doc=None):
     
     def postprocess_item(source, target, source_parent):
         # Ensure serial/batch information is properly copied
-        if source.serial_and_batch_bundle:
-            target.serial_and_batch_bundle = source.serial_and_batch_bundle
-            target.use_serial_batch_fields = 1
-        elif source.serial_no:
+        # if source.serial_and_batch_bundle:
+        #     # target.serial_and_batch_bundle = source.serial_and_batch_bundle
+        #     target.use_serial_batch_fields = 1
+        # elif source.serial_no:
+        #     target.serial_no = source.serial_no
+        # elif source.batch_no:
+        #     target.batch_no = source.batch_no
+        if source.serial_no:
             target.serial_no = source.serial_no
-        elif source.batch_no:
+            target.use_serial_batch_fields = 1
+        if source.batch_no:
             target.batch_no = source.batch_no
+            target.use_serial_batch_fields = 1
 
     def postprocess_doc(source, target, source_parent):
         # Set custom field after document is created
@@ -313,7 +319,6 @@ def custom_make_stock_entry(source_name, target_doc=None):
                     "parent": "reference_purchase_receipt",
                     "batch_no": "batch_no",
                     "serial_no": "serial_no",
-                    "serial_and_batch_bundle": "serial_and_batch_bundle",
                     "use_serial_batch_fields": "use_serial_batch_fields",
                 },
                 "condition": filter_items_by_quality_inspection,
