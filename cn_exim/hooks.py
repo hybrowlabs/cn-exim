@@ -183,6 +183,9 @@ doc_events = {
         "after_insert": "cn_exim.config.py.item.create_putaway_rule_from_material_type",
         "on_update": "cn_exim.config.py.item.update_putaway_rule_on_material_type_change",
     },
+    "Material Request": {
+        "validate": "cn_exim.cn_exim.doc_events.stock.material_request.validate",
+    },
 }
 
 # Scheduled Tasks
