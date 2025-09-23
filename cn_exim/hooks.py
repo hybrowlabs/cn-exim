@@ -14,6 +14,9 @@ app_license = "mit"
 # Import the override file to apply monkey patch
 # after_migrate = ["cn_exim.overrides.e_waybill_override"]
 
+# Before migrate hooks
+before_migrate = ["cn_exim.patches.before_migrate.execute"]
+
 # include js, css files in header of desk.html
 # app_include_css = "/assets/cn_exim/css/cn_exim.css"
 # app_include_js = "/assets/cn_exim/js/purchase_order.js"

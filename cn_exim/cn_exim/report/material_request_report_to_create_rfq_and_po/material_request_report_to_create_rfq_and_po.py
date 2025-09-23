@@ -387,6 +387,9 @@ def update_material_request_qty(material_request, item_code, qty):
  
     mri_doc = frappe.get_doc("Material Request Item", mri)
     mri_doc.qty = qty
+    allow_stock_qty_updation = frappe.db.get_single_value("Stock Settings","allow_stock_qty_updation")
+    if allow_stock_qty_updation:
+        mri_doc.stock_qty = qty
     mri_doc.save()
 
     mr_doc = frappe.get_doc("Material Request", material_request)
