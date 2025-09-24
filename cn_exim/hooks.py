@@ -163,7 +163,8 @@ doc_events = {
     "EMD":{
         "validate": "cn_exim.cn_exim.doctype.emd.emd.validate"
     },
-    "Purchase Receipt":{
+    "Purchase Receipt": {
+        "before_insert": "cn_exim.overrides.purchase_receipt.before_insert",
         "on_submit": "cn_exim.overrides.purchase_receipt.on_submit"
     },
     "Purchase Order": {

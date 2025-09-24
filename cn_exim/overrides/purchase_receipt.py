@@ -1,4 +1,8 @@
 import frappe
+from frappe import _
+
+def before_insert(doc,method):
+    check_buying_settings(doc)
 
 def on_submit(self, method):
     if self.items:
@@ -66,3 +70,24 @@ def create_out_stock_entry_from_gate_entry(pr_doc):
     except Exception as e:
         frappe.log_error(f"Error creating OUT stock entry: {str(e)}")
         frappe.throw(f"Error creating OUT stock entry: {str(e)}")
+
+def check_buying_settings(doc):
+    """
+    Check Buying Settings to enforce Gate Entry requirement for Purchase Receipt
+    """
+    allow_grn_without_gate_entry = frappe.db.get_single_value("Buying Settings", "allow_grn_without_gate_entry") or "Yes"
+
+    if allow_grn_without_gate_entry == "No":
+        doc.custom_gate_entry_reqd = 1
+        check_gate_entry(doc)
+
+def check_gate_entry(doc):
+    """
+    Validate Gate Entry is mandatory when settings require it
+    """
+    if not doc.custom_gate_entry_no:
+        frappe.throw(
+            _("Gate Entry is mandatory for creating Purchase Receipt.<br><br>"
+              "<strong>To bypass this validation:</strong><br>"
+              "Go to Buying Settings → Enable 'Allow GRN Without Gate Entry'")
+        )
