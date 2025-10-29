@@ -117,7 +117,7 @@ def create_purchase_receipt_from_gate_entry(gate_entry_name):
             po_item_details = frappe.db.get_value(
                 "Purchase Order Item",
                 {"parent": item.purchase_order, "item_code": item.item},
-                ["name", "warehouse", "parent"],
+                ["name", "warehouse", "parent","rate"],
                 as_dict=True
             )
             
@@ -148,7 +148,7 @@ def create_purchase_receipt_from_gate_entry(gate_entry_name):
                 "item_code": item.item,
                 "item_name": item.item_name,
                 "uom": item.uom,
-                "rate": item.rate,
+                "rate": po_item_details.rate,
                 "amount": item.amount,
                 "base_rate": item.rate_inr,
                 "base_amount": item.amount_inr,
