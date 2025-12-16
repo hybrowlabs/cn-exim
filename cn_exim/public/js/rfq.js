@@ -1,17 +1,26 @@
 frappe.ui.form.on("Request for Quotation", {
     
-    refresh(frm) {
-        // Reapply on refresh as well
-        setTimeout(()=>{
+   refresh(frm) {
+    // Apply on every refresh
+    apply_field_visibility(frm);
+},
 
-            apply_field_visibility(frm);
-        },100)
+onload_post_render(frm) {
+    // Apply when form loads
+    apply_field_visibility(frm);
+},
 
-        
-    },
-      onload_post_render(frm) {
-        apply_field_visibility(frm);
-    },
+// Add this hook - it fires when a new form is created
+onload(frm) {
+    // Apply when form first loads (including new docs)
+    apply_field_visibility(frm);
+},
+
+// Add this hook - it fires after a form is loaded from the server
+after_load(frm) {
+    // Apply after data is loaded
+    apply_field_visibility(frm);
+},
     custom_shipment_address: function (frm) {
         erpnext.utils.get_address_display(frm, "custom_shipment_address", "custom_shipment_address_details", false);
     },
@@ -198,7 +207,6 @@ function updateChargesHtml(frm, cdt, cdn) {
     }
 }
 
-
 function apply_field_visibility(frm) {
     frappe.call({
         method: "frappe.client.get_list",
@@ -232,45 +240,35 @@ function apply_field_visibility(frm) {
         }
     });
 }
-
 function toggle_fields(frm, start, end, deadline) {
 
-    // -------- Start Date ----------
-    frm.set_df_property("custom_validity_start_date", "reqd", 0);
+    // ---------- Start Date ----------
     frm.set_df_property("custom_validity_start_date", "hidden", !start);
+    frm.set_df_property("custom_validity_start_date", "reqd", !!start);
 
-    if (start) {
-        frm.set_df_property("custom_validity_start_date", "reqd", 1);
-    } else {
-        frm.set_value("custom_validity_start_date", null);
+    if (!start && frm.is_new()) {
+        frm.doc.custom_validity_start_date = null;
     }
 
-    frm.refresh_field("custom_validity_start_date");
-
-
-    // -------- End Date ----------
-    frm.set_df_property("custom_validity_end_date", "reqd", 0);
+    // ---------- End Date ----------
     frm.set_df_property("custom_validity_end_date", "hidden", !end);
+    frm.set_df_property("custom_validity_end_date", "reqd", !!end);
 
-    if (end) {
-        frm.set_df_property("custom_validity_end_date", "reqd", 1);
-    } else {
-        frm.set_value("custom_validity_end_date", null);
+    if (!end && frm.is_new()) {
+        frm.doc.custom_validity_end_date = null;
     }
 
-    frm.refresh_field("custom_validity_end_date");
+    // ---------- Deadline ----------
+    frm.set_df_property("custom_quotation_deadline", "hidden", !deadline);
+    frm.set_df_property("custom_quotation_deadline", "reqd", !!deadline);
 
-
-    if (deadline) {
-        frm.set_df_property("custom_quotation_deadline", "reqd", 1);
-        frm.set_df_property("custom_quotation_deadline", "hidden", deadline);
-        
-    } else {
-        frm.set_value("custom_quotation_deadline", null);
-        frm.set_df_property("custom_quotation_deadline", "hidden", !deadline);
+    if (!deadline && frm.is_new()) {
+        frm.doc.custom_quotation_deadline = null;
     }
 
-    frm.refresh_field("custom_quotation_deadline");
+    frm.refresh_fields([
+        "custom_validity_start_date",
+        "custom_validity_end_date",
+        "custom_quotation_deadline"
+    ]);
 }
-
-
