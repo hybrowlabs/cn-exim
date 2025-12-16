@@ -1,4 +1,12 @@
 frappe.ui.form.on("Request for Quotation", {
+    
+    refresh(frm) {
+        // Reapply on refresh as well
+        setTimeout(()=>{
+
+            apply_field_visibility(frm);
+        },200)
+    },
     custom_shipment_address: function (frm) {
         erpnext.utils.get_address_display(frm, "custom_shipment_address", "custom_shipment_address_details", false);
     },
@@ -184,4 +192,80 @@ function updateChargesHtml(frm, cdt, cdn) {
         frm.refresh_field('items');
     }
 }
+
+
+function apply_field_visibility(frm) {
+    frappe.call({
+        method: "frappe.client.get_list",
+        args: {
+            doctype: "Field Visiblity Settings",
+            filters: {
+                doctype_name: frm.doctype
+            },
+            fields: [
+                "custom_validity_start_date",
+                "custom_validity_end_date",
+                "custom_quotation_deadline"
+            ],
+            limit_page_length: 1
+        },
+        callback: function (r) {
+            if (!r.message || !r.message.length) {
+                // No config → hide & remove mandatory
+                toggle_fields(frm, false, false, false);
+                return;
+            }
+
+            const cfg = r.message[0];
+
+            toggle_fields(
+                frm,
+                cfg.custom_validity_start_date,
+                cfg.custom_validity_end_date,
+                cfg.custom_quotation_deadline
+            );
+        }
+    });
+}
+
+function toggle_fields(frm, start, end, deadline) {
+
+    // -------- Start Date ----------
+    frm.set_df_property("custom_validity_start_date", "reqd", 0);
+    frm.set_df_property("custom_validity_start_date", "hidden", !start);
+
+    if (start) {
+        frm.set_df_property("custom_validity_start_date", "reqd", 1);
+    } else {
+        frm.set_value("custom_validity_start_date", null);
+    }
+
+    frm.refresh_field("custom_validity_start_date");
+
+
+    // -------- End Date ----------
+    frm.set_df_property("custom_validity_end_date", "reqd", 0);
+    frm.set_df_property("custom_validity_end_date", "hidden", !end);
+
+    if (end) {
+        frm.set_df_property("custom_validity_end_date", "reqd", 1);
+    } else {
+        frm.set_value("custom_validity_end_date", null);
+    }
+
+    frm.refresh_field("custom_validity_end_date");
+
+
+    if (deadline) {
+        frm.set_df_property("custom_quotation_deadline", "reqd", 1);
+        frm.set_df_property("custom_quotation_deadline", "hidden", deadline);
+        
+    } else {
+        frm.set_value("custom_quotation_deadline", null);
+        frm.set_df_property("custom_quotation_deadline", "hidden", !deadline);
+    }
+
+    frm.refresh_field("custom_quotation_deadline");
+}
+
 

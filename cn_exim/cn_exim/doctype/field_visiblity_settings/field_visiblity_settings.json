@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:doctype_name",
+ "creation": "2025-12-15 15:12:12.581116",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_hyow",
+  "doctype_name",
+  "custom_validity_start_date",
+  "custom_validity_end_date",
+  "custom_quotation_deadline"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_hyow",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "doctype_name",
+   "fieldtype": "Link",
+   "label": "Doctype Name",
+   "options": "DocType",
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "custom_validity_start_date",
+   "fieldtype": "Check",
+   "label": "Validity Start Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "custom_validity_end_date",
+   "fieldtype": "Check",
+   "label": "Validity End Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "custom_quotation_deadline",
+   "fieldtype": "Check",
+   "label": "Quotation Deadline"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-15 15:20:01.217461",
+ "modified_by": "Administrator",
+ "module": "Cn Exim",
+ "name": "Field Visiblity Settings",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
