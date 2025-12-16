@@ -5,7 +5,12 @@ frappe.ui.form.on("Request for Quotation", {
         setTimeout(()=>{
 
             apply_field_visibility(frm);
-        },200)
+        },100)
+
+        
+    },
+      onload_post_render(frm) {
+        apply_field_visibility(frm);
     },
     custom_shipment_address: function (frm) {
         erpnext.utils.get_address_display(frm, "custom_shipment_address", "custom_shipment_address_details", false);
