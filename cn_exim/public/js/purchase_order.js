@@ -1,5 +1,7 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
+        set_requisitioner_from_reference(frm);
+
         if (frm.doc.custom_purchase_sub_type == "Import" && frm.doc.docstatus == 1 && frm.doc.is_subcontracted == 0) {
             frm.add_custom_button("Pickup Request", function () {
                 let purchase_order_list = [{
@@ -639,4 +641,51 @@ function total_amount_calculate(frm) {
             }
         })
     }
+}
+
+
+
+
+
+
+
+function set_requisitioner_from_reference(frm) {
+    // already set → do nothing
+    if (frm.doc.custom_requisitioner) return;
+
+    if (!frm.doc.items || !frm.doc.items.length) return;
+
+    // 1️⃣ Try direct Material Request from PO items
+    let mr = frm.doc.items.find(d => d.material_request)?.material_request;
+
+    if (mr) {
+        fetch_requisitioner(frm, mr);
+        return;
+    }
+
+    // 2️⃣ Try via Supplier Quotation
+    let sq = frm.doc.items.find(d => d.supplier_quotation)?.supplier_quotation;
+
+    if (!sq) return;
+
+    frappe.db.get_value("Supplier Quotation Item",
+        { parent: sq },
+        "material_request"
+    ).then(r => {
+        if (r.message?.material_request) {
+            fetch_requisitioner(frm, r.message.material_request);
+        }
+    });
+}
+
+function fetch_requisitioner(frm, mr) {
+    frappe.db.get_value(
+        "Material Request",
+        mr,
+        "custom_requisitioner"
+    ).then(r => {
+        if (r.message?.custom_requisitioner) {
+            frm.set_value("custom_requisitioner", r.message.custom_requisitioner);
+        }
+    });
 }
